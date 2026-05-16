@@ -4,5 +4,7 @@
     "raynigon.nginx-formatter",
     // React formatting
     "dbaeumer.vscode-eslint",
+    // Code formatting
+    "esbenp.prettier-vscode"
   ]
 }

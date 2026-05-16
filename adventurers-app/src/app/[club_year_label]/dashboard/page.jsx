@@ -1,7 +1,6 @@
-
 import View from './view.jsx';
 
-// Incluir metadata: título e descrição (Dashboard (25-26)
+export const metadata = { title: 'Dashboard' }
 
 const Page = () => {
   return <View/>

@@ -1,3 +1,206 @@
-html {
-  background: #fff;
+:root {
+  --color-primary: #1e5aa8;
+  --color-primary-light: #36c6f4;
+  --color-accent: #e89a2d;
+  --color-accent-light: #f4c542;
+  --glass-bg: rgba(255, 255, 255, 0.95);
+  --glass-bg-strong: rgba(255, 255, 255, 0.22);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-shadow:
+    0 4px 24px rgba(30, 90, 168, 0.18), 0 1.5px 6px rgba(30, 90, 168, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  --text-light: #f7fafc;
+  --text-dark: #1c3450;
+}
+
+html,
+body {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: linear-gradient(
+    -5deg,
+    var(--color-primary-light) 65%,
+    var(--color-primary) 100%
+  );
+  background-attachment: fixed;
+}
+
+/* Glass morphism base card */
+.glass-card {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: saturate(180%) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 18px !important;
+  box-shadow: var(--glass-shadow) !important;
+}
+
+/* Stronger glass for headers */
+.glass-header {
+  background: rgba(20, 60, 100, 0.55);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* Table rows hover */
+.clickable-row {
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+  }
+}
+
+.glass-scrollarea {
+  border: 1px solid var(--color-primary-light);
+}
+
+/* Table header glass style */
+.glass-table-header th {
+  background: rgba(255, 255, 255, 0.95);
+  background: var(--color-primary-light);
+  color: var(--text-dark);
+
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  button,
+  p {
+    font-size: 0.8rem;
+    font-weight: 400 !important;
+    line-height: 1.25rem;
+    letter-spacing: 0.08em;
+    height: 34px;
+    text-transform: uppercase;
+    padding-left: 0;
+    padding-right: 0;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    display: inline-flex;
+  }
+}
+
+/* Page content area */
+.page-content {
+  padding: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Action bar (buttons row) */
+.action-bar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+/* Breadcrumb light styling */
+.breadcrumb-nav ol,
+.breadcrumb-nav li {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.breadcrumb-nav a {
+  color: rgba(255, 255, 255, 0.8) !important;
+  text-decoration: none;
+  &:hover {
+    color: #fff !important;
+    text-decoration: underline;
+  }
+}
+
+.breadcrumb-nav [aria-current="page"] {
+  color: #fff !important;
+  font-weight: 600;
+}
+
+/* Glass button */
+.glass-btn {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  color: #fff !important;
+  backdrop-filter: blur(8px) !important;
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+  }
+}
+
+.accent-btn {
+  background: var(--color-accent) !important;
+  border: none !important;
+  color: #1a1a1a !important;
+  border-radius: 10px !important;
+  font-weight: 700 !important;
+
+  &:hover {
+    background: #e09a00 !important;
+  }
+}
+
+/* Resource page info card */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.info-item label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.info-item p {
+  color: var(--text-dark);
+  font-size: 1rem;
+  font-weight: 500;
+  margin-top: 0.15rem;
+}
+
+/* Collection page cards grid */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.25rem;
+}
+
+/* Full-width single card */
+.full-card {
+  width: 100%;
+}
+
+/* Card title and text */
+.card-title {
+  color: var(--text-dark) !important;
+  font-size: 1.5rem !important;
+  font-weight: 500 !important;
+}
+
+.card-description {
+  color: var(--text-muted) !important;
+  font-size: 0.85rem !important;
+}
+
+/* Table cells light text */
+.glass-table td,
+.glass-table th {
+  color: var(--text-dark) !important;
+  border-color: rgba(0, 0, 0, 0.05) !important;
 }

@@ -1,0 +1,40 @@
+import { useEffect, useState } from "react"
+import { fromSnakeCaseToTitleCase } from "@/utils/stringUtils"
+
+function useStaff(clubYearLabel = null) {
+  const [rawStaff, setRawStaff] = useState([])
+  const [staff, setStaff] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  function transform(raw) {
+    return raw.map(s => ({
+      id: s.id,
+      name: `${s.firstName ?? s.first_name} ${s.lastName ?? s.last_name}`,
+      email: s.email ?? '—',
+      phone: s.phone ?? '—',
+      role: s.staffRole ? fromSnakeCaseToTitleCase(s.staffRole) : (s.staff_role ? fromSnakeCaseToTitleCase(s.staff_role) : '—'),
+      backgroundCheckExpiration: s.backgroundCheckExpiration
+        ? new Date(s.backgroundCheckExpiration).toLocaleDateString()
+        : (s.background_check_expiration ? new Date(s.background_check_expiration).toLocaleDateString() : '—'),
+    }))
+  }
+
+  useEffect(() => {
+    setLoading(true)
+    const url = clubYearLabel
+      ? `/api/club-years/${clubYearLabel}/staff`
+      : '/api/staff'
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        setRawStaff(data)
+        setStaff(transform(data))
+        setLoading(false)
+      })
+      .catch(() => setLoading(false))
+  }, [clubYearLabel])
+
+  return { staff, loading }
+}
+
+export default useStaff
