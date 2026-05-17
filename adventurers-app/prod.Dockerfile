@@ -25,16 +25,19 @@ ARG ENV_VARIABLE
 ENV ENV_VARIABLE=${ENV_VARIABLE}
 ARG NEXT_PUBLIC_ENV_VARIABLE
 ENV NEXT_PUBLIC_ENV_VARIABLE=${NEXT_PUBLIC_ENV_VARIABLE}
-ARG POSTGRES_HOST
-ENV POSTGRES_HOST=${POSTGRES_HOST}
-ARG POSTGRES_PORT
-ENV POSTGRES_PORT=${POSTGRES_PORT}
-ARG POSTGRES_DATABASE
-ENV POSTGRES_DATABASE=${POSTGRES_DATABASE}
-ARG POSTGRES_USER
-ENV POSTGRES_USER=${POSTGRES_USER}
-ARG POSTGRES_PASSWORD
-ENV POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+
+# DATABASE_URL replaces the individual POSTGRES_* vars.
+# Only bake it in at build time if your code reads it during `next build`.
+# If it's only needed at runtime (recommended), remove these two lines
+# and rely solely on the runtime ENV below.
+ARG DATABASE_URL
+ENV DATABASE_URL=${DATABASE_URL}
+
+# NEXT_PUBLIC_* vars are embedded into the client bundle at build time,
+# so they must be ARGs here. Server-only vars (secrets) are safer as
+# runtime ENV only — see the runner stage below.
+ARG NEXT_PUBLIC_BETTER_AUTH_URL
+ENV NEXT_PUBLIC_BETTER_AUTH_URL=${NEXT_PUBLIC_BETTER_AUTH_URL}
 
 # Next.js collects completely anonymous telemetry data about general usage. Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line to disable telemetry at build time
@@ -67,26 +70,35 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Environment variables must be redefined at run time
+# Runtime environment variables — injected by Koyeb at container start.
+# These are NOT baked into the image, which is safer for secrets.
+# Set all of these in the Koyeb dashboard under Environment Variables / Secrets.
 ARG ENV_VARIABLE
 ENV ENV_VARIABLE=${ENV_VARIABLE}
 ARG NEXT_PUBLIC_ENV_VARIABLE
 ENV NEXT_PUBLIC_ENV_VARIABLE=${NEXT_PUBLIC_ENV_VARIABLE}
-ARG POSTGRES_HOST
-ENV POSTGRES_HOST=${POSTGRES_HOST}
-ARG POSTGRES_PORT
-ENV POSTGRES_PORT=${POSTGRES_PORT}
-ARG POSTGRES_DATABASE
-ENV POSTGRES_DATABASE=${POSTGRES_DATABASE}
-ARG POSTGRES_USER
-ENV POSTGRES_USER=${POSTGRES_USER}
-ARG POSTGRES_PASSWORD
-ENV POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+
+# Replaces POSTGRES_HOST, POSTGRES_PORT, POSTGRES_DATABASE, POSTGRES_USER, POSTGRES_PASSWORD
+# Format: postgresql://user:password@host:port/database
+ARG DATABASE_URL
+ENV DATABASE_URL=${DATABASE_URL}
+
+# Better Auth — server-side secrets, runtime only
+ARG BETTER_AUTH_SECRET
+ENV BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
+ARG BETTER_AUTH_URL
+ENV BETTER_AUTH_URL=${BETTER_AUTH_URL}
+ARG NEXT_PUBLIC_BETTER_AUTH_URL
+ENV NEXT_PUBLIC_BETTER_AUTH_URL=${NEXT_PUBLIC_BETTER_AUTH_URL}
+
+# Google OAuth — server-side secrets, runtime only
+ARG GOOGLE_CLIENT_ID
+ENV GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+ARG GOOGLE_CLIENT_SECRET
+ENV GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
 
 # Uncomment the following line to disable telemetry at run time
 # ENV NEXT_TELEMETRY_DISABLED 1
 
-# Note: Don't expose ports here, Compose will handle that for us
-
-# We can use the node process itself here
+# Note: Don't expose ports here, Compose/Koyeb will handle that
 CMD node server.js

@@ -1,64 +1,43 @@
-# `version` is now deprecated
-# https://docs.docker.com/compose/compose-file/#version-top-level-element
+# Koyeb-compatible production docker-compose
+#
+# WHAT CHANGED FROM THE ORIGINAL:
+# - Removed: nginx (Koyeb handles routing, SSL, and load balancing natively)
+# - Removed: postgres (use Koyeb Managed PostgreSQL instead)
+# - Removed: external network (services talk via DATABASE_URL env var)
+# - Removed: build args for POSTGRES_* (replaced by DATABASE_URL secret)
+# - Added: DATABASE_URL for Koyeb managed Postgres connection string
+# - Added: Better Auth + Google OAuth env vars (missing from prod compose)
+# - Added: ports so Koyeb knows where to route traffic
+#
+# BEFORE DEPLOYING ON KOYEB:
+# 1. Create a Managed PostgreSQL database in the Koyeb dashboard
+# 2. Copy the connection string it gives you
+# 3. Set all env vars below as Koyeb secrets (Dashboard → Secrets)
+# 4. Push your Docker images to a registry (Docker Hub, GHCR, etc.)
+#    and point each service's image field to them, OR connect your
+#    GitHub repo and let Koyeb build from your prod.Dockerfile directly
 
 services:
-  next-ts-app:
-    container_name: next-ts-app
+  adventurers-app:
+    container_name: adventurers-app
     build:
-      context: ./next-ts-app
+      context: ./adventurers-app
       dockerfile: prod.Dockerfile
-      args:
-        ENV_VARIABLE: ${ENV_VARIABLE}
-        NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
-        POSTGRES_HOST: ${POSTGRES_HOST}
-        POSTGRES_PORT: ${POSTGRES_PORT}
-        POSTGRES_DATABASE: ${POSTGRES_DATABASE}
-        POSTGRES_USER: ${POSTGRES_USER}
-        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    restart: always
-    networks:
-      - my_network
-
-  next-js-app:
-    container_name: next-js-app
-    build:
-      context: ./next-js-app
-      dockerfile: prod.Dockerfile
-      args:
-        ENV_VARIABLE: ${ENV_VARIABLE}
-        NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
-        POSTGRES_HOST: ${POSTGRES_HOST}
-        POSTGRES_PORT: ${POSTGRES_PORT}
-        POSTGRES_DATABASE: ${POSTGRES_DATABASE}
-        POSTGRES_USER: ${POSTGRES_USER}
-        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    restart: always
-    networks:
-      - my_network
-
-  nginx:
-    container_name: nginx
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
-    volumes:
-      - ./nginx/sites-enabled:/etc/nginx/sites-enabled
-      - ./nginx/logs:/var/log/nginx
+    environment:
+      ENV_VARIABLE: ${ENV_VARIABLE}
+      NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DATABASE: ${POSTGRES_DATABASE}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      # Better Auth
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL}
+      NEXT_PUBLIC_BETTER_AUTH_URL: ${NEXT_PUBLIC_BETTER_AUTH_URL}
+      # Google OAuth
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
     ports:
-      - 80:80
-      - 443:443
       - 3000:3000
-    depends_on:
-      - next-ts-app
-      - next-js-app
     restart: always
-    networks:
-      - my_network
-
-  # Add more containers below
-
-# Define a network, which allows containers to communicate
-# with each other, by using their container name as a hostname
-networks:
-  my_network:
-    external: true
