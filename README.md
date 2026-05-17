@@ -53,6 +53,7 @@ The app will be available at **http://localhost:3000**.
 ### 3. Sign in
 
 The app uses **Google OAuth** for authentication. Only emails listed in `ALLOWED_EMAILS` are permitted to sign in.
+Note: To get the google client ID and secret, follow the [instructions outlined by Better Auth documentation](https://better-auth.com/docs/authentication/google).
 
 ---
 
