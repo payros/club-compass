@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 import { Breadcrumb } from "@chakra-ui/react";
 import Link from "next/link";
 import { FaChevronRight } from "react-icons/fa";
@@ -16,15 +17,15 @@ export default function Breadcrumbs({ items = [] }) {
         {items.map((item, i) => {
           const isLast = i === items.length - 1;
           return (
-            <Breadcrumb.Item key={i}>
-              {isLast ? (
-                <Breadcrumb.CurrentLink
-                  style={{ color: "#fff", fontWeight: 600, fontSize: "2rem" }}
-                >
-                  {item.label}
-                </Breadcrumb.CurrentLink>
-              ) : (
-                <>
+            <React.Fragment key={i}>
+              <Breadcrumb.Item>
+                {isLast ? (
+                  <Breadcrumb.CurrentLink
+                    style={{ color: "#fff", fontWeight: 600, fontSize: "2rem" }}
+                  >
+                    {item.label}
+                  </Breadcrumb.CurrentLink>
+                ) : (
                   <Breadcrumb.Link asChild>
                     <Link
                       href={item.href ?? "#"}
@@ -36,16 +37,18 @@ export default function Breadcrumbs({ items = [] }) {
                       {item.label}
                     </Link>
                   </Breadcrumb.Link>
-                  <Breadcrumb.Separator
-                    style={{ color: "rgba(255,255,255,0.75)" }}
-                    ml={2}
-                    mr={1}
-                  >
-                    <FaChevronRight />
-                  </Breadcrumb.Separator>
-                </>
+                )}
+              </Breadcrumb.Item>
+              {!isLast && (
+                <Breadcrumb.Separator
+                  style={{ color: "rgba(255,255,255,0.75)" }}
+                  ml={2}
+                  mr={1}
+                >
+                  <FaChevronRight />
+                </Breadcrumb.Separator>
               )}
-            </Breadcrumb.Item>
+            </React.Fragment>
           );
         })}
       </Breadcrumb.List>

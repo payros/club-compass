@@ -1,11 +1,22 @@
 "use client";
 import { useState } from "react";
-import { Box, Button, Heading, Text, VStack } from "@chakra-ui/react";
+import { useSearchParams } from "next/navigation";
+import { Alert, Box, Button, Heading, Text, VStack } from "@chakra-ui/react";
 import { FcGoogle } from "react-icons/fc";
 import { authClient } from "@/lib/auth-client";
 
+function parseErrorMessage(error) {
+  if (!error) return null;
+  return error
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
 export default function View() {
   const [loading, setLoading] = useState(false);
+  const searchParams = useSearchParams();
+  const errorMessage = parseErrorMessage(searchParams.get("error"));
 
   async function handleGoogleSignIn() {
     setLoading(true);
@@ -39,6 +50,13 @@ export default function View() {
             </Heading>
             <Text color="fg.muted">Sign in to access the app</Text>
           </Box>
+
+          {errorMessage && (
+            <Alert.Root status="error" borderRadius="lg">
+              <Alert.Indicator />
+              <Alert.Description>{errorMessage}</Alert.Description>
+            </Alert.Root>
+          )}
 
           <Button
             onClick={handleGoogleSignIn}

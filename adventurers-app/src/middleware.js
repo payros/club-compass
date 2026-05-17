@@ -1,5 +1,6 @@
 import { betterFetch } from "@better-fetch/fetch";
 import { NextResponse } from "next/server";
+import { isEmailAllowed } from "@/utils/authUtils";
 
 export async function middleware(request) {
   const { pathname } = request.nextUrl;
@@ -19,6 +20,13 @@ export async function middleware(request) {
 
   if (!session) {
     const loginUrl = new URL("/login", request.url);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  // Whitelist check: block sessions for non-allowed users
+  if (session.user?.email && !isEmailAllowed(session.user.email)) {
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("error", "not_whitelisted");
     return NextResponse.redirect(loginUrl);
   }
 
