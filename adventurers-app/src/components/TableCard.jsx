@@ -126,7 +126,7 @@ function TableCard({
               ) : (
                 data.map((item, index) => (
                   <MotionRow
-                    key={item.id ?? index}
+                    key={`${item.id ?? ""}-${index}`}
                     bg="transparent"
                     className={onRowClick ? "clickable-row" : ""}
                     onClick={() => onRowClick && onRowClick(item)}
