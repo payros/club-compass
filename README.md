@@ -85,7 +85,7 @@ When you visit `/`, you're automatically redirected to the latest club year's da
 Events have two modes controlled by an **Award Ceremony** flag:
 
 - **Regular event** — When a child attends, any awards linked to the event are **added** to their record.
-- **Award ceremony** — When a child attends, linked awards have their `awarded_on` date **stamped** (officially granting the award).
+- **Award ceremony** — When a child attends, linked awards have their `awarded_on` date **stamped** (officially granting the patch).
 
 ### Authentication & Access
 
