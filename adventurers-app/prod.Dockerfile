@@ -27,9 +27,6 @@ COPY postgres ./postgres
 COPY reset-prod-db.sh ./reset-prod-db.sh
 RUN chmod +x ./reset-prod-db.sh
 
-# Reset and re-initialise the production database
-RUN ./reset-prod-db.sh
-
 # DATABASE_URL is needed at build time: the reset script runs during build,
 # and Next.js may read it during `next build`.
 ARG DATABASE_URL
@@ -38,6 +35,9 @@ ENV DATABASE_URL=${DATABASE_URL}
 # NEXT_PUBLIC_* vars are embedded into the client bundle at build time.
 ARG NEXT_PUBLIC_BETTER_AUTH_URL
 ENV NEXT_PUBLIC_BETTER_AUTH_URL=${NEXT_PUBLIC_BETTER_AUTH_URL}
+
+# Reset and re-initialise the production database
+RUN ./reset-prod-db.sh
 
 # Next.js collects completely anonymous telemetry data about general usage. Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line to disable telemetry at build time
