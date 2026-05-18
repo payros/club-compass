@@ -11,8 +11,10 @@ export async function middleware(request) {
     return NextResponse.next();
   }
 
+  const internalOrigin =
+    process.env.NEXTAUTH_URL ?? `http://${request.nextUrl.host}`;
   const { data: session } = await betterFetch("/api/auth/get-session", {
-    baseURL: request.nextUrl.origin,
+    baseURL: internalOrigin,
     headers: {
       cookie: request.headers.get("cookie") ?? "",
     },
