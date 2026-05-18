@@ -1,5 +1,3 @@
-\connect adv_db adv_db_user
-
 -- Configuration
 CREATE SCHEMA adv_db AUTHORIZATION adv_db_user;
 GRANT ALL PRIVILEGES ON SCHEMA adv_db TO adv_db_user;
