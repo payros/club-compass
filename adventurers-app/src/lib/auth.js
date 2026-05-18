@@ -9,6 +9,10 @@ export const auth = betterAuth({
   database: new Pool({
     connectionString: process.env.DATABASE_URL,
     options: "-c search_path=adv_db",
+    ssl:
+      process.env.NODE_ENV === "production"
+        ? { rejectUnauthorized: false }
+        : false,
   }),
   socialProviders: {
     google: {
