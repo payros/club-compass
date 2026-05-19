@@ -3,7 +3,6 @@
  * If ALLOWED_EMAILS is empty or unset, all emails are allowed.
  */
 export function isEmailAllowed(email) {
-  console.log("process.env.ALLOWED_EMAILS", process.env.ALLOWED_EMAILS);
   const allowedEmails = (process.env.ALLOWED_EMAILS ?? "")
     .split(",")
     .map((e) => e.trim().toLowerCase())
