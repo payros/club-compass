@@ -24,7 +24,6 @@ async function getByLabel(label) {
 }
 
 async function create(clubYear) {
-  console.log("clubYear in service", clubYear);
   // Call the database and insert a new club year
   try {
     const result = await sql`

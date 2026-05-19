@@ -20,7 +20,6 @@ import useClubYear from "@/hooks/useClubYear";
 
 const FALLBACK_CLUB_NAME =
   process.env.NEXT_PUBLIC_CLUB_NAME ?? "Adventurers Club";
-console.log("FALLBACK_CLUB_NAME", process.env.NEXT_PUBLIC_CLUB_NAME);
 /**
  * Global app header
  * @param {Array} breadcrumbs - [{label, href}]
