@@ -1,49 +1,86 @@
-"use client"
-import Link from "next/link"
-import { Card, Text, SimpleGrid } from "@chakra-ui/react"
-import PageLayout from "@/components/PageLayout"
-import PageTransition from "@/components/PageTransition"
-import { FiUsers, FiUser, FiAward, FiCalendar, FiUserCheck } from "react-icons/fi"
-
-const DIRECTORIES = [
-  { label: "Children", href: "/children", icon: FiUsers, description: "All children on record" },
-  { label: "Parents", href: "/parents", icon: FiUser, description: "Parents and guardians" },
-  { label: "Staff", href: "/staff", icon: FiUserCheck, description: "All staff members" },
-  { label: "Awards", href: "/awards", icon: FiAward, description: "Award catalog" },
-  { label: "Club Years", href: "/club-years", icon: FiCalendar, description: "All club years" },
-  { label: "Users", href: "/users", icon: FiUsers, description: "App user accounts" },
-]
+"use client";
+import useChildren from "@/hooks/useChildren";
+import useClubYears from "@/hooks/useClubYears";
+import useParents from "@/hooks/useParents";
+import useStaff from "@/hooks/useStaff";
+import DashboardPage from "@/components/pages/DashboardPage";
 
 export default function View() {
-  const breadcrumbs = [{ label: "Directories" }]
+  const breadcrumbs = [{ label: "Directories" }];
+
+  const { children, loading: loadingAllChildren } = useChildren();
+  const { clubYears, loading: loadingClubYears } = useClubYears();
+  const { parents, loading: loadingParents } = useParents();
+  const { staff, loading: loadingStaff } = useStaff();
+
+  const cards = [
+    {
+      title: "All Children",
+      href: `/children`,
+      badge: children?.length ?? 0,
+      headers: [
+        { key: "name", label: "Name", sortable: true },
+        { key: "age", label: "Age", sortable: true },
+      ],
+      data: children,
+      loading: loadingAllChildren,
+      onRowClick: (item) => router.push(`/children/${item.id}`),
+    },
+    {
+      title: "All Parents",
+      href: `/parents`,
+      headers: [
+        { key: "name", label: "Name", sortable: true },
+        { key: "phone", label: "Phone", sortable: true },
+      ],
+      data: parents,
+      loading: loadingParents,
+      onRowClick: (item) => router.push(`/parents/${item.id}`),
+    },
+    {
+      title: "All Staff",
+      href: `/staff`,
+      headers: [
+        { key: "name", label: "Name", sortable: true },
+        { key: "role", label: "Role", sortable: true },
+      ],
+      data: staff,
+      loading: loadingStaff,
+      onRowClick: (item) => router.push(`/staff/${item.id}`),
+    },
+    {
+      title: "Club Years",
+      href: `/club-years`,
+      headers: [
+        { key: "clubName", label: "Club Name", sortable: true },
+        { key: "label", label: "Year Label", sortable: true },
+      ],
+      data: clubYears,
+      loading: loadingClubYears,
+      onRowClick: (item) => router.push(`/club-years/${item.label}`),
+    },
+  ];
+
+  const actions = [
+    {
+      label: "Add Club Year",
+      href: `/club-years/new`,
+    },
+    {
+      label: "Add Child",
+      href: `/children/new`,
+    },
+    {
+      label: "Add Parent",
+      href: `/parents/new`,
+    },
+    {
+      label: "Add Staff",
+      href: `/staff/new`,
+    },
+  ];
 
   return (
-    <PageLayout breadcrumbs={breadcrumbs}>
-      <PageTransition>
-        <div className="cards-grid">
-          {DIRECTORIES.map(dir => {
-            const Icon = dir.icon
-            return (
-              <Link key={dir.href} href={dir.href} style={{ textDecoration: "none" }}>
-                <Card.Root className="glass-card" style={{ cursor: "pointer", transition: "transform 0.15s", userSelect: "none" }}
-                  _hover={{ transform: "translateY(-2px)" }}>
-                  <Card.Body>
-                    <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                      <div style={{ background: "rgba(255,174,23,0.25)", borderRadius: 12, padding: "0.65rem", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <Icon size={22} color="#FFAE17" />
-                      </div>
-                      <div>
-                        <Text color="white" fontWeight={700} fontSize="1rem">{dir.label}</Text>
-                        <Text color="rgba(255,255,255,0.6)" fontSize="0.82rem">{dir.description}</Text>
-                      </div>
-                    </div>
-                  </Card.Body>
-                </Card.Root>
-              </Link>
-            )
-          })}
-        </div>
-      </PageTransition>
-    </PageLayout>
-  )
+    <DashboardPage breadcrumbs={breadcrumbs} actions={actions} cards={cards} />
+  );
 }

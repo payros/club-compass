@@ -20,6 +20,8 @@ services:
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
       # Whitelisted users
       ALLOWED_EMAILS: ${ALLOWED_EMAILS}
+      # Club display name
+      NEXT_PUBLIC_CLUB_NAME: ${NEXT_PUBLIC_CLUB_NAME}
     volumes:
       - ./adventurers-app/src:/app/src
       - ./adventurers-app/public:/app/public

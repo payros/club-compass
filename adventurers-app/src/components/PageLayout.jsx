@@ -8,17 +8,15 @@ import AppHeader from "./AppHeader";
  * @param {ReactNode} children
  * @param {Array} breadcrumbs - [{label, href}] for the header breadcrumbs
  * @param {Array} actions - [{label, href}] rendered as right-aligned buttons
- * @param {string} clubName
  */
 export default function PageLayout({
   children,
   breadcrumbs = [],
   actions = [],
-  clubName,
 }) {
   return (
     <Box minH="100vh">
-      <AppHeader breadcrumbs={breadcrumbs} clubName={clubName} />
+      <AppHeader breadcrumbs={breadcrumbs} />
       <Box className="page-content">
         {actions.length > 0 && (
           <Flex justify="flex-end" gap={2} className="action-bar">

@@ -16,16 +16,16 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Breadcrumbs from "./Breadcrumbs";
 import { authClient } from "@/lib/auth-client";
+import useClubYear from "@/hooks/useClubYear";
 
+const FALLBACK_CLUB_NAME =
+  process.env.NEXT_PUBLIC_CLUB_NAME ?? "Adventurers Club";
+console.log("FALLBACK_CLUB_NAME", process.env.NEXT_PUBLIC_CLUB_NAME);
 /**
  * Global app header
  * @param {Array} breadcrumbs - [{label, href}]
- * @param {string} clubName - Name of the club/app
  */
-export default function AppHeader({
-  breadcrumbs = [],
-  clubName = "Adventurers Club",
-}) {
+export default function AppHeader({ breadcrumbs = [] }) {
   const { data: session } = authClient.useSession();
   const router = useRouter();
   const userName = session?.user?.name ?? "User";
@@ -36,6 +36,9 @@ export default function AppHeader({
     .join("")
     .slice(0, 2)
     .toUpperCase();
+  const { clubYear, loading } = useClubYear();
+  // Use the most recent name if available, otherwise fallback to env variable or default
+  const clubName = (!loading && clubYear?.clubName) || FALLBACK_CLUB_NAME;
 
   const handleLogout = async () => {
     await authClient.signOut();
@@ -63,8 +66,7 @@ export default function AppHeader({
               whiteSpace="nowrap"
               flexShrink={0}
             >
-              {/* TO DO: replace with logo + name dynamically from club year information */}
-              Little Eagles
+              {clubName}
             </Text>
             <Breadcrumbs items={breadcrumbs} />
           </Box>
