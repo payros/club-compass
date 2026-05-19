@@ -16,7 +16,7 @@ const View = () => {
     events: { by: null, direction: "asc" },
   });
 
-  const { children, loadingChildren } = useChildren(
+  const { children, loading: loadingChildren } = useChildren(
     clubYearLabel,
     sortBy.children,
   );
@@ -43,7 +43,6 @@ const View = () => {
     {
       title: "Adventurers",
       href: `/${clubYearLabel}/adventurers`,
-      badge: children?.length ?? 0,
       headers: [
         { key: "name", label: "Name", sortable: true },
         { key: "age", label: "Age", sortable: true },
@@ -60,7 +59,6 @@ const View = () => {
     {
       title: "Events",
       href: `/${clubYearLabel}/events`,
-      badge: events?.length ?? 0,
       headers: [
         { key: "title", label: "Title", sortable: true },
         { key: "eventDate", label: "Date", sortable: true },
@@ -75,7 +73,6 @@ const View = () => {
     {
       title: "Classes",
       href: `/${clubYearLabel}/classes`,
-      badge: classes?.length ?? 0,
       headers: [
         { key: "class", label: "Class", sortable: false },
         { key: "instructor", label: "Instructor", sortable: false },
@@ -87,7 +84,6 @@ const View = () => {
     {
       title: "Staff",
       href: `/${clubYearLabel}/staff`,
-      badge: staff?.length ?? 0,
       headers: [
         { key: "name", label: "Name", sortable: false },
         { key: "role", label: "Role", sortable: false },
@@ -106,6 +102,10 @@ const View = () => {
     {
       label: "Enroll Family",
       href: `/${clubYearLabel}/families/new`,
+    },
+    {
+      label: "View Directories",
+      href: `/directories`,
     },
   ];
 

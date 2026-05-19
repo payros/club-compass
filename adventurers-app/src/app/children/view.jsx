@@ -1,19 +1,19 @@
-"use client"
-import { useRouter } from "next/navigation"
-import useAllChildren from "@/hooks/useAllChildren"
-import CollectionPage from "@/components/pages/CollectionPage"
+"use client";
+import { useRouter } from "next/navigation";
+import useChildren from "@/hooks/useChildren";
+import CollectionPage from "@/components/pages/CollectionPage";
 
 const headers = [
   { key: "name", label: "Name", sortable: false },
   { key: "age", label: "Age", sortable: false },
   { key: "sex", label: "Sex", sortable: false },
-]
+];
 
 export default function View() {
-  const { children, loading } = useAllChildren()
-  const router = useRouter()
+  const { children, loading } = useChildren();
+  const router = useRouter();
 
-  const breadcrumbs = [{ label: "Children" }]
+  const breadcrumbs = [{ label: "Children" }];
 
   return (
     <CollectionPage
@@ -26,5 +26,5 @@ export default function View() {
       badge={children?.length ?? 0}
       onRowClick={(item) => router.push(`/children/${item.id}`)}
     />
-  )
+  );
 }

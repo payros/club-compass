@@ -14,13 +14,12 @@ import PageTransition from "@/components/PageTransition";
  */
 export default function DashboardPage({
   breadcrumbs,
-  clubName,
   actions,
   cards = [],
   extraContent,
 }) {
   return (
-    <PageLayout breadcrumbs={breadcrumbs} actions={actions} clubName={clubName}>
+    <PageLayout breadcrumbs={breadcrumbs} actions={actions}>
       <PageTransition>
         {extraContent}
         <div
