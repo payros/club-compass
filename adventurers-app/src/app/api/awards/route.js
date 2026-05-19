@@ -1,9 +1,9 @@
-import awardsService from '@/services/awardsService';
+import awardsService from '@/services/awardsService'
 import { NextResponse } from 'next/server'
 
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+export const dynamic = 'force-dynamic'
 
-export async function GET(request) {
-  const awards = await awardsService.listAwards();
-  return NextResponse.json(awards);
+export async function GET() {
+  const awards = await awardsService.list()
+  return NextResponse.json(awards)
 }

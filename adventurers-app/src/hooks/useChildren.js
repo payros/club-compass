@@ -2,72 +2,67 @@ import { useEffect, useState } from 'react'
 import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
 import { fromDateOfBirthToAge } from '@/utils/dateUtils'
 
-function useChildren(clubYearLabel, { by, direction }) {
+function useChildren(clubYearLabel = null, { by, direction } = {}) {
   const [rawChildren, setRawChildren] = useState([])
   const [children, setChildren] = useState([])
-  const [loadingChildren, setLoadingChildren] = useState(true)
+  const [loading, setLoading] = useState(true)
 
-  function transformChildenData(rawChildren) {
-    return rawChildren.map((child) => ({
-      id: child.id,
-      name: `${child.firstName} ${child.lastName}`,
-      age: fromDateOfBirthToAge(child.dateOfBirth),
-      class: fromSnakeCaseToTitleCase(child.class),
-    }))
+  function transform(raw) {
+    return raw.map((c) => {
+      const firstName = c.firstName ?? c.first_name
+      const lastName = c.lastName ?? c.last_name
+      const dob = c.dateOfBirth ?? c.date_of_birth
+      const base = {
+        id: c.id,
+        name: `${firstName} ${lastName}`,
+        age: dob ? fromDateOfBirthToAge(dob) : '—',
+      }
+      if (clubYearLabel) {
+        base.class = fromSnakeCaseToTitleCase(c.class)
+      } else {
+        base.sex = c.sex ?? '—'
+        base.allergies = c.allergies ?? '—'
+      }
+      return base
+    })
   }
 
   function sortChildren(childrenList) {
-    if (by) {
-      let order = 0
-      const orderDirection = direction === 'asc' ? 1 : -1
-      const sortedChildren = [...childrenList].sort((a, b) => {
-        switch (by) {
-          case 'name': {
-            const nameA = a.name.toLowerCase()
-            const nameB = b.name.toLowerCase()
-            order = nameA.localeCompare(nameB)
-            break
-          }
-          case 'age':
-            order = a.age - b.age
-            break
-          case 'class': {
-            const classA = a.class.toLowerCase()
-            const classB = b.class.toLowerCase()
-            order = classA.localeCompare(classB)
-            break
-          }
-          default:
-            order = 0
-        }
-        return order * orderDirection
-      })
-      return sortedChildren
-    }
-
-    return childrenList
+    if (!by) return childrenList
+    const orderDirection = direction === 'asc' ? 1 : -1
+    return [...childrenList].sort((a, b) => {
+      switch (by) {
+        case 'name':
+          return a.name.toLowerCase().localeCompare(b.name.toLowerCase()) * orderDirection
+        case 'age':
+          return (a.age - b.age) * orderDirection
+        case 'class':
+          return a.class.toLowerCase().localeCompare(b.class.toLowerCase()) * orderDirection
+        default:
+          return 0
+      }
+    })
   }
 
-  // Fetch children data from the API
   useEffect(() => {
-    setLoadingChildren(true)
-    fetch(`/api/club-years/${clubYearLabel}/children`)
+    setLoading(true)
+    const url = clubYearLabel ? `/api/club-years/${clubYearLabel}/children` : '/api/children'
+    fetch(url)
       .then((res) => res.json())
       .then((data) => {
         setRawChildren(data)
-        setLoadingChildren(false)
+        setLoading(false)
       })
+      .catch(() => setLoading(false))
   }, [clubYearLabel])
 
-  // Transform and sort children whenever rawChildren, sortBy, or sortDirection change
   useEffect(() => {
-    let childrenList = transformChildenData(rawChildren)
+    let childrenList = transform(rawChildren)
     childrenList = sortChildren(childrenList)
     setChildren(childrenList)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [by, direction, rawChildren])
 
-  return { children, loadingChildren }
+  return { children, loading }
 }
 
 export default useChildren

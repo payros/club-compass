@@ -10,11 +10,18 @@ services:
     environment:
       ENV_VARIABLE: ${ENV_VARIABLE}
       NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
-      POSTGRES_HOST: ${POSTGRES_HOST}
-      POSTGRES_PORT: ${POSTGRES_PORT}
-      POSTGRES_DATABASE: ${POSTGRES_DATABASE}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DATABASE_URL: ${DATABASE_URL}
+      # Better Auth
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL}
+      NEXT_PUBLIC_BETTER_AUTH_URL: ${NEXT_PUBLIC_BETTER_AUTH_URL}
+      # Google OAuth
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      # Whitelisted users
+      ALLOWED_EMAILS: ${ALLOWED_EMAILS}
+      # Club display name
+      NEXT_PUBLIC_CLUB_NAME: ${NEXT_PUBLIC_CLUB_NAME}
     volumes:
       - ./adventurers-app/src:/app/src
       - ./adventurers-app/public:/app/public

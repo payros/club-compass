@@ -1,125 +1,80 @@
 'use client'
-import { AbsoluteCenter, Button, Flex, Heading, Stack } from '@chakra-ui/react'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
-import TableCard from '@/components/TableCard'
-import { handleSorting, sortRecordsInAlphabeticalOrder } from '@/utils/tableUtils'
-import Link from 'next/link'
+import ResourcePage from '@/components/pages/ResourcePage'
+import { fromDateToString } from '@/utils/dateUtils'
 
-// Colocar cartão e tabela com informações do clube
+export default function View() {
+  const { club_year_label: clubYearLabel, event_id: eventId } = useParams()
+  const router = useRouter()
 
-const View = () => {
-  const childrenHeaders = [
-    { key: 'name', label: 'Name', sortable: true },
-    { key: 'class', label: 'Class', sortable: true },
-  ]
-
-  const awardsHeaders = [
-    { key: 'name', label: 'Name', sortable: true },
-    { key: 'class', label: 'Class ', sortable: true },
-    { key: 'type', label: 'Type', sortable: true },
-  ]
-
-  const clubYearLabel = useParams()['club_year_label']
-  const eventId = useParams()['event_id']
-
-  const [loadingEvent, setLoadingEvent] = useState(false)
-  const [eventData, setEventData] = useState(null)
-  const [sortBy, setSortBy] = useState({
-    children: { by: null, direction: 'asc' },
-    awards: { by: null, direction: 'asc' },
-  })
+  const [event, setEvent] = useState(null)
+  const [attendees, setAttendees] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [loadingAttendees, setLoadingAttendees] = useState(true)
 
   useEffect(() => {
-    if (eventData) {
-      setEventData((prevData) => {
-        const sortedChildren = sortRecordsInAlphabeticalOrder(
-          sortBy.children.by,
-          sortBy.children.direction,
-          eventData.children
-        )
-        return {
-          ...prevData,
-          children: sortedChildren,
-        }
-      })
-    }
-  }, [sortBy.children])
-
-  useEffect(() => {
-    if (eventData) {
-      setEventData((prevData) => {
-        const sortedAwards = sortRecordsInAlphabeticalOrder(sortBy.awards.by, sortBy.awards.direction, eventData.awards)
-        return {
-          ...prevData,
-          awards: sortedAwards,
-        }
-      })
-    }
-  }, [sortBy.awards])
-
-  useEffect(() => {
-    setLoadingEvent(true)
     fetch(`/api/club-years/${clubYearLabel}/events/${eventId}`)
-      .then((res) => res.json())
-      .then((rawData) => {
-        const modifiedData = {
-          ...rawData,
-          children: rawData.children.map((child) => ({
-            ...child,
-            name: `${child.firstName} ${child.lastName}`,
-            class: fromSnakeCaseToTitleCase(child.class),
-          })),
-          awards: rawData.awards.map((award) => ({
-            ...award,
-            class: fromSnakeCaseToTitleCase(award.class),
-            type: fromSnakeCaseToTitleCase(award.type),
-          })),
-        }
-        setEventData(modifiedData)
-        setLoadingEvent(false)
+      .then((r) => r.json())
+      .then((data) => {
+        setEvent(data)
+        setLoading(false)
       })
+      .catch(() => setLoading(false))
+
+    fetch(`/api/club-years/${clubYearLabel}/events/${eventId}/attendees`)
+      .then((r) => r.json())
+      .then((data) => {
+        setAttendees(data)
+        setLoadingAttendees(false)
+      })
+      .catch(() => setLoadingAttendees(false))
   }, [clubYearLabel, eventId])
 
-  //******************
-  // Render the dashboard view **********
-  //******************
+  const breadcrumbs = [
+    { label: clubYearLabel, href: `/${clubYearLabel}/dashboard` },
+    { label: 'Events', href: `/${clubYearLabel}/events` },
+    { label: event?.title ?? 'Event' },
+  ]
+
+  const fields = event
+    ? [
+        { label: 'Title', value: event.title },
+        {
+          label: 'Date',
+          value: event.eventDate
+            ? fromDateToString(event.eventDate)
+            : event.event_date
+              ? fromDateToString(event.event_date)
+              : '—',
+        },
+        { label: 'Award Ceremony', value: (event.awardCeremony ?? event.award_ceremony) ? 'Yes' : 'No' },
+      ]
+    : []
+
+  const relatedCards = [
+    {
+      title: 'Attendees',
+      badge: attendees.length,
+      headers: [{ key: 'name', label: 'Name', sortable: false }],
+      data: attendees.map((a) => ({
+        id: a.id,
+        name: `${a.firstName ?? a.first_name} ${a.lastName ?? a.last_name}`,
+      })),
+      loading: loadingAttendees,
+      onRowClick: (item) => router.push(`/${clubYearLabel}/adventurers/${item.id}`),
+    },
+  ]
 
   return (
-    <AbsoluteCenter>
-      <Stack direction="column" gap="4" mb="4">
-        <Heading size="4xl">{eventData?.title ?? 'Event Details'}</Heading>
-
-        <Flex gap="4" mb="4" justify="flex-end">
-          <Link href={`/${clubYearLabel}/events/${eventId}/roll-call`}>
-            <Button>Roll Call</Button>
-          </Link>
-        </Flex>
-
-        <Flex direction="row" gap="4">
-          <TableCard
-            title="Children"
-            headers={childrenHeaders}
-            data={eventData?.children ?? []}
-            loading={loadingEvent}
-            sortBy={sortBy.children.by}
-            sortDirection={sortBy.children.direction}
-            handleSort={(by) => handleSorting(by, 'children', setSortBy)}
-          ></TableCard>
-          <TableCard
-            title="Awards"
-            headers={awardsHeaders}
-            data={eventData?.awards ?? []}
-            loading={loadingEvent}
-            sortBy={sortBy.awards.by}
-            sortDirection={sortBy.awards.direction}
-            handleSort={(by) => handleSorting(by, 'awards', setSortBy)}
-          ></TableCard>
-        </Flex>
-      </Stack>
-    </AbsoluteCenter>
+    <ResourcePage
+      breadcrumbs={breadcrumbs}
+      clubName={`${clubYearLabel} Club`}
+      title={event?.title ?? 'Event'}
+      subtitle={`Club Year: ${clubYearLabel}`}
+      loading={loading}
+      fields={fields}
+      relatedCards={relatedCards}
+    />
   )
 }
-
-export default View

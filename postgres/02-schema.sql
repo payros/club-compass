@@ -39,15 +39,6 @@ CREATE TYPE "staff_role" AS ENUM (
   'general_staff'
 );
 
-CREATE TABLE "users" (
-  "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  "email" varchar UNIQUE NOT NULL,
-  "password" varchar NOT NULL,
-  "first_name" varchar,
-  "last_name" varchar,
-  "created_at" timestamp DEFAULT (now())
-);
-
 CREATE TABLE "staff" (
   "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   "first_name" varchar NOT NULL,
@@ -159,6 +150,55 @@ CREATE TABLE "awards_children" (
   "child_id" integer NOT NULL,
   "awarded_on" timestamp,
   "created_at" timestamp DEFAULT (now())
+);
+
+-- Better Auth tables
+
+CREATE TABLE "user" (
+  "id"            text PRIMARY KEY,
+  "name"          text NOT NULL,
+  "email"         text NOT NULL UNIQUE,
+  "emailVerified" boolean NOT NULL DEFAULT false,
+  "image"         text,
+  "createdAt"     timestamp NOT NULL DEFAULT now(),
+  "updatedAt"     timestamp NOT NULL DEFAULT now()
+);
+
+CREATE TABLE "session" (
+  "id"        text PRIMARY KEY,
+  "token"     text NOT NULL UNIQUE,
+  "expiresAt" timestamp NOT NULL,
+  "ipAddress" text,
+  "userAgent" text,
+  "userId"    text NOT NULL REFERENCES "user" ("id") ON DELETE CASCADE,
+  "createdAt" timestamp NOT NULL DEFAULT now(),
+  "updatedAt" timestamp NOT NULL DEFAULT now()
+);
+
+CREATE TABLE "account" (
+  "id"           text PRIMARY KEY,
+  "accountId"    text NOT NULL,
+  "providerId"   text NOT NULL,
+  "userId"       text NOT NULL REFERENCES "user" ("id") ON DELETE CASCADE,
+  "accessToken"            text,
+  "refreshToken"           text,
+  "idToken"                text,
+  "expiresAt"              timestamp,
+  "accessTokenExpiresAt"   timestamp,
+  "refreshTokenExpiresAt"  timestamp,
+  "scope"                  text,
+  "password"               text,
+  "createdAt"    timestamp NOT NULL DEFAULT now(),
+  "updatedAt"    timestamp NOT NULL DEFAULT now()
+);
+
+CREATE TABLE "verification" (
+  "id"         text PRIMARY KEY,
+  "identifier" text NOT NULL,
+  "value"      text NOT NULL,
+  "expiresAt"  timestamp NOT NULL,
+  "createdAt"  timestamp NOT NULL DEFAULT now(),
+  "updatedAt"  timestamp NOT NULL DEFAULT now()
 );
 
 ALTER TABLE "parents_children" ADD FOREIGN KEY ("parent_id") REFERENCES "parents" ("id");
