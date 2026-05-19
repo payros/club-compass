@@ -8,6 +8,7 @@ import { TableCell,
  } from "@chakra-ui/react";
    
 import { FaCaretDown, FaCaretUp } from "react-icons/fa";
+import Link from "next/link";
 
 
 function TableCard({ title, headers, data, loading, sortBy, sortDirection, handleSort }) {
@@ -55,7 +56,7 @@ function TableCard({ title, headers, data, loading, sortBy, sortDirection, handl
           </Table.Row></>)
          : data.map((item, index) => (
           <Table.Row key={index}>
-            {headers.map((header) => <TableCell key={header.key}>{item[header.key]}</TableCell>)}
+            {headers.map((header) => <TableCell key={header.key}>{header.link ? <Link href={header.link(item)}>{item[header.key]}</Link> : item[header.key]}</TableCell>)}
           </Table.Row>
         )) }
       </Table.Body>

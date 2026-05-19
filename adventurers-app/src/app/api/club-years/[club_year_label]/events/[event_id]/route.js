@@ -6,20 +6,21 @@ import { NextResponse } from 'next/server'
 export async function GET(request, { params }) {
   const pathParams = await params
   const clubYearLabel = pathParams['club_year_label']
-  const events = await eventsService.listByClubYear(clubYearLabel)
+  const eventId = pathParams['event_id']
+  const events = await eventsService.getById(clubYearLabel, eventId)
   return NextResponse.json(events)
 }
 
-export async function POST(request, { params }) {
-
-  const newEventData = await request.json()
+export async function PATCH(request, { params }) {
+  const updatedEventData = await request.json()
   const pathParams = await params
   const clubYearLabel = pathParams['club_year_label']
+  const eventId = pathParams['event_id']
 
-  const eventRecord = await eventsService.create({
-    ...newEventData,
-    club_year_label: clubYearLabel,
-    award_ceremony: newEventData.award_ceremony === 'on' ? true : false,
-  })
+  if ('award_ceremony' in updatedEventData) {
+    updatedEventData.award_ceremony = updatedEventData.award_ceremony === 'on' ? true : false
+  }
+
+  const eventRecord = await eventsService.update(clubYearLabel, eventId, updatedEventData)
   return NextResponse.json(eventRecord ?? {})
 }

@@ -191,6 +191,10 @@ ALTER TABLE "events_children" ADD FOREIGN KEY ("event_id") REFERENCES "events" (
 
 ALTER TABLE "events_children" ADD FOREIGN KEY ("child_id") REFERENCES "children" ("id");
 
+ALTER TABLE "events_children" ADD UNIQUE ("event_id", "child_id");
+
 ALTER TABLE "awards_children" ADD FOREIGN KEY ("award_id") REFERENCES "awards" ("id");
 
 ALTER TABLE "awards_children" ADD FOREIGN KEY ("child_id") REFERENCES "children" ("id");
+
+ALTER TABLE "awards_children" ADD UNIQUE ("award_id", "child_id");

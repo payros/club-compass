@@ -1,12 +1,13 @@
-
-import View from './view.jsx';
-
+import View from "./view.jsx";
+  
 export const metadata = {
-  title: 'Dashboard',
+  title: 'Event Roll-Call',
   description: 'Welcome to Next.js',
 }
+
+
 const Page = () => {
-  return <View/>
+  return <View />
 }
 
 export default Page;

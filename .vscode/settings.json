@@ -1,27 +1,9 @@
 {
-  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
   "editor.formatOnSave": true,
   "eslint.format.enable": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": "explicit"
   },
-  "[javascript]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-  },
-  "[javascriptreact]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-  },
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-  }
-}
-{
-  // Automatic code formatting
-  "editor.formatOnSave": false,
-  "eslint.format.enable": true,
   "[json]": {
     "editor.defaultFormatter": "dbaeumer.vscode-eslint",
     "editor.formatOnSave": true
@@ -67,13 +49,9 @@
     "editor.defaultFormatter": "raynigon.nginx-formatter",
     "editor.formatOnSave": true
   },
-  // Look for .eslintrc.json files here
   "eslint.workingDirectories": [
-    ".",
+    "."
   ],
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
-  },
   "eslint.validate": ["javascript", "typescript"],
   "eslint.nodePath": "./node_modules/eslint"
 }
