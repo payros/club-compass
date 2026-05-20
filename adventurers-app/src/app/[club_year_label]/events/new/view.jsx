@@ -3,7 +3,6 @@ import { Button, Field, Fieldset, FieldRoot, Input, Card, Switch, NativeSelect, 
 import { useParams, useRouter } from 'next/navigation'
 import PageLayout from '@/components/PageLayout'
 import PageTransition from '@/components/PageTransition'
-import { useParams, useRouter } from 'next/navigation'
 import { useState, useMemo } from 'react'
 import { FaRegTrashAlt } from 'react-icons/fa'
 import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'

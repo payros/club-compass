@@ -14,20 +14,9 @@ async function listByClubYear(clubYearLabel) {
   return []
 }
 
-async function getById(id) {
-  try {
-    const result = await sql`SELECT * FROM adv_db.events WHERE id = ${id}`
-    return result[0]
-  } catch (err) {
-    console.error(err)
-  }
-  return null
-}
-
 async function getAttendeesByEventId(eventId) {
   try {
-    const result = await sql.begin(async (sql) => {
-      const resultEvent = await sql`
+    const result = await sql`
       SELECT ch.*
       FROM adv_db.events_children AS ec
       JOIN adv_db.children AS ch ON ec.child_id = ch.id
@@ -42,28 +31,24 @@ async function getAttendeesByEventId(eventId) {
 
 async function create(event) {
   try {
-    const result = await sql`
+    const resultEvent = await sql`
       INSERT INTO adv_db.events (title, event_date, award_ceremony, club_year_id)
       VALUES (${event.title}, ${event.event_date}, ${event.award_ceremony}, (SELECT id FROM adv_db.club_years WHERE label = ${event.club_year_label}))
       RETURNING *`
 
-      console.log('Created event:', resultEvent)
-      if (event.awards && event.awards.length > 0) {
-        const values = event.awards.map((award) => [resultEvent[0].id, award.award_id, award.class_id])
-        const resultAwards = await sql`
+    if (event.awards && event.awards.length > 0) {
+      const values = event.awards.map((award) => [resultEvent[0].id, award.award_id, award.class_id])
+      const resultAwards = await sql`
         INSERT INTO adv_db.events_awards (event_id, award_id, class_id)
         VALUES ${sql(values)}
         RETURNING *`
 
-        resultEvent[0].awards = resultAwards
-      } else {
-        resultEvent[0].awards = []
-      }
+      resultEvent[0].awards = resultAwards
+    } else {
+      resultEvent[0].awards = []
+    }
 
-      return resultEvent
-    })
-
-    return result
+    return resultEvent
   } catch (err) {
     console.error(err)
     throw err

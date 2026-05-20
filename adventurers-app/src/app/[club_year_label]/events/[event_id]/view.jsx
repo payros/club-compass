@@ -52,6 +52,13 @@ export default function View() {
       ]
     : []
 
+  const actions = [
+    {
+      label: 'Roll Call',
+      href: `/${clubYearLabel}/events/${eventId}/roll-call`,
+    },
+  ]
+
   const relatedCards = [
     {
       title: 'Attendees',
@@ -75,6 +82,7 @@ export default function View() {
       loading={loading}
       fields={fields}
       relatedCards={relatedCards}
+      actions={actions}
     />
   )
 }
