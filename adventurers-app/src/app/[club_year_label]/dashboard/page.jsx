@@ -1,9 +1,9 @@
-import View from './view.jsx';
+import View from './view.jsx'
 
 export const metadata = { title: 'Dashboard' }
 
 const Page = () => {
-  return <View/>
+  return <View />
 }
 
-export default Page;
+export default Page

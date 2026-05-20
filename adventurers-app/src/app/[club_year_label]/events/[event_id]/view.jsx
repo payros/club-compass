@@ -1,8 +1,8 @@
-"use client"
-import { useParams, useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
-import ResourcePage from "@/components/pages/ResourcePage"
-import { fromDateToString } from "@/utils/dateUtils"
+'use client'
+import { useParams, useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import ResourcePage from '@/components/pages/ResourcePage'
+import { fromDateToString } from '@/utils/dateUtils'
 
 export default function View() {
   const { club_year_label: clubYearLabel, event_id: eventId } = useParams()
@@ -15,36 +15,56 @@ export default function View() {
 
   useEffect(() => {
     fetch(`/api/club-years/${clubYearLabel}/events/${eventId}`)
-      .then(r => r.json())
-      .then(data => { setEvent(data); setLoading(false) })
+      .then((r) => r.json())
+      .then((data) => {
+        setEvent(data)
+        setLoading(false)
+      })
       .catch(() => setLoading(false))
 
     fetch(`/api/club-years/${clubYearLabel}/events/${eventId}/attendees`)
-      .then(r => r.json())
-      .then(data => { setAttendees(data); setLoadingAttendees(false) })
+      .then((r) => r.json())
+      .then((data) => {
+        setAttendees(data)
+        setLoadingAttendees(false)
+      })
       .catch(() => setLoadingAttendees(false))
   }, [clubYearLabel, eventId])
 
   const breadcrumbs = [
     { label: clubYearLabel, href: `/${clubYearLabel}/dashboard` },
-    { label: "Events", href: `/${clubYearLabel}/events` },
-    { label: event?.title ?? "Event" },
+    { label: 'Events', href: `/${clubYearLabel}/events` },
+    { label: event?.title ?? 'Event' },
   ]
 
-  const fields = event ? [
-    { label: "Title", value: event.title },
-    { label: "Date", value: event.eventDate ? fromDateToString(event.eventDate) : (event.event_date ? fromDateToString(event.event_date) : "—") },
-    { label: "Award Ceremony", value: (event.awardCeremony ?? event.award_ceremony) ? "Yes" : "No" },
-  ] : []
+  const fields = event
+    ? [
+        { label: 'Title', value: event.title },
+        {
+          label: 'Date',
+          value: event.eventDate
+            ? fromDateToString(event.eventDate)
+            : event.event_date
+              ? fromDateToString(event.event_date)
+              : '—',
+        },
+        { label: 'Award Ceremony', value: (event.awardCeremony ?? event.award_ceremony) ? 'Yes' : 'No' },
+      ]
+    : []
+
+  const actions = [
+    {
+      label: 'Roll Call',
+      href: `/${clubYearLabel}/events/${eventId}/roll-call`,
+    },
+  ]
 
   const relatedCards = [
     {
-      title: "Attendees",
+      title: 'Attendees',
       badge: attendees.length,
-      headers: [
-        { key: "name", label: "Name", sortable: false },
-      ],
-      data: attendees.map(a => ({
+      headers: [{ key: 'name', label: 'Name', sortable: false }],
+      data: attendees.map((a) => ({
         id: a.id,
         name: `${a.firstName ?? a.first_name} ${a.lastName ?? a.last_name}`,
       })),
@@ -57,11 +77,12 @@ export default function View() {
     <ResourcePage
       breadcrumbs={breadcrumbs}
       clubName={`${clubYearLabel} Club`}
-      title={event?.title ?? "Event"}
+      title={event?.title ?? 'Event'}
       subtitle={`Club Year: ${clubYearLabel}`}
       loading={loading}
       fields={fields}
       relatedCards={relatedCards}
+      actions={actions}
     />
   )
 }

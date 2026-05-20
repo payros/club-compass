@@ -21,7 +21,5 @@ export async function POST(request, { params }) {
     club_year_label: clubYearLabel,
     award_ceremony: newEventData.award_ceremony === 'on' ? true : false,
   })
-
   return NextResponse.json(eventRecord ?? {})
 }
-
