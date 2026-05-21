@@ -48,13 +48,9 @@
     "editor.defaultFormatter": "raynigon.nginx-formatter",
     "editor.formatOnSave": true
   },
-  // Look for .eslintrc.json files here
   "eslint.workingDirectories": [
-    ".",
+    "."
   ],
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
-  },
   "eslint.validate": ["javascript", "typescript"],
   "eslint.nodePath": "./node_modules/eslint"
 }
