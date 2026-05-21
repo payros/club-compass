@@ -39,6 +39,25 @@ const View = () => {
     { label: "Dashboard" },
   ];
 
+  const actions = [
+    {
+      label: "Enroll Staff",
+      href: `/${clubYearLabel}/staff/new`,
+    },
+    {
+      label: "Enroll Family",
+      href: `/${clubYearLabel}/families/new`,
+    },
+    {
+      label: "Add Event",
+      href: `/${clubYearLabel}/events/new`,
+    },
+    {
+      label: "View Directories",
+      href: `/directories`,
+    },
+  ];
+
   const cards = [
     {
       title: "Adventurers",
@@ -91,21 +110,6 @@ const View = () => {
       data: staff,
       loading: loadingStaff,
       onRowClick: (item) => router.push(`/staff/${item.id}`),
-    },
-  ];
-
-  const actions = [
-    {
-      label: "Add Event",
-      href: `/${clubYearLabel}/events/new`,
-    },
-    {
-      label: "Enroll Family",
-      href: `/${clubYearLabel}/families/new`,
-    },
-    {
-      label: "View Directories",
-      href: `/directories`,
     },
   ];
 

@@ -12,7 +12,26 @@ export async function GET() {
 
 export async function POST(request) {
   const newClubYearData = await request.json();
-  const clubYearRecord = await clubYearService.create(newClubYearData);
-
-  return NextResponse.json(clubYearRecord ?? {});
+  try {
+    const clubYearRecord = await clubYearService.create(newClubYearData);
+    return NextResponse.json(clubYearRecord ?? {});
+  } catch (err) {
+    if (
+      err.code === "23505" &&
+      err.constraint_name === "club_years_label_key"
+    ) {
+      return NextResponse.json(
+        {
+          error: "A club year with this label already exists.",
+          field: "label",
+        },
+        { status: 409 },
+      );
+    }
+    console.error(err);
+    return NextResponse.json(
+      { error: "Failed to create club year." },
+      { status: 500 },
+    );
+  }
 }

@@ -25,15 +25,11 @@ async function getByLabel(label) {
 
 async function create(clubYear) {
   // Call the database and insert a new club year
-  try {
-    const result = await sql`
-      INSERT INTO adv_db.club_years (club_name, start_date, end_date, label)
-      VALUES (${clubYear.clubName}, ${clubYear.startDate}, ${clubYear.endDate}, ${clubYear.label})
-      RETURNING *`;
-    return result;
-  } catch (err) {
-    console.error(err);
-  }
+  const result = await sql`
+    INSERT INTO adv_db.club_years (club_name, start_date, end_date, label)
+    VALUES (${clubYear.clubName}, ${clubYear.startDate}, ${clubYear.endDate}, ${clubYear.label})
+    RETURNING *`;
+  return result;
 }
 
 const clubYearService = {

@@ -1,28 +1,59 @@
 "use client";
-import { Button, Field, Fieldset, Input, Card } from "@chakra-ui/react";
+import {
+  Button,
+  Field,
+  Fieldset,
+  Input,
+  Card,
+  Spinner,
+  Alert,
+} from "@chakra-ui/react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import PageLayout from "@/components/PageLayout";
 import PageTransition from "@/components/PageTransition";
 
 const View = () => {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [labelError, setLabelError] = useState(null);
+  const [globalError, setGlobalError] = useState(null);
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
+    setLabelError(null);
+    setGlobalError(null);
+    setLoading(true);
     const formData = new FormData(event.target);
     const data = Object.fromEntries(formData.entries());
 
-    fetch("/api/club-years", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Success:", data);
-        if (data?.[0]?.label) router.push(`/${data[0].label}/dashboard`);
-      })
-      .catch(console.error);
+    try {
+      const response = await fetch("/api/club-years", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        if (result?.field === "label") {
+          setLabelError(result.error);
+        } else {
+          setGlobalError(
+            result?.error ??
+              "The form could not be submitted due to an error. Please try again later.",
+          );
+        }
+        return;
+      }
+      if (result?.[0]?.label) router.push(`/${result[0].label}/dashboard`);
+    } catch (err) {
+      console.error(err);
+      setGlobalError(
+        "The form could not be submitted due to an error. Please try again.",
+      );
+    } finally {
+      setLoading(false);
+    }
   }
 
   const breadcrumbs = [
@@ -41,6 +72,12 @@ const View = () => {
                 Fill in the information below to create a new club year.
               </Card.Description>
             </Card.Header>
+            {globalError && (
+              <Alert.Root status="error">
+                <Alert.Indicator />
+                <Alert.Description>{globalError}</Alert.Description>
+              </Alert.Root>
+            )}
             <Card.Body>
               <form onSubmit={handleSubmit}>
                 <Fieldset.Root size="lg">
@@ -52,9 +89,12 @@ const View = () => {
                         placeholder="Enter the official name of your club"
                       />
                     </Field.Root>
-                    <Field.Root>
+                    <Field.Root invalid={!!labelError}>
                       <Field.Label>Year Label</Field.Label>
                       <Input name="label" placeholder="e.g. 2025-2026" />
+                      {labelError && (
+                        <Field.ErrorText>{labelError}</Field.ErrorText>
+                      )}
                     </Field.Root>
                     <Field.Root>
                       <Field.Label>Start Date</Field.Label>
@@ -65,8 +105,13 @@ const View = () => {
                       <Input name="endDate" type="date" />
                     </Field.Root>
                   </Fieldset.Content>
-                  <Button type="submit" mt={4} colorPalette="accent">
-                    Create Club Year
+                  <Button
+                    type="submit"
+                    mt={4}
+                    colorPalette="accent"
+                    disabled={loading}
+                  >
+                    {loading ? <Spinner size="sm" /> : "Create Club Year"}
                   </Button>
                 </Fieldset.Root>
               </form>
