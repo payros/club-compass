@@ -1,5 +1,4 @@
 'use client'
-import { Card, SimpleGrid, Text } from '@chakra-ui/react'
 import TableCard from '@/components/TableCard'
 import PageLayout from '@/components/PageLayout'
 import PageTransition from '@/components/PageTransition'
