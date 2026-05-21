@@ -1,70 +1,54 @@
-"use client";
-import {
-  Button,
-  Field,
-  Fieldset,
-  Input,
-  Card,
-  Spinner,
-  Alert,
-} from "@chakra-ui/react";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import PageLayout from "@/components/PageLayout";
-import PageTransition from "@/components/PageTransition";
+'use client'
+import { Button, Field, Fieldset, Input, Card, Spinner, Alert } from '@chakra-ui/react'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import PageLayout from '@/components/PageLayout'
+import PageTransition from '@/components/PageTransition'
 
 const View = () => {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [labelError, setLabelError] = useState(null);
-  const [globalError, setGlobalError] = useState(null);
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+  const [labelError, setLabelError] = useState(null)
+  const [globalError, setGlobalError] = useState(null)
 
   async function handleSubmit(event) {
-    event.preventDefault();
-    setLabelError(null);
-    setGlobalError(null);
-    setLoading(true);
-    const formData = new FormData(event.target);
-    const data = Object.fromEntries(formData.entries());
+    event.preventDefault()
+    setLabelError(null)
+    setGlobalError(null)
+    setLoading(true)
+    const formData = new FormData(event.target)
+    const data = Object.fromEntries(formData.entries())
 
     try {
-      const response = await fetch("/api/club-years", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const response = await fetch('/api/club-years', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
-      });
-      const result = await response.json();
+      })
+      const result = await response.json()
       if (!response.ok) {
-        if (result?.field === "label") {
-          setLabelError(result.error);
+        if (result?.field === 'label') {
+          setLabelError(result.error)
         } else {
-          setGlobalError(
-            result?.error ??
-              "The form could not be submitted due to an error. Please try again later.",
-          );
+          setGlobalError(result?.error ?? 'The form could not be submitted due to an error. Please try again later.')
         }
-        return;
+        return
       }
-      if (result?.[0]?.label) router.push(`/${result[0].label}/dashboard`);
+      if (result?.[0]?.label) router.push(`/${result[0].label}/dashboard`)
     } catch (err) {
-      console.error(err);
-      setGlobalError(
-        "The form could not be submitted due to an error. Please try again.",
-      );
+      console.error(err)
+      setGlobalError('The form could not be submitted due to an error. Please try again.')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   }
 
-  const breadcrumbs = [
-    { label: "Club Years", href: "/club-years" },
-    { label: "New Club Year" },
-  ];
+  const breadcrumbs = [{ label: 'Club Years', href: '/club-years' }, { label: 'New Club Year' }]
 
   return (
     <PageLayout breadcrumbs={breadcrumbs}>
       <PageTransition>
-        <div style={{ maxWidth: 480, margin: "2rem auto" }}>
+        <div style={{ maxWidth: 480, margin: '2rem auto' }}>
           <Card.Root className="glass-card">
             <Card.Header>
               <Card.Title className="card-title">New Club Year</Card.Title>
@@ -84,17 +68,12 @@ const View = () => {
                   <Fieldset.Content>
                     <Field.Root>
                       <Field.Label>Club Name</Field.Label>
-                      <Input
-                        name="clubName"
-                        placeholder="Enter the official name of your club"
-                      />
+                      <Input name="clubName" placeholder="Enter the official name of your club" />
                     </Field.Root>
                     <Field.Root invalid={!!labelError}>
                       <Field.Label>Year Label</Field.Label>
                       <Input name="label" placeholder="e.g. 2025-2026" />
-                      {labelError && (
-                        <Field.ErrorText>{labelError}</Field.ErrorText>
-                      )}
+                      {labelError && <Field.ErrorText>{labelError}</Field.ErrorText>}
                     </Field.Root>
                     <Field.Root>
                       <Field.Label>Start Date</Field.Label>
@@ -110,8 +89,10 @@ const View = () => {
                     mt={4}
                     colorPalette="accent"
                     disabled={loading}
+                    loading={loading}
+                    loadingText="Creating Club Year…"
                   >
-                    {loading ? <Spinner size="sm" /> : "Create Club Year"}
+                    Create Club Year
                   </Button>
                 </Fieldset.Root>
               </form>
@@ -120,7 +101,7 @@ const View = () => {
         </div>
       </PageTransition>
     </PageLayout>
-  );
-};
+  )
+}
 
-export default View;
+export default View
