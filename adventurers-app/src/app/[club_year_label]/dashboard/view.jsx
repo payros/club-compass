@@ -30,6 +30,25 @@ const View = () => {
 
   const breadcrumbs = [{ label: clubYearLabel, href: `/${clubYearLabel}/dashboard` }, { label: 'Dashboard' }]
 
+  const actions = [
+    {
+      label: 'Enroll Staff',
+      href: `/${clubYearLabel}/staff/new`,
+    },
+    {
+      label: 'Enroll Family',
+      href: `/${clubYearLabel}/families/new`,
+    },
+    {
+      label: 'Add Event',
+      href: `/${clubYearLabel}/events/new`,
+    },
+    {
+      label: 'View Directories',
+      href: `/directories`,
+    },
+  ]
+
   const cards = [
     {
       title: 'Adventurers',
@@ -84,22 +103,7 @@ const View = () => {
     },
   ]
 
-  const actions = [
-    {
-      label: 'Add Event',
-      href: `/${clubYearLabel}/events/new`,
-    },
-    {
-      label: 'Enroll Family',
-      href: `/${clubYearLabel}/families/new`,
-    },
-    {
-      label: 'View Directories',
-      href: `/directories`,
-    },
-  ]
-
-  return <DashboardPage breadcrumbs={breadcrumbs} clubName={`${clubYearLabel} Club`} actions={actions} cards={cards} />
+  return <DashboardPage breadcrumbs={breadcrumbs} actions={actions} cards={cards} />
 }
 
 export default View

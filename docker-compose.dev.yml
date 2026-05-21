@@ -8,8 +8,6 @@ services:
       context: ./adventurers-app
       dockerfile: dev.Dockerfile
     environment:
-      ENV_VARIABLE: ${ENV_VARIABLE}
-      NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
       DATABASE_URL: ${DATABASE_URL}
       # Better Auth
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
