@@ -5,6 +5,7 @@ import useChildren from '@/hooks/useChildren'
 import useEvents from '@/hooks/useEvents'
 import useStaff from '@/hooks/useStaff'
 import useClasses from '@/hooks/useClasses'
+import useAwards from '@/hooks/useAwards'
 import DashboardPage from '@/components/pages/DashboardPage'
 
 const View = () => {
@@ -20,6 +21,7 @@ const View = () => {
   const { events, loadingEvents } = useEvents(clubYearLabel, sortBy.events)
   const { staff, loading: loadingStaff } = useStaff(clubYearLabel)
   const { classes, loading: loadingClasses } = useClasses(clubYearLabel)
+  const { awards, loading: loadingAwards } = useAwards(clubYearLabel)
 
   function handleSorting(by, tableKey) {
     setSortBy((prev) => {
@@ -100,6 +102,19 @@ const View = () => {
       data: staff,
       loading: loadingStaff,
       onRowClick: (item) => router.push(`/staff/${item.id}`),
+    },
+    {
+      title: 'Awards',
+      href: `/${clubYearLabel}/awards`,
+      badge: awards?.length ?? 0,
+      headers: [
+        { key: 'name', label: 'Name', sortable: false },
+        { key: 'level', label: 'Level', sortable: false },
+        { key: 'class', label: 'Class', sortable: false },
+      ],
+      data: awards,
+      loading: loadingAwards,
+      onRowClick: (item) => router.push(`/${clubYearLabel}/awards/${item.id}`),
     },
   ]
 

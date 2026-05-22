@@ -1,15 +1,19 @@
 'use client'
+import { useRouter } from 'next/navigation'
 import useChildren from '@/hooks/useChildren'
 import useClubYears from '@/hooks/useClubYears'
 import useParents from '@/hooks/useParents'
 import useStaff from '@/hooks/useStaff'
+import useAwards from '@/hooks/useAwards'
 import DashboardPage from '@/components/pages/DashboardPage'
 
 export default function View() {
+  const router = useRouter()
   const { children, loading: loadingAllChildren } = useChildren()
   const { clubYears, loading: loadingClubYears } = useClubYears()
   const { parents, loading: loadingParents } = useParents()
   const { staff, loading: loadingStaff } = useStaff()
+  const { awards, loading: loadingAwards } = useAwards()
 
   const breadcrumbs = [{ label: 'Directories' }]
 
@@ -77,6 +81,19 @@ export default function View() {
       data: clubYears,
       loading: loadingClubYears,
       onRowClick: (item) => router.push(`/club-years/${item.label}`),
+    },
+    {
+      title: 'All Awards',
+      href: `/awards`,
+      badge: awards?.length ?? 0,
+      headers: [
+        { key: 'name', label: 'Name', sortable: true },
+        { key: 'level', label: 'Level', sortable: true },
+        { key: 'class', label: 'Class', sortable: true },
+      ],
+      data: awards,
+      loading: loadingAwards,
+      onRowClick: (item) => router.push(`/awards/${item.id}`),
     },
   ]
 

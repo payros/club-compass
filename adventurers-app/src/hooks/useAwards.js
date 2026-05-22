@@ -1,29 +1,36 @@
-import { useEffect, useState } from "react"
-import { fromSnakeCaseToTitleCase } from "@/utils/stringUtils"
+import { useEffect, useState } from 'react'
+import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
 
-function useAwards() {
+function useAwards(clubYearLabel = null) {
   const [awards, setAwards] = useState([])
   const [loading, setLoading] = useState(true)
 
   function transform(raw) {
-    return raw.map(a => ({
-      id: a.id,
-      name: a.name ?? '—',
-      type: a.type ? fromSnakeCaseToTitleCase(a.type) : '—',
-      level: a.level ? fromSnakeCaseToTitleCase(a.level) : '—',
-    }))
+    return raw.map((a) => {
+      const type = a.type ? fromSnakeCaseToTitleCase(a.type) : null
+      return {
+        id: a.id,
+        name: a.name ?? '—',
+        type: type ?? '—',
+        level: a.level ? fromSnakeCaseToTitleCase(a.level) : '—',
+        class: a.level ? fromSnakeCaseToTitleCase(a.level) : '—',
+        link: a.link || null,
+        linkLabel: a.link ? `${a.name ?? ''} ${type ?? ''} requirements`.trim() : '—',
+      }
+    })
   }
 
   useEffect(() => {
     setLoading(true)
-    fetch('/api/awards')
-      .then(res => res.json())
-      .then(data => {
+    const url = clubYearLabel ? `/api/club-years/${clubYearLabel}/awards` : '/api/awards'
+    fetch(url)
+      .then((res) => res.json())
+      .then((data) => {
         setAwards(transform(data))
         setLoading(false)
       })
       .catch(() => setLoading(false))
-  }, [])
+  }, [clubYearLabel])
 
   return { awards, loading }
 }
