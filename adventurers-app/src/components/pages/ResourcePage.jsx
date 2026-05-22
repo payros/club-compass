@@ -1,8 +1,8 @@
-"use client"
-import { Card, Text, Skeleton } from "@chakra-ui/react"
-import TableCard from "@/components/TableCard"
-import PageLayout from "@/components/PageLayout"
-import PageTransition from "@/components/PageTransition"
+'use client'
+import { Card, Text, Skeleton } from '@chakra-ui/react'
+import TableCard from '@/components/TableCard'
+import PageLayout from '@/components/PageLayout'
+import PageTransition from '@/components/PageTransition'
 
 /**
  * ResourcePage — Info card at top + relation table cards below
@@ -32,11 +32,15 @@ export default function ResourcePage({
         <Card.Root className="glass-card" mb={5}>
           <Card.Header>
             <Card.Title className="card-title" fontSize="1.3rem">
-              {loading ? <Skeleton height="6" width="200px" style={{ background: "rgba(255,255,255,0.15)" }} /> : title}
+              {loading ? <Skeleton height="6" width="200px" style={{ background: 'rgba(255,255,255,0.15)' }} /> : title}
             </Card.Title>
             {subtitle && (
               <Card.Description className="card-description">
-                {loading ? <Skeleton height="4" width="120px" mt={1} style={{ background: "rgba(255,255,255,0.1)" }} /> : subtitle}
+                {loading ? (
+                  <Skeleton height="4" width="120px" mt={1} style={{ background: 'rgba(255,255,255,0.1)' }} />
+                ) : (
+                  subtitle
+                )}
               </Card.Description>
             )}
           </Card.Header>
@@ -45,8 +49,8 @@ export default function ResourcePage({
               <div className="info-grid">
                 {[0, 1, 2, 3].map((i) => (
                   <div key={i} className="info-item">
-                    <Skeleton height="3" width="80px" mb={1} style={{ background: "rgba(255,255,255,0.1)" }} />
-                    <Skeleton height="5" width="140px" style={{ background: "rgba(255,255,255,0.12)" }} />
+                    <Skeleton height="3" width="80px" mb={1} style={{ background: 'rgba(255,255,255,0.1)' }} />
+                    <Skeleton height="5" width="140px" style={{ background: 'rgba(255,255,255,0.12)' }} />
                   </div>
                 ))}
               </div>
@@ -55,7 +59,7 @@ export default function ResourcePage({
                 {fields.map((field, i) => (
                   <div key={i} className="info-item">
                     <label>{field.label}</label>
-                    <p>{field.value ?? "—"}</p>
+                    <p>{field.value ?? '—'}</p>
                   </div>
                 ))}
               </div>
@@ -79,7 +83,7 @@ export default function ResourcePage({
                 sortBy={card.sortBy}
                 sortDirection={card.sortDirection}
                 handleSort={card.handleSort}
-                maxH={card.maxH ?? "260px"}
+                maxH={card.maxH ?? '260px'}
               />
             ))}
           </div>

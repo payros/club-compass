@@ -148,6 +148,8 @@ CREATE TABLE "awards_children" (
   "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   "award_id" integer NOT NULL,
   "child_id" integer NOT NULL,
+  "event_id" integer,
+  "award_ceremony_id" integer,
   "awarded_on" timestamp,
   "created_at" timestamp DEFAULT (now())
 );
@@ -236,5 +238,9 @@ ALTER TABLE "events_children" ADD UNIQUE ("event_id", "child_id");
 ALTER TABLE "awards_children" ADD FOREIGN KEY ("award_id") REFERENCES "awards" ("id");
 
 ALTER TABLE "awards_children" ADD FOREIGN KEY ("child_id") REFERENCES "children" ("id");
+
+ALTER TABLE "awards_children" ADD FOREIGN KEY ("event_id") REFERENCES "events" ("id");
+
+ALTER TABLE "awards_children" ADD FOREIGN KEY ("award_ceremony_id") REFERENCES "events" ("id");
 
 ALTER TABLE "awards_children" ADD UNIQUE ("award_id", "child_id");

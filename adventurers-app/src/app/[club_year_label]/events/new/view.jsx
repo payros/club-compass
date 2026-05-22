@@ -13,6 +13,7 @@ const View = () => {
   const [eventAwards, setEventAwards] = useState([])
   const [awardList, setAwardList] = useState([])
   const [classList, setClassList] = useState([])
+  const [loading, setLoading] = useState(false)
 
   const fetchAwards = async () => {
     try {
@@ -47,6 +48,7 @@ const View = () => {
     const data = Object.fromEntries(formData.entries())
     data.awards = eventAwards
 
+    setLoading(true)
     fetch(`/api/club-years/${clubYearLabel}/events`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -58,6 +60,7 @@ const View = () => {
         router.push(`/${clubYearLabel}/events`)
       })
       .catch(console.error)
+      .finally(() => setLoading(false))
   }
 
   const breadcrumbs = [
@@ -161,9 +164,9 @@ const View = () => {
                       ))}
 
                       <Button
-                        colorPalette="green"
-                        alignSelf="flex-start"
-                        mt="4"
+                        size="sm"
+                        variant="outline"
+                        colorPalette="brand"
                         onClick={() => setEventAwards([...eventAwards, { award_id: null, class_id: null }])}
                       >
                         Add Award
@@ -171,8 +174,15 @@ const View = () => {
                     </Field.Root>
                   </Fieldset.Content>
 
-                  <Button type="submit" alignSelf="flex-start" mt="4">
-                    Submit
+                  <Button
+                    type="submit"
+                    mt={4}
+                    colorPalette="accent"
+                    disabled={loading}
+                    loading={loading}
+                    loadingText="Creating Event…"
+                  >
+                    Create Event
                   </Button>
                 </Fieldset.Root>
               </form>

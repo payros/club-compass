@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server'
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 
 export async function GET(request, { params }) {
+  console.log('GET request received with params:', params)
   const { event_id } = await params
   const event = await eventsService.getById(event_id)
   if (!event) return NextResponse.json({ error: 'Not found' }, { status: 404 })

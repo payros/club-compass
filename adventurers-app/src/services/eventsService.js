@@ -55,7 +55,7 @@ async function create(event) {
   }
 }
 
-async function getById(clubYearLabel, eventId) {
+async function getById(eventId) {
   try {
     const result = await sql`SELECT ev.id, ev.title, ev.event_date, ev.award_ceremony,
                 coalesce(json_agg(DISTINCT jsonb_build_object('id', c.id, 'firstName', c.first_name, 'lastName', c.last_name, 'class', cl.class)) FILTER (WHERE c.id IS NOT NULL), '[]'::json) AS children,
@@ -69,7 +69,7 @@ async function getById(clubYearLabel, eventId) {
                 LEFT JOIN adv_db.events_awards as ea ON ev.id = ea.event_id
                 LEFT JOIN adv_db.awards as a ON ea.award_id = a.id
                 LEFT JOIN adv_db.classes as cl2 ON ea.class_id = cl2.id
-                WHERE cy.label = ${clubYearLabel} AND ev.id = ${eventId}
+                WHERE ev.id = ${eventId}
                 GROUP BY ev.id`
     console.log('Event details:', result)
     return result[0]
@@ -94,10 +94,13 @@ async function update(clubYearLabel, eventId, updatedEventData) {
       const updateValues = []
       let paramIndex = 1
 
-      Object.entries(eventData).forEach(([key, value]) => {
-        updateFields.push(`${key} = $${paramIndex++}`)
-        updateValues.push(value)
-      })
+      Object.entries(eventData)
+        // Exclude award_ceremony since updating it will make award linking/unlinking more complex.
+        .filter(([key, value]) => key !== 'award_ceremony')
+        .forEach(([key, value]) => {
+          updateFields.push(`${key} = $${paramIndex++}`)
+          updateValues.push(value)
+        })
 
       // Update event if there are fields to update
       let updatedEvent = null
@@ -138,6 +141,20 @@ async function update(clubYearLabel, eventId, updatedEventData) {
           await sql`
             DELETE FROM adv_db.events_children
             WHERE event_id = ${eventIdInt} AND child_id = ANY(${sql.array(childrenToDelete)}::integer[])`
+
+          // Handle award side effects for removed children
+          if (updatedEvent.awardCeremony) {
+            // Award ceremony: clear awarded_on and award_ceremony_id for any grants made via this ceremony
+            await sql`
+              UPDATE adv_db.awards_children
+              SET awarded_on = NULL, award_ceremony_id = NULL
+              WHERE award_ceremony_id = ${eventIdInt} AND child_id = ANY(${sql.array(childrenToDelete)}::integer[])`
+          } else {
+            // Regular event: delete the award links entirely
+            await sql`
+              DELETE FROM adv_db.awards_children
+              WHERE event_id = ${eventIdInt} AND child_id = ANY(${sql.array(childrenToDelete)}::integer[])`
+          }
         }
 
         // Insert new children links
@@ -146,10 +163,7 @@ async function update(clubYearLabel, eventId, updatedEventData) {
           await sql`
             INSERT INTO adv_db.events_children (event_id, child_id)
             VALUES ${sql(childrenValues)}`
-        }
 
-        // Handle award linking side effects for newly added children
-        if (childrenToInsert.length > 0) {
           // Get all awards for this event
           const eventAwards = await sql`
             SELECT DISTINCT ea.award_id, ea.class_id FROM adv_db.events_awards ea
@@ -173,16 +187,12 @@ async function update(clubYearLabel, eventId, updatedEventData) {
             console.log(`Awards for child ${childId} with class ${classId}:`, awardsByChildClass)
             awardsByChildClass.forEach((award) => {
               if (childId && award.awardId) {
-                awardsToLink.push([childId, award.awardId])
+                awardsToLink.push([childId, award.awardId, eventIdInt])
               }
             })
           }
           console.log('Awards to link for newly added children:', awardsToLink)
           // Handle inserts or updates based on award_ceremony flag
-          // THIS DOES NOT ACCOUNT FOR DELETIONS.
-          // IT ONLY LINKS NEW CHILDREN TO AWARDS
-          // DELETING CHILDREN FROM AN EVENT SHOULD NOT UNLINK AWARDS,
-          // AS THEY MAY BE LINKED TO OTHER EVENTS.
           if (awardsToLink.length > 0) {
             if (updatedEvent.awardCeremony) {
               const awardUpdateFields = []
@@ -195,7 +205,7 @@ async function update(clubYearLabel, eventId, updatedEventData) {
               })
 
               const updateQuery = `UPDATE adv_db.awards_children
-                SET awarded_on = '${new Date(updatedEvent.eventDate).toISOString()}'
+                SET awarded_on = '${new Date(updatedEvent.eventDate).toISOString()}', award_ceremony_id = ${eventIdInt}
                 WHERE (${awardUpdateFields.join(' OR ')}) AND awarded_on IS NULL`
               console.log('Award update query:', updateQuery)
               await sql.unsafe(updateQuery, awardUpdateValues)
@@ -203,7 +213,7 @@ async function update(clubYearLabel, eventId, updatedEventData) {
               // Only insert new awards for newly added children
               if (awardsToLink.length > 0) {
                 await sql`
-                  INSERT INTO adv_db.awards_children (child_id, award_id)
+                  INSERT INTO adv_db.awards_children (child_id, award_id, event_id)
                   VALUES ${sql(awardsToLink)}`
               }
             }
