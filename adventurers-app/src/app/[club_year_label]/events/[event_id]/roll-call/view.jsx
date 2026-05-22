@@ -1,24 +1,11 @@
 'use client'
-import {
-  Button,
-  Field,
-  Fieldset,
-  FieldRoot,
-  Input,
-  AbsoluteCenter,
-  Card,
-  Stack,
-  Checkbox,
-  IconButton,
-  Box,
-  CheckboxGroup,
-  Heading,
-} from '@chakra-ui/react'
+import { Button, Card, Stack, Checkbox, Box, CheckboxGroup, Fieldset, Heading, Alert } from '@chakra-ui/react'
 import { useParams, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import { FaRegTrashAlt } from 'react-icons/fa'
 import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
 import useChildren from '@/hooks/useChildren'
+import PageLayout from '@/components/PageLayout'
+import PageTransition from '@/components/PageTransition'
 
 const View = () => {
   const router = useRouter()
@@ -31,6 +18,8 @@ const View = () => {
   const [eventData, setEventData] = useState(null)
   const [loadingEvent, setLoadingEvent] = useState(false)
   const [selectedChildren, setSelectedChildren] = useState([])
+  const [submitting, setSubmitting] = useState(false)
+  const [globalError, setGlobalError] = useState(null)
 
   useEffect(() => {
     setLoadingEvent(true)
@@ -43,26 +32,37 @@ const View = () => {
       })
   }, [clubYearLabel, eventId])
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault()
+    setGlobalError(null)
+    setSubmitting(true)
 
-    fetch(`/api/club-years/${clubYearLabel}/events/${eventId}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        children: selectedChildren,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Success:', data)
-        router.push(`/${clubYearLabel}/events/${eventId}`)
+    try {
+      const response = await fetch(`/api/club-years/${clubYearLabel}/events/${eventId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          children: selectedChildren,
+        }),
       })
-      .catch((error) => {
-        console.error('Error:', error)
-      })
+
+      if (!response.ok) {
+        const result = await response.json().catch(() => null)
+        const message = result?.error ?? 'Roll call could not be submitted. Please try again.'
+        console.error('Roll call PATCH failed:', message)
+        setGlobalError(message)
+        return
+      }
+
+      router.push(`/${clubYearLabel}/events/${eventId}`)
+    } catch (error) {
+      console.error('Roll call submission error:', error)
+      setGlobalError('Roll call could not be submitted. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   function handleCheckboxChange(childId, isChecked) {
@@ -76,55 +76,79 @@ const View = () => {
     return acc
   }, [])
 
-  return (
-    <AbsoluteCenter>
-      <Card.Root maxW="sm">
-        <Card.Header>
-          <Card.Title>Roll Call for {eventData?.title ?? 'Event'}</Card.Title>
-          <Card.Description>
-            Select all the children who attented this event. Awards will be distributed based on attendance.
-          </Card.Description>
-        </Card.Header>
-        <Card.Body>
-          <form onSubmit={handleSubmit}>
-            <Fieldset.Root size="lg" maxW="md">
-              <Fieldset.Content>
-                <Stack direction="column" gap="2">
-                  <CheckboxGroup>
-                    {classes.map((className) => (
-                      <Box key={className} p="2">
-                        <Heading fontWeight="bold" size="md">
-                          {fromSnakeCaseToTitleCase(className)}
-                        </Heading>
-                        <Stack direction="column" gap="1" mt="2">
-                          {children
-                            .filter((child) => child.class === className)
-                            .map((child) => (
-                              <Checkbox.Root
-                                key={child.id}
-                                checked={selectedChildren.includes(child.id)}
-                                onCheckedChange={(e) => handleCheckboxChange(child.id, !!e.checked)}
-                              >
-                                <Checkbox.HiddenInput />
-                                <Checkbox.Control />
-                                <Checkbox.Label>{child.name}</Checkbox.Label>
-                              </Checkbox.Root>
-                            ))}
-                        </Stack>
-                      </Box>
-                    ))}
-                  </CheckboxGroup>
-                </Stack>
-              </Fieldset.Content>
+  const breadcrumbs = [
+    { label: clubYearLabel, href: `/${clubYearLabel}/dashboard` },
+    { label: 'Events', href: `/${clubYearLabel}/events` },
+    { label: eventData?.title ?? 'Event', href: `/${clubYearLabel}/events/${eventId}` },
+    { label: 'Roll Call' },
+  ]
 
-              <Button type="submit" alignSelf="flex-start" mt="4">
-                Submit
-              </Button>
-            </Fieldset.Root>
-          </form>
-        </Card.Body>
-      </Card.Root>
-    </AbsoluteCenter>
+  return (
+    <PageLayout breadcrumbs={breadcrumbs} clubName={`${clubYearLabel} Club`}>
+      <PageTransition>
+        <div style={{ maxWidth: 480, margin: '2rem auto' }}>
+          <Card.Root className="glass-card">
+            <Card.Header>
+              <Card.Title className="card-title">Roll Call for {eventData?.title ?? 'Event'}</Card.Title>
+              <Card.Description className="card-description">
+                Select all the children who attended this event. Awards will be distributed based on attendance.
+              </Card.Description>
+            </Card.Header>
+            {globalError && (
+              <Alert.Root status="error">
+                <Alert.Indicator />
+                <Alert.Description>{globalError}</Alert.Description>
+              </Alert.Root>
+            )}
+            <Card.Body>
+              <form onSubmit={handleSubmit}>
+                <Fieldset.Root size="lg" maxW="md">
+                  <Fieldset.Content>
+                    <Stack direction="column" gap="2">
+                      <CheckboxGroup>
+                        {classes.map((className) => (
+                          <Box key={className} p="2">
+                            <Heading fontWeight="bold" size="md">
+                              {fromSnakeCaseToTitleCase(className)}
+                            </Heading>
+                            <Stack direction="column" gap="1" mt="2">
+                              {children
+                                .filter((child) => child.class === className)
+                                .map((child) => (
+                                  <Checkbox.Root
+                                    key={child.id}
+                                    checked={selectedChildren.includes(child.id)}
+                                    onCheckedChange={(e) => handleCheckboxChange(child.id, !!e.checked)}
+                                  >
+                                    <Checkbox.HiddenInput />
+                                    <Checkbox.Control />
+                                    <Checkbox.Label>{child.name}</Checkbox.Label>
+                                  </Checkbox.Root>
+                                ))}
+                            </Stack>
+                          </Box>
+                        ))}
+                      </CheckboxGroup>
+                    </Stack>
+                  </Fieldset.Content>
+
+                  <Button
+                    type="submit"
+                    mt={4}
+                    colorPalette="accent"
+                    disabled={submitting}
+                    loading={submitting}
+                    loadingText="Submitting…"
+                  >
+                    Submit Roll Call
+                  </Button>
+                </Fieldset.Root>
+              </form>
+            </Card.Body>
+          </Card.Root>
+        </div>
+      </PageTransition>
+    </PageLayout>
   )
 }
 

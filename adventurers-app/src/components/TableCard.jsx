@@ -77,9 +77,9 @@ function TableCard({
                   </Table.Row>
                 ))
               ) : !data || data.length === 0 ? (
-                <Table.Row bg="transparent">
+                <Table.Row bg="transparent" style={{ borderColor: 'transparent' }}>
                   <Table.Cell colSpan={headers.length}>
-                    <Text color="rgba(255,255,255,0.45)" textAlign="center" py={4} fontSize="sm">
+                    <Text textAlign="center" py={4} fontSize="sm">
                       No records found
                     </Text>
                   </Table.Cell>
@@ -97,7 +97,17 @@ function TableCard({
                   >
                     {headers.map((header) => (
                       <TableCell key={header.key} color="rgba(255,255,255,0.9)" fontSize="sm">
-                        {item[header.key]}
+                        {header.hrefKey && item[header.hrefKey] ? (
+                          <Link
+                            href={item[header.hrefKey]}
+                            onClick={(e) => e.stopPropagation()}
+                            style={{ textDecoration: 'underline', color: 'inherit' }}
+                          >
+                            {item[header.key]}
+                          </Link>
+                        ) : (
+                          item[header.key]
+                        )}
                       </TableCell>
                     ))}
                   </MotionRow>
