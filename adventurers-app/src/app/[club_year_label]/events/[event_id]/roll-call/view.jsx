@@ -44,7 +44,6 @@ const View = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log('Success:', data)
         router.push(`/${clubYearLabel}/events/${eventId}`)
       })
       .catch((error) => {
