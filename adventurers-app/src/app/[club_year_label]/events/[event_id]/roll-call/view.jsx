@@ -1,5 +1,5 @@
 'use client'
-import { Button, Card, Stack, Checkbox, Box, CheckboxGroup, Fieldset, Heading } from '@chakra-ui/react'
+import { Button, Card, Stack, Checkbox, Box, CheckboxGroup, Fieldset, Heading, Alert } from '@chakra-ui/react'
 import { useParams, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
@@ -18,6 +18,8 @@ const View = () => {
   const [eventData, setEventData] = useState(null)
   const [loadingEvent, setLoadingEvent] = useState(false)
   const [selectedChildren, setSelectedChildren] = useState([])
+  const [submitting, setSubmitting] = useState(false)
+  const [globalError, setGlobalError] = useState(null)
 
   useEffect(() => {
     setLoadingEvent(true)
@@ -30,25 +32,37 @@ const View = () => {
       })
   }, [clubYearLabel, eventId])
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault()
+    setGlobalError(null)
+    setSubmitting(true)
 
-    fetch(`/api/club-years/${clubYearLabel}/events/${eventId}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        children: selectedChildren,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        router.push(`/${clubYearLabel}/events/${eventId}`)
+    try {
+      const response = await fetch(`/api/club-years/${clubYearLabel}/events/${eventId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          children: selectedChildren,
+        }),
       })
-      .catch((error) => {
-        console.error('Error:', error)
-      })
+
+      if (!response.ok) {
+        const result = await response.json().catch(() => null)
+        const message = result?.error ?? 'Roll call could not be submitted. Please try again.'
+        console.error('Roll call PATCH failed:', message)
+        setGlobalError(message)
+        return
+      }
+
+      router.push(`/${clubYearLabel}/events/${eventId}`)
+    } catch (error) {
+      console.error('Roll call submission error:', error)
+      setGlobalError('Roll call could not be submitted. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   function handleCheckboxChange(childId, isChecked) {
@@ -80,6 +94,12 @@ const View = () => {
                 Select all the children who attended this event. Awards will be distributed based on attendance.
               </Card.Description>
             </Card.Header>
+            {globalError && (
+              <Alert.Root status="error">
+                <Alert.Indicator />
+                <Alert.Description>{globalError}</Alert.Description>
+              </Alert.Root>
+            )}
             <Card.Body>
               <form onSubmit={handleSubmit}>
                 <Fieldset.Root size="lg" maxW="md">
@@ -112,7 +132,14 @@ const View = () => {
                     </Stack>
                   </Fieldset.Content>
 
-                  <Button type="submit" mt={4} colorPalette="accent">
+                  <Button
+                    type="submit"
+                    mt={4}
+                    colorPalette="accent"
+                    disabled={submitting}
+                    loading={submitting}
+                    loadingText="Submitting…"
+                  >
                     Submit Roll Call
                   </Button>
                 </Fieldset.Root>

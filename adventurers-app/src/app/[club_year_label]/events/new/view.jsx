@@ -1,5 +1,16 @@
 'use client'
-import { Button, Field, Fieldset, FieldRoot, Input, Card, Switch, NativeSelect, IconButton } from '@chakra-ui/react'
+import {
+  Button,
+  Field,
+  Fieldset,
+  FieldRoot,
+  Input,
+  Card,
+  Switch,
+  NativeSelect,
+  IconButton,
+  Alert,
+} from '@chakra-ui/react'
 import { useParams, useRouter } from 'next/navigation'
 import PageLayout from '@/components/PageLayout'
 import PageTransition from '@/components/PageTransition'
@@ -14,6 +25,7 @@ const View = () => {
   const [awardList, setAwardList] = useState([])
   const [classList, setClassList] = useState([])
   const [loading, setLoading] = useState(false)
+  const [globalError, setGlobalError] = useState(null)
 
   const fetchAwards = async () => {
     try {
@@ -41,25 +53,38 @@ const View = () => {
   // get all classes
   useMemo(() => fetchClasses(), [])
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault()
+    setGlobalError(null)
 
     const formData = new FormData(event.target)
     const data = Object.fromEntries(formData.entries())
     data.awards = eventAwards
 
     setLoading(true)
-    fetch(`/api/club-years/${clubYearLabel}/events`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        router.push(`/${clubYearLabel}/events`)
+    try {
+      const response = await fetch(`/api/club-years/${clubYearLabel}/events`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
       })
-      .catch(console.error)
-      .finally(() => setLoading(false))
+
+      if (!response.ok) {
+        const result = await response.json().catch(() => null)
+        const message = result?.error ?? 'The event could not be created. Please try again.'
+        console.error('Create event POST failed:', message)
+        setGlobalError(message)
+        return
+      }
+
+      const result = await response.json()
+      router.push(`/${clubYearLabel}/events/${result.id}`)
+    } catch (error) {
+      console.error('Create event submission error:', error)
+      setGlobalError('The event could not be created. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const breadcrumbs = [
@@ -67,13 +92,6 @@ const View = () => {
     { label: 'Events', href: `/${clubYearLabel}/events` },
     { label: 'New Event' },
   ]
-
-  const inputStyle = {
-    background: 'rgba(255,255,255,0.12)',
-    border: '1px solid rgba(255,255,255,0.25)',
-    color: '#fff',
-    borderRadius: 10,
-  }
 
   return (
     <PageLayout breadcrumbs={breadcrumbs} clubName={`${clubYearLabel} Club`}>
@@ -86,6 +104,12 @@ const View = () => {
                 Fill in the information below to add a new event.
               </Card.Description>
             </Card.Header>
+            {globalError && (
+              <Alert.Root status="error">
+                <Alert.Indicator />
+                <Alert.Description>{globalError}</Alert.Description>
+              </Alert.Root>
+            )}
             <Card.Body>
               <form onSubmit={handleSubmit}>
                 <Fieldset.Root size="lg" maxW="md">
