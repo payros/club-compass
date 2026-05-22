@@ -1,5 +1,7 @@
 'use client'
 import { Card, Text, Skeleton } from '@chakra-ui/react'
+import { FaExternalLinkAlt } from 'react-icons/fa'
+import Link from 'next/link'
 import TableCard from '@/components/TableCard'
 import PageLayout from '@/components/PageLayout'
 import PageTransition from '@/components/PageTransition'
@@ -59,7 +61,27 @@ export default function ResourcePage({
                 {fields.map((field, i) => (
                   <div key={i} className="info-item">
                     <label>{field.label}</label>
-                    <p>{field.value ?? '—'}</p>
+                    {field.href ? (
+                      <p>
+                        <Link
+                          href={field.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            textDecoration: 'underline',
+                            color: 'inherit',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.3rem',
+                          }}
+                        >
+                          {field.value ?? '—'}
+                          <FaExternalLinkAlt style={{ fontSize: '0.7em', opacity: 0.8 }} />
+                        </Link>
+                      </p>
+                    ) : (
+                      <p>{field.value ?? '—'}</p>
+                    )}
                   </div>
                 ))}
               </div>

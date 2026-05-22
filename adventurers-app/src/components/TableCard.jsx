@@ -1,5 +1,5 @@
 import { TableCell, Card, Table, Skeleton, Button, Spacer, Icon, Text } from '@chakra-ui/react'
-import { FaCaretDown, FaCaretUp } from 'react-icons/fa'
+import { FaCaretDown, FaCaretUp, FaExternalLinkAlt } from 'react-icons/fa'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 
@@ -101,9 +101,18 @@ function TableCard({
                           <Link
                             href={item[header.hrefKey]}
                             onClick={(e) => e.stopPropagation()}
-                            style={{ textDecoration: 'underline', color: 'inherit' }}
+                            target={header.hrefExternal ? '_blank' : undefined}
+                            rel={header.hrefExternal ? 'noopener noreferrer' : undefined}
+                            style={{
+                              textDecoration: 'underline',
+                              color: 'inherit',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '0.3rem',
+                            }}
                           >
                             {item[header.key]}
+                            {header.hrefExternal && <FaExternalLinkAlt style={{ fontSize: '0.7em', opacity: 0.8 }} />}
                           </Link>
                         ) : (
                           item[header.key]

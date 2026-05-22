@@ -1,5 +1,5 @@
 'use client'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import useAwards from '@/hooks/useAwards'
 import CollectionPage from '@/components/pages/CollectionPage'
 
@@ -11,21 +11,23 @@ const headers = [
 ]
 
 export default function View() {
+  const clubYearLabel = useParams()['club_year_label']
   const router = useRouter()
-  const { awards, loading } = useAwards()
+  const { awards, loading } = useAwards(clubYearLabel)
 
-  const breadcrumbs = [{ label: 'Awards' }]
+  const breadcrumbs = [{ label: clubYearLabel, href: `/${clubYearLabel}/dashboard` }, { label: 'Awards' }]
 
   return (
     <CollectionPage
       breadcrumbs={breadcrumbs}
+      clubName={`${clubYearLabel} Club`}
       title="Awards"
-      description="All available awards"
+      description={`Awards for the ${clubYearLabel} club year`}
       headers={headers}
       data={awards}
       loading={loading}
       badge={awards?.length ?? 0}
-      onRowClick={(item) => router.push(`/awards/${item.id}`)}
+      onRowClick={(item) => router.push(`/${clubYearLabel}/awards/${item.id}`)}
     />
   )
 }
