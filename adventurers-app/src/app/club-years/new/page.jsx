@@ -1,13 +1,17 @@
-import View from "./view.jsx";
-  
+import { Suspense } from 'react'
+import View from './view.jsx'
+
 export const metadata = {
   title: 'New Club Year',
   description: 'Welcome to Next.js',
 }
 
-
 const Page = () => {
-  return <View />
+  return (
+    <Suspense>
+      <View />
+    </Suspense>
+  )
 }
 
-export default Page;
+export default Page
