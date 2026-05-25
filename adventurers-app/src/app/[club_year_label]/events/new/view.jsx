@@ -1,22 +1,10 @@
 'use client'
-import {
-  Button,
-  Field,
-  Fieldset,
-  FieldRoot,
-  Input,
-  Card,
-  Switch,
-  NativeSelect,
-  IconButton,
-  Alert,
-} from '@chakra-ui/react'
+import { Button, Field, Input, Switch, NativeSelect, IconButton } from '@chakra-ui/react'
 import { useParams, useRouter } from 'next/navigation'
-import PageLayout from '@/components/PageLayout'
-import PageTransition from '@/components/PageTransition'
 import { useState, useMemo } from 'react'
 import { FaRegTrashAlt } from 'react-icons/fa'
 import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
+import FormPage from '@/components/pages/FormPage'
 
 const View = () => {
   const router = useRouter()
@@ -74,6 +62,7 @@ const View = () => {
         const message = result?.error ?? 'The event could not be created. Please try again.'
         console.error('Create event POST failed:', message)
         setGlobalError(message)
+        setLoading(false)
         return
       }
 
@@ -82,7 +71,6 @@ const View = () => {
     } catch (error) {
       console.error('Create event submission error:', error)
       setGlobalError('The event could not be created. Please try again.')
-    } finally {
       setLoading(false)
     }
   }
@@ -94,126 +82,99 @@ const View = () => {
   ]
 
   return (
-    <PageLayout breadcrumbs={breadcrumbs} clubName={`${clubYearLabel} Club`}>
-      <PageTransition>
-        <div style={{ maxWidth: 480, margin: '2rem auto' }}>
-          <Card.Root className="glass-card">
-            <Card.Header>
-              <Card.Title className="card-title">New Event</Card.Title>
-              <Card.Description className="card-description">
-                Fill in the information below to add a new event.
-              </Card.Description>
-            </Card.Header>
-            {globalError && (
-              <Alert.Root status="error">
-                <Alert.Indicator />
-                <Alert.Description>{globalError}</Alert.Description>
-              </Alert.Root>
-            )}
-            <Card.Body>
-              <form onSubmit={handleSubmit}>
-                <Fieldset.Root size="lg" maxW="md">
-                  <Fieldset.Content>
-                    <Field.Root>
-                      <Field.Label>Event Name</Field.Label>
-                      <Input name="title" placeholder={'Enter the name of your event'} />
-                    </Field.Root>
+    <FormPage
+      title="New Event"
+      description="Fill in the information below to add a new event."
+      breadcrumbs={breadcrumbs}
+      clubName={`${clubYearLabel} Club`}
+      globalError={globalError}
+      handleSubmit={handleSubmit}
+      submitLabel="Create Event"
+      submitLoadingLabel="Creating Event…"
+      loading={loading}
+    >
+      <Field.Root>
+        <Field.Label>Event Name</Field.Label>
+        <Input name="title" placeholder={'Enter the name of your event'} />
+      </Field.Root>
 
-                    <Field.Root>
-                      <Field.Label>Event Date</Field.Label>
-                      <Input name="event_date" type="date" />
-                    </Field.Root>
+      <Field.Root>
+        <Field.Label>Event Date</Field.Label>
+        <Input name="event_date" type="date" />
+      </Field.Root>
 
-                    <Field.Root>
-                      <Field.Label>Is Award Ceremony?</Field.Label>
-                      <Switch.Root name="award_ceremony" defaultChecked={false}>
-                        <Switch.HiddenInput />
-                        <Switch.Control />
-                      </Switch.Root>
-                    </Field.Root>
+      <Field.Root>
+        <Field.Label>Is Award Ceremony?</Field.Label>
+        <Switch.Root name="award_ceremony" defaultChecked={false}>
+          <Switch.HiddenInput />
+          <Switch.Control />
+        </Switch.Root>
+      </Field.Root>
 
-                    <Field.Root>
-                      <Field.Label>Awards</Field.Label>
-                      {eventAwards.map((eventAward, index) => (
-                        <div key={index} style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
-                          <NativeSelect.Root>
-                            <NativeSelect.Field
-                              value={eventAward.award_id || ''} // Controlled value
-                              onChange={(e) => {
-                                const newAwards = [...eventAwards]
-                                newAwards[index].award_id = e.target.value
-                                setEventAwards(newAwards)
-                              }}
-                            >
-                              <option value="">Select Award</option> // Add a default option if needed
-                              {awardList.map((awardOption) => (
-                                <option key={awardOption.id} value={awardOption.id}>
-                                  {awardOption.name}
-                                </option>
-                              ))}
-                            </NativeSelect.Field>
-                            <NativeSelect.Indicator />
-                          </NativeSelect.Root>
-                          <NativeSelect.Root>
-                            <NativeSelect.Field
-                              value={eventAward.class_id || ''} // Controlled value
-                              onChange={(e) => {
-                                const newAwards = [...eventAwards]
-                                newAwards[index].class_id = e.target.value
-                                setEventAwards(newAwards)
-                              }}
-                            >
-                              <option value="">Select Class</option> // Add a default option if needed
-                              {classList.map((classOption) => (
-                                <option key={classOption.id} value={classOption.id}>
-                                  {fromSnakeCaseToTitleCase(classOption.class)}
-                                </option>
-                              ))}
-                            </NativeSelect.Field>
-                            <NativeSelect.Indicator />
-                          </NativeSelect.Root>
-                          <IconButton
-                            variant="ghost"
-                            aria-label="Remove Award"
-                            onClick={() => {
-                              const newAwards = [...eventAwards]
-                              newAwards.splice(index, 1)
-                              setEventAwards(newAwards)
-                            }}
-                          >
-                            <FaRegTrashAlt />
-                          </IconButton>
-                        </div>
-                      ))}
+      <Field.Root>
+        <Field.Label>Awards</Field.Label>
+        {eventAwards.map((eventAward, index) => (
+          <div key={index} style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+            <NativeSelect.Root>
+              <NativeSelect.Field
+                value={eventAward.award_id || ''} // Controlled value
+                onChange={(e) => {
+                  const newAwards = [...eventAwards]
+                  newAwards[index].award_id = e.target.value
+                  setEventAwards(newAwards)
+                }}
+              >
+                <option value="">Select Award</option> // Add a default option if needed
+                {awardList.map((awardOption) => (
+                  <option key={awardOption.id} value={awardOption.id}>
+                    {awardOption.name}
+                  </option>
+                ))}
+              </NativeSelect.Field>
+              <NativeSelect.Indicator />
+            </NativeSelect.Root>
+            <NativeSelect.Root>
+              <NativeSelect.Field
+                value={eventAward.class_id || ''} // Controlled value
+                onChange={(e) => {
+                  const newAwards = [...eventAwards]
+                  newAwards[index].class_id = e.target.value
+                  setEventAwards(newAwards)
+                }}
+              >
+                <option value="">Select Class</option> // Add a default option if needed
+                {classList.map((classOption) => (
+                  <option key={classOption.id} value={classOption.id}>
+                    {fromSnakeCaseToTitleCase(classOption.class)}
+                  </option>
+                ))}
+              </NativeSelect.Field>
+              <NativeSelect.Indicator />
+            </NativeSelect.Root>
+            <IconButton
+              variant="ghost"
+              aria-label="Remove Award"
+              onClick={() => {
+                const newAwards = [...eventAwards]
+                newAwards.splice(index, 1)
+                setEventAwards(newAwards)
+              }}
+            >
+              <FaRegTrashAlt />
+            </IconButton>
+          </div>
+        ))}
 
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        colorPalette="brand"
-                        onClick={() => setEventAwards([...eventAwards, { award_id: null, class_id: null }])}
-                      >
-                        Add Award
-                      </Button>
-                    </Field.Root>
-                  </Fieldset.Content>
-
-                  <Button
-                    type="submit"
-                    mt={4}
-                    colorPalette="accent"
-                    disabled={loading}
-                    loading={loading}
-                    loadingText="Creating Event…"
-                  >
-                    Create Event
-                  </Button>
-                </Fieldset.Root>
-              </form>
-            </Card.Body>
-          </Card.Root>
-        </div>
-      </PageTransition>
-    </PageLayout>
+        <Button
+          size="sm"
+          variant="outline"
+          colorPalette="brand"
+          onClick={() => setEventAwards([...eventAwards, { award_id: null, class_id: null }])}
+        >
+          Add Award
+        </Button>
+      </Field.Root>
+    </FormPage>
   )
 }
 

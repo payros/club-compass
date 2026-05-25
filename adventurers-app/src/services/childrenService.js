@@ -1,8 +1,14 @@
 import sql from 'src/lib/postgres'
 
-async function list() {
+async function list(search) {
   try {
-    const result = await sql`SELECT * FROM adv_db.children ORDER BY last_name ASC`
+    const result = search
+      ? await sql`
+          SELECT * FROM adv_db.children
+          WHERE first_name ILIKE ${'%' + search + '%'} OR last_name ILIKE ${'%' + search + '%'}
+          ORDER BY last_name ASC
+          LIMIT 10`
+      : await sql`SELECT * FROM adv_db.children ORDER BY last_name ASC`
     return result
   } catch (err) {
     console.error(err)
@@ -10,14 +16,25 @@ async function list() {
   return []
 }
 
-async function listByClubYear(clubYearLabel) {
+async function listByClubYear(clubYearLabel, search) {
   try {
-    const result = await sql`SELECT ch.id, ch.date_of_birth, cy.label, ch.first_name, ch.last_name,cl.class
-                            FROM adv_db.classes_children as cc
-                            JOIN adv_db.club_years as cy ON cc.club_year_id = cy.id
-                            JOIN adv_db.children as ch ON cc.child_id = ch.id
-                            JOIN adv_db.classes as cl ON cc.class_id = cl.id
-                            WHERE cy.label = ${clubYearLabel}`
+    const result = search
+      ? await sql`
+          SELECT ch.id, ch.date_of_birth, cy.label, ch.first_name, ch.last_name, cl.class
+          FROM adv_db.classes_children as cc
+          JOIN adv_db.club_years as cy ON cc.club_year_id = cy.id
+          JOIN adv_db.children as ch ON cc.child_id = ch.id
+          JOIN adv_db.classes as cl ON cc.class_id = cl.id
+          WHERE cy.label = ${clubYearLabel}
+            AND (ch.first_name ILIKE ${'%' + search + '%'} OR ch.last_name ILIKE ${'%' + search + '%'})
+          LIMIT 10`
+      : await sql`
+          SELECT ch.id, ch.date_of_birth, cy.label, ch.first_name, ch.last_name, cl.class
+          FROM adv_db.classes_children as cc
+          JOIN adv_db.club_years as cy ON cc.club_year_id = cy.id
+          JOIN adv_db.children as ch ON cc.child_id = ch.id
+          JOIN adv_db.classes as cl ON cc.class_id = cl.id
+          WHERE cy.label = ${clubYearLabel}`
     return result
   } catch (err) {
     console.error(err)

@@ -35,7 +35,11 @@ const View = () => {
   const actions = [
     {
       label: 'Enroll Staff',
-      href: `/${clubYearLabel}/staff/new`,
+      href: `/${clubYearLabel}/staff/enroll`,
+    },
+    {
+      label: 'Add Classes',
+      href: `/${clubYearLabel}/classes/new`,
     },
     {
       label: 'Enroll Family',
