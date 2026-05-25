@@ -16,11 +16,14 @@ A CMS app for managing an Adventurers Club — keeping track of children, parent
 Create a `.env` file at the root of the repo with the following variables:
 
 ```env
-# Database
+# Database (container-to-container URL used by the Next.js app)
 DATABASE_URL=postgresql://adv_db_user:yourpassword@postgres:5432/adv_db
 POSTGRES_PASSWORD=yourpassword # DEV ONLY
 POSTGRES_USER=adv_db_user # DEV ONLY
 POSTGRES_DATABASE=adv_db # DEV ONLY
+
+# Atlas migration URL (host-to-container, used by the Atlas CLI on your machine)
+ATLAS_DB_URL=postgres://adv_db_user:yourpassword@localhost:5433/adv_db?search_path=adv_db&sslmode=disable
 
 # Better Auth
 BETTER_AUTH_SECRET=your_secret_here
@@ -33,24 +36,43 @@ GOOGLE_CLIENT_SECRET=your_google_client_secret
 
 # Whitelisted users — comma-separated emails allowed to sign in
 ALLOWED_EMAILS=you@example.com,colleague@example.com
+
+# Club display name
+NEXT_PUBLIC_CLUB_NAME=Your Club Name
 ```
 
-### 2. Start the dev server
+### 2. Install Atlas CLI
 
 ```bash
+curl -sSf https://atlasgo.sh | sh
+```
+
+### 3. Start the dev server
+
+```bash
+# Start without sample data (normal usage)
 ./dev.sh
+
+# Start with sample data pre-loaded (first time setup, or after a reset)
+./dev.sh --sample-data
+# Short form:
+./dev.sh -s
 ```
 
 That's it! This script will:
 - Stop any existing containers
 - Create the `my_network` Docker network (if it doesn't exist)
 - Build and start the app + PostgreSQL via `docker-compose.dev.yml`
-
-The app will be available at **http://localhost:3000**.
+- Wait for PostgreSQL to be ready
+- Apply all pending Atlas migrations (schema + seed data)
+- Optionally load dev sample data (with `--sample-data`)
+- Follow container logs (Ctrl+C detaches; containers keep running)
 
 > **Hot reloading:** Source files in `adventurers-app/src/` are volume-mounted into the container, so your edits take effect immediately without needing to rebuild.
 
-### 3. Sign in
+> **Stopping containers:** Ctrl+C detaches from logs but leaves containers running. Run `docker compose -f docker-compose.dev.yml down` to stop them, or just run `./dev.sh` again (it kills all containers at the start).
+
+### 4. Sign in
 
 The app uses **Google OAuth** for authentication. Only emails listed in `ALLOWED_EMAILS` are permitted to sign in.
 Note: To get the google client ID and secret, follow the [instructions outlined by Better Auth documentation](https://better-auth.com/docs/authentication/google).
@@ -107,19 +129,51 @@ The app is meant to be built as a single docker container in production with a s
 
 ## 🗄️ Database
 
-### Dev
-PostgreSQL runs in its own container and is initialized automatically on first start using scripts in `postgres/`:
+Schema and migrations are managed by [Atlas](https://atlasgo.io/). All changes go through versioned migration files committed to git.
 
-1. `01-configuration.sql` — DB configuration
-2. `02-schema.sql` — Table definitions
-3. `03-seed-data.sql` — Required seed data
-4. `04-sample-data.sql` — Optional sample data for development
+### File layout
+
+| Path | Purpose |
+|---|---|
+| `postgres/01-configuration.sql` | One-time DB setup (schema, user, grants). Runs on Docker init only. |
+| `db/schema.sql` | DDL-only desired state. Atlas diffs this to generate new migrations. |
+| `db/sample-data.sql` | Dev-only data. Applied with `./dev.sh --sample-data`. Never runs in prod. |
+| `db/migrations/` | Versioned migration files managed by Atlas. Committed to git. |
+| `atlas.hcl` | Atlas environment config (dev + prod). |
+
+### Dev
+
+PostgreSQL runs in its own Docker container. On every `./dev.sh` run the volume is wiped and Atlas reapplies all migrations from scratch, giving you a clean database every time.
 
 ### Prod
-You should ran the following scripts manually to setup your database:
 
-1. `01-configuration.sql` — DB configuration
-2. `02-schema.sql` — Table definitions
-3. `03-seed-data.sql` — Required seed data
+Migrations are applied automatically to production by the GitHub Actions workflow (`.github/workflows/migrate.yml`) on every push to `main`. The workflow uses the `ATLAS_DB_URL` repository secret.
 
-Database migration support (for app updates) coming soon.
+**One-time prod database setup:** When provisioning a new production database, run `postgres/01-configuration.sql` manually against it once (e.g. via `psql`). After that, GitHub Actions handles everything.
+
+The `ATLAS_DB_URL` secret must include the schema in the connection string:
+```
+postgres://user:pass@host:5432/dbname?search_path=adv_db&sslmode=require
+```
+
+---
+
+## 🔄 Making Database Changes
+
+### Schema change (add a column, new table, etc.)
+
+1. Edit `db/schema.sql` to reflect the desired end state
+2. Generate the migration: `atlas migrate diff <descriptive_name> --env dev`
+3. Review the generated file in `db/migrations/`
+4. Check for safety issues: `atlas migrate lint --env dev --latest 1`
+5. Apply locally: `atlas migrate apply --env dev` (or `./dev.sh` for a full reset)
+6. Commit both `db/schema.sql` **and** the new migration file
+7. Push to `main` — GitHub Actions applies the migration to production automatically
+
+### Seed data change (new awards, lookup data, etc.)
+
+1. Create a blank migration file: `atlas migrate new add_<descriptive_name> --env dev`
+2. Write your `INSERT` statements in the generated file
+3. Check for safety issues: `atlas migrate lint --env dev --latest 1`
+4. Apply locally: `atlas migrate apply --env dev`
+5. Commit the new migration file and push to `main`

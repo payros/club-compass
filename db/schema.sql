@@ -1,6 +1,6 @@
--- Schema
-
-SET search_path  TO adv_db;
+-- Desired-state schema (DDL only — no seed data).
+-- Atlas uses this file as the source of truth for `atlas migrate diff`.
+-- Do NOT add SET search_path here; the search path is set via the connection URL.
 
 CREATE TYPE "sex" AS ENUM (
   'male',
