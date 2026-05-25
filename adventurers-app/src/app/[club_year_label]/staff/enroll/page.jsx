@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import View from './view.jsx'
 
 export const metadata = {
@@ -6,7 +7,11 @@ export const metadata = {
 }
 
 const Page = () => {
-  return <View />
+  return (
+    <Suspense>
+      <View />
+    </Suspense>
+  )
 }
 
 export default Page
