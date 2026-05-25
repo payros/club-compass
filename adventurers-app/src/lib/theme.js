@@ -1,21 +1,16 @@
-import {
-  createSystem,
-  defaultConfig,
-  defineConfig,
-  defineRecipe,
-} from "@chakra-ui/react";
+import { createSystem, defaultConfig, defineConfig, defineRecipe } from '@chakra-ui/react'
 
 const config = defineConfig({
   theme: {
     tokens: {
       colors: {
         primary: {
-          DEFAULT: { value: "#1e5aa8" },
-          light: { value: "#36c6f4" },
+          DEFAULT: { value: '#1e5aa8' },
+          light: { value: '#36c6f4' },
         },
         accent: {
-          DEFAULT: { value: "#e89a2d" },
-          light: { value: "#f4c542" },
+          DEFAULT: { value: '#e89a2d' },
+          light: { value: '#f4c542' },
         },
       },
     },
@@ -23,41 +18,41 @@ const config = defineConfig({
       colors: {
         // "brand" palette — maps colorPalette="brand" to the blue primary scale
         brand: {
-          solid: { value: "#1e5aa8" },
-          contrast: { value: "#f7fafc" },
-          fg: { value: "#1e5aa8" },
-          muted: { value: "rgba(30, 90, 168, 0.15)" },
-          subtle: { value: "rgba(54, 198, 244, 0.15)" },
-          emphasized: { value: "#1c3450" },
-          focusRing: { value: "#1c3450" },
-          placeholder: { value: "#1c3450" },
+          solid: { value: '#1e5aa8' },
+          contrast: { value: '#f7fafc' },
+          fg: { value: '#1e5aa8' },
+          muted: { value: 'rgba(30, 90, 168, 0.15)' },
+          subtle: { value: 'rgba(54, 198, 244, 0.15)' },
+          emphasized: { value: '#1c3450' },
+          focusRing: { value: '#1c3450' },
+          placeholder: { value: '#1c3450' },
         },
         // "accent" palette — maps colorPalette="accent" to the amber accent
         accent: {
-          solid: { value: "#2f7a6a" },
-          contrast: { value: "#fff" },
-          fg: { value: "#f4c542" },
-          muted: { value: "rgba(232, 154, 45, 0.15)" },
-          subtle: { value: "rgba(244, 197, 66, 0.15)" },
-          emphasized: { value: "#f4c542" },
-          focusRing: { value: "#f4c542" },
-          placeholder: { value: "rgba(244, 197, 66, 0.5)" },
+          solid: { value: '#2f7a6a' },
+          contrast: { value: '#fff' },
+          fg: { value: '#f4c542' },
+          muted: { value: 'rgba(232, 154, 45, 0.15)' },
+          subtle: { value: 'rgba(244, 197, 66, 0.15)' },
+          emphasized: { value: '#f4c542' },
+          focusRing: { value: '#f4c542' },
+          placeholder: { value: 'rgba(244, 197, 66, 0.5)' },
         },
         // "glass" palette — for white-on-dark glass UI elements (buttons, borders)
         glass: {
-          solid: { value: "rgba(255,255,255,0.2)" },
-          contrast: { value: "#ffffff" },
-          fg: { value: "#ffffff" },
-          muted: { value: "rgba(255,255,255,0.08)" },
-          subtle: { value: "rgba(255,255,255,0.12)" },
-          emphasized: { value: "rgba(255,255,255,0.3)" },
-          focusRing: { value: "rgba(255,255,255,0.6)" },
-          placeholder: { value: "rgba(255,255,255,0.45)" },
+          solid: { value: 'rgba(255,255,255,0.2)' },
+          contrast: { value: '#ffffff' },
+          fg: { value: '#ffffff' },
+          muted: { value: 'rgba(255,255,255,0.08)' },
+          subtle: { value: 'rgba(255,255,255,0.12)' },
+          emphasized: { value: 'rgba(255,255,255,0.3)' },
+          focusRing: { value: 'rgba(255,255,255,0.6)' },
+          placeholder: { value: 'rgba(255,255,255,0.45)' },
         },
       },
     },
   },
-});
+})
 
 const buttonRecipe = defineRecipe({
   base: {},
@@ -65,24 +60,24 @@ const buttonRecipe = defineRecipe({
     variant: {
       outline: {
         borderWidth: 0,
-        color: "{colors.accent.solid}",
-        borderColor: "{colors.brand.solid}",
+        color: '{colors.accent.solid}',
+        borderColor: '{colors.brand.solid}',
         _hover: {
-          bg: "{colors.accent.fg}",
-          borderColor: "{colors.accent.fg}",
-          color: "{colors.brand.emphasized}",
+          bg: '{colors.accent.fg}',
+          borderColor: '{colors.accent.fg}',
+          color: '{colors.brand.emphasized}',
         },
       },
       solid: {
         _hover: {
-          bg: "{colors.accent.emphasized}",
-          borderColor: "{colors.accent.emphasized}",
-          color: "{colors.brand.placeholder}",
+          bg: '{colors.accent.emphasized}',
+          borderColor: '{colors.accent.emphasized}',
+          color: '{colors.brand.placeholder}',
         },
       },
     },
   },
-});
+})
 
 export const system = createSystem(defaultConfig, {
   ...config,
@@ -92,4 +87,4 @@ export const system = createSystem(defaultConfig, {
       button: buttonRecipe,
     },
   },
-});
+})
