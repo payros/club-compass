@@ -1,4 +1,5 @@
 -- Clear all rows in adv_db schema
+-- This is a utility script. Not being loaded automatically by anything. Use with caution.
 
 SET search_path TO adv_db;
 
@@ -16,6 +17,7 @@ TRUNCATE TABLE
   parents,
   staff,
   verification,
+  awards,
   account,
   session,
   "user"
