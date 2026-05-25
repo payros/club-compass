@@ -5,6 +5,7 @@ import { useState, useMemo } from 'react'
 import { FaRegTrashAlt } from 'react-icons/fa'
 import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
 import FormPage from '@/components/pages/FormPage'
+import SearchBox from '@/components/SearchBox'
 
 const View = () => {
   const router = useRouter()
@@ -114,26 +115,19 @@ const View = () => {
       <Field.Root>
         <Field.Label>Awards</Field.Label>
         {eventAwards.map((eventAward, index) => (
-          <div key={index} style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
-            <NativeSelect.Root>
-              <NativeSelect.Field
-                value={eventAward.award_id || ''} // Controlled value
-                onChange={(e) => {
-                  const newAwards = [...eventAwards]
-                  newAwards[index].award_id = e.target.value
-                  setEventAwards(newAwards)
-                }}
-              >
-                <option value="">Select Award</option> // Add a default option if needed
-                {awardList.map((awardOption) => (
-                  <option key={awardOption.id} value={awardOption.id}>
-                    {awardOption.name}
-                  </option>
-                ))}
-              </NativeSelect.Field>
-              <NativeSelect.Indicator />
-            </NativeSelect.Root>
-            <NativeSelect.Root>
+          <div key={index} style={{ display: 'flex', gap: '8px', marginBottom: '8px', width: '100%' }}>
+            <SearchBox
+              type="award"
+              name={`award-${index}`}
+              placeholder="Select Award"
+              style={{ flex: 1 }}
+              handleSelect={(award) => {
+                const newAwards = [...eventAwards]
+                newAwards[index].award_id = award.id
+                setEventAwards(newAwards)
+              }}
+            />
+            <NativeSelect.Root style={{ flexShrink: 0, width: 'auto' }}>
               <NativeSelect.Field
                 value={eventAward.class_id || ''} // Controlled value
                 onChange={(e) => {

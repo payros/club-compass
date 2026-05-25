@@ -15,7 +15,6 @@ TRUNCATE TABLE
   children,
   parents,
   staff,
-  awards,
   verification,
   account,
   session,

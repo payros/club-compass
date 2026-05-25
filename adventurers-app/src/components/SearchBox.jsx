@@ -13,6 +13,7 @@ import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
  *   handleSelect   — called with the selected item object
  *   clubYearLabel  — optional; scopes the search to a specific club year
  *   value          — controlled display value for the input
+ *   maxSuggestions — max number of suggestions to show (default: 10)
  */
 function getEndpoint(type, clubYearLabel) {
   const base = clubYearLabel ? `/api/club-years/${clubYearLabel}` : '/api'
@@ -38,6 +39,8 @@ function SuggestionRow({ type, item, clubYearLabel }) {
     if (cls) subtitle = fromSnakeCaseToTitleCase(cls)
   } else if (type === 'event' && !clubYearLabel) {
     if (item.clubYearLabel) subtitle = item.clubYearLabel
+  } else if (type === 'award') {
+    if (item.level) subtitle = fromSnakeCaseToTitleCase(item.level)
   }
 
   return (
@@ -52,39 +55,44 @@ function SuggestionRow({ type, item, clubYearLabel }) {
   )
 }
 
-const SearchBox = ({ type, label, placeholder, handleSelect, clubYearLabel, value }) => {
+const SearchBox = ({ type, label, placeholder, handleSelect, clubYearLabel, value, style, maxSuggestions = 10 }) => {
   const [query, setQuery] = useState(value ?? '')
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
   const timerRef = useRef(null)
+
+  async function fetchResults(q) {
+    const endpoint = getEndpoint(type, clubYearLabel)
+    const url = q.trim() ? `${endpoint}?search=${encodeURIComponent(q.trim())}` : endpoint
+    try {
+      const res = await fetch(url)
+      if (res.ok) {
+        setResults(await res.json())
+      } else {
+        setResults([])
+      }
+    } catch {
+      setResults([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  function handleFocus() {
+    if (results.length === 0) {
+      setLoading(true)
+      clearTimeout(timerRef.current)
+      timerRef.current = setTimeout(() => fetchResults(query), 300)
+    }
+  }
 
   function handleChange(e) {
     const q = e.target.value
     setQuery(q)
     clearTimeout(timerRef.current)
 
-    if (!q.trim()) {
-      setResults([])
-      setLoading(false)
-      return
-    }
-
     setLoading(true)
-    timerRef.current = setTimeout(async () => {
-      try {
-        const endpoint = getEndpoint(type, clubYearLabel)
-        const res = await fetch(`${endpoint}?search=${encodeURIComponent(q.trim())}`)
-        if (res.ok) {
-          setResults(await res.json())
-        } else {
-          setResults([])
-        }
-      } catch {
-        setResults([])
-      } finally {
-        setLoading(false)
-      }
-    }, 300)
+    timerRef.current = setTimeout(() => fetchResults(q), 300)
   }
 
   function onSelect(item) {
@@ -100,14 +108,19 @@ const SearchBox = ({ type, label, placeholder, handleSelect, clubYearLabel, valu
   }
 
   return (
-    <Box position="relative">
+    <Box position="relative" style={style}>
       <Field.Root>
         {label && <Field.Label>{label}</Field.Label>}
         <Input
           placeholder={placeholder}
           value={query}
           onChange={handleChange}
-          onBlur={() => setTimeout(() => setResults([]), 150)}
+          onFocus={handleFocus}
+          onBlur={() => {
+            clearTimeout(timerRef.current)
+            setLoading(false)
+            setTimeout(() => setResults([]), 150)
+          }}
           autoComplete="off"
         />
       </Field.Root>
@@ -130,7 +143,7 @@ const SearchBox = ({ type, label, placeholder, handleSelect, clubYearLabel, valu
               <Spinner size="sm" colorPalette="accent" />
             </Box>
           ) : (
-            results.map((item) => (
+            results.slice(0, maxSuggestions).map((item) => (
               <Box
                 key={item.id}
                 px={3}

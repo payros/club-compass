@@ -63,21 +63,21 @@ async function getAttendeesByEventId(eventId) {
 
 async function create(event) {
   try {
-    const resultEvent = await sql`
+    const [resultEvent] = await sql`
       INSERT INTO adv_db.events (title, event_date, award_ceremony, club_year_id)
       VALUES (${event.title}, ${event.event_date}, ${event.award_ceremony}, (SELECT id FROM adv_db.club_years WHERE label = ${event.club_year_label}))
       RETURNING *`
 
     if (event.awards && event.awards.length > 0) {
-      const values = event.awards.map((award) => [resultEvent[0].id, award.award_id, award.class_id])
+      const values = event.awards.map((award) => [resultEvent.id, award.award_id, award.class_id])
       const resultAwards = await sql`
         INSERT INTO adv_db.events_awards (event_id, award_id, class_id)
         VALUES ${sql(values)}
         RETURNING *`
 
-      resultEvent[0].awards = resultAwards
+      resultEvent.awards = resultAwards
     } else {
-      resultEvent[0].awards = []
+      resultEvent.awards = []
     }
 
     return resultEvent

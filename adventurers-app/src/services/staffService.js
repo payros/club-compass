@@ -3,42 +3,27 @@ import sql from 'src/lib/postgres'
 async function list(search, clubYearLabel) {
   try {
     if (clubYearLabel) {
-      const result = search
-        ? await sql`
-            SELECT sf.*,
-              cys.staff_role
-            FROM adv_db.staff sf
-            JOIN adv_db.club_years_staff cys ON cys.staff_id = sf.id
-            JOIN adv_db.club_years cy ON cys.club_year_id = cy.id
-            WHERE cy.label = ${clubYearLabel}
-              AND (
-                sf.first_name ILIKE ${'%' + search + '%'}
-                OR sf.last_name ILIKE ${'%' + search + '%'}
-              )
-            ORDER BY sf.last_name ASC
-            LIMIT 10`
-        : await sql`
-            SELECT sf.*, cys.staff_role
-            FROM adv_db.staff sf
-            JOIN adv_db.club_years_staff cys ON cys.staff_id = sf.id
-            JOIN adv_db.club_years cy ON cys.club_year_id = cy.id
-            WHERE cy.label = ${clubYearLabel}
-            ORDER BY sf.last_name ASC`
+      const result = await sql`
+          SELECT sf.*, cys.staff_role
+          FROM adv_db.staff sf
+          JOIN adv_db.club_years_staff cys ON cys.staff_id = sf.id
+          JOIN adv_db.club_years cy ON cys.club_year_id = cy.id
+          WHERE cy.label = ${clubYearLabel}
+          ${search ? sql`AND (sf.first_name ILIKE ${'%' + search + '%'} OR sf.last_name ILIKE ${'%' + search + '%'})` : sql``}
+          ORDER BY sf.last_name ASC
+          ${search ? sql`LIMIT 10` : sql``}`
       return result
     }
-    const result = search
-      ? await sql`
-          SELECT sf.*,
-            (SELECT cys.staff_role
-             FROM adv_db.club_years_staff cys
-             WHERE cys.staff_id = sf.id
-             ORDER BY cys.id DESC LIMIT 1) AS last_role
-          FROM adv_db.staff sf
-          WHERE sf.first_name ILIKE ${'%' + search + '%'}
-             OR sf.last_name ILIKE ${'%' + search + '%'}
-          ORDER BY sf.last_name ASC
-          LIMIT 10`
-      : await sql`SELECT * FROM adv_db.staff ORDER BY last_name ASC`
+    const result = await sql`
+        SELECT sf.*,
+          (SELECT cys.staff_role
+           FROM adv_db.club_years_staff cys
+           WHERE cys.staff_id = sf.id
+           ORDER BY cys.id DESC LIMIT 1) AS last_role
+        FROM adv_db.staff sf
+        ${search ? sql`WHERE sf.first_name ILIKE ${'%' + search + '%'} OR sf.last_name ILIKE ${'%' + search + '%'}` : sql``}
+        ORDER BY sf.last_name ASC
+        ${search ? sql`LIMIT 10` : sql``}`
     return result
   } catch (err) {
     console.error(err)
