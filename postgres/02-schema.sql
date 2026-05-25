@@ -101,7 +101,8 @@ CREATE TABLE "club_years_staff" (
   "club_year_id" integer NOT NULL,
   "staff_id" integer NOT NULL,
   "staff_role" staff_role,
-  "created_at" timestamp DEFAULT (now())
+  "created_at" timestamp DEFAULT (now()),
+  UNIQUE ("club_year_id", "staff_id")
 );
 
 CREATE TABLE "classes" (

@@ -1,11 +1,10 @@
 'use client'
-import { Button, Card, Stack, Checkbox, Box, CheckboxGroup, Fieldset, Heading, Alert } from '@chakra-ui/react'
+import { Stack, Checkbox, Box, CheckboxGroup, Heading } from '@chakra-ui/react'
 import { useParams, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
 import useChildren from '@/hooks/useChildren'
-import PageLayout from '@/components/PageLayout'
-import PageTransition from '@/components/PageTransition'
+import FormPage from '@/components/pages/FormPage'
 
 const View = () => {
   const router = useRouter()
@@ -53,6 +52,7 @@ const View = () => {
         const message = result?.error ?? 'Roll call could not be submitted. Please try again.'
         console.error('Roll call PATCH failed:', message)
         setGlobalError(message)
+        setSubmitting(false)
         return
       }
 
@@ -60,7 +60,6 @@ const View = () => {
     } catch (error) {
       console.error('Roll call submission error:', error)
       setGlobalError('Roll call could not be submitted. Please try again.')
-    } finally {
       setSubmitting(false)
     }
   }
@@ -84,71 +83,45 @@ const View = () => {
   ]
 
   return (
-    <PageLayout breadcrumbs={breadcrumbs} clubName={`${clubYearLabel} Club`}>
-      <PageTransition>
-        <div style={{ maxWidth: 480, margin: '2rem auto' }}>
-          <Card.Root className="glass-card">
-            <Card.Header>
-              <Card.Title className="card-title">Roll Call for {eventData?.title ?? 'Event'}</Card.Title>
-              <Card.Description className="card-description">
-                Select all the children who attended this event. Awards will be distributed based on attendance.
-              </Card.Description>
-            </Card.Header>
-            {globalError && (
-              <Alert.Root status="error">
-                <Alert.Indicator />
-                <Alert.Description>{globalError}</Alert.Description>
-              </Alert.Root>
-            )}
-            <Card.Body>
-              <form onSubmit={handleSubmit}>
-                <Fieldset.Root size="lg" maxW="md">
-                  <Fieldset.Content>
-                    <Stack direction="column" gap="2">
-                      <CheckboxGroup>
-                        {classes.map((className) => (
-                          <Box key={className} p="2">
-                            <Heading fontWeight="bold" size="md">
-                              {fromSnakeCaseToTitleCase(className)}
-                            </Heading>
-                            <Stack direction="column" gap="1" mt="2">
-                              {children
-                                .filter((child) => child.class === className)
-                                .map((child) => (
-                                  <Checkbox.Root
-                                    key={child.id}
-                                    checked={selectedChildren.includes(child.id)}
-                                    onCheckedChange={(e) => handleCheckboxChange(child.id, !!e.checked)}
-                                  >
-                                    <Checkbox.HiddenInput />
-                                    <Checkbox.Control />
-                                    <Checkbox.Label>{child.name}</Checkbox.Label>
-                                  </Checkbox.Root>
-                                ))}
-                            </Stack>
-                          </Box>
-                        ))}
-                      </CheckboxGroup>
-                    </Stack>
-                  </Fieldset.Content>
-
-                  <Button
-                    type="submit"
-                    mt={4}
-                    colorPalette="accent"
-                    disabled={submitting}
-                    loading={submitting}
-                    loadingText="Submitting…"
-                  >
-                    Submit Roll Call
-                  </Button>
-                </Fieldset.Root>
-              </form>
-            </Card.Body>
-          </Card.Root>
-        </div>
-      </PageTransition>
-    </PageLayout>
+    <FormPage
+      title={`Roll Call for ${eventData?.title ?? 'Event'}`}
+      description="Select all the children who attended this event. Awards will be distributed based on attendance."
+      breadcrumbs={breadcrumbs}
+      clubName={`${clubYearLabel} Club`}
+      globalError={globalError}
+      handleSubmit={handleSubmit}
+      submitLabel="Submit Roll Call"
+      submitLoadingLabel="Submitting…"
+      loading={submitting}
+      contentLoading={loadingEvent || loadingChildren}
+    >
+      <Stack direction="column" gap="2">
+        <CheckboxGroup>
+          {classes.map((className) => (
+            <Box key={className} p="2">
+              <Heading fontWeight="bold" size="md">
+                {fromSnakeCaseToTitleCase(className)}
+              </Heading>
+              <Stack direction="column" gap="1" mt="2">
+                {children
+                  .filter((child) => child.class === className)
+                  .map((child) => (
+                    <Checkbox.Root
+                      key={child.id}
+                      checked={selectedChildren.includes(child.id)}
+                      onCheckedChange={(e) => handleCheckboxChange(child.id, !!e.checked)}
+                    >
+                      <Checkbox.HiddenInput />
+                      <Checkbox.Control />
+                      <Checkbox.Label>{child.name}</Checkbox.Label>
+                    </Checkbox.Root>
+                  ))}
+              </Stack>
+            </Box>
+          ))}
+        </CheckboxGroup>
+      </Stack>
+    </FormPage>
   )
 }
 

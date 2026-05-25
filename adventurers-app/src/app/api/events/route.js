@@ -1,4 +1,4 @@
-import awardsService from '@/services/awardsService'
+import eventsService from '@/services/eventsService'
 import { NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
@@ -6,6 +6,6 @@ export const dynamic = 'force-dynamic'
 export async function GET(request) {
   const { searchParams } = new URL(request.url)
   const search = searchParams.get('search') || undefined
-  const awards = await awardsService.list(null, search)
-  return NextResponse.json(awards)
+  const events = await eventsService.list(search)
+  return NextResponse.json(events)
 }

@@ -16,8 +16,24 @@ async function listByClubYear(clubYearLabel) {
   return []
 }
 
+async function create(clubYearLabel, classes) {
+  const [clubYear] = await sql`SELECT id FROM adv_db.club_years WHERE label = ${clubYearLabel}`
+  if (!clubYear) throw new Error(`Club year '${clubYearLabel}' not found`)
+
+  const results = []
+  for (const cls of classes) {
+    const [record] = await sql`
+      INSERT INTO adv_db.classes (class, club_year_id, instructor_id)
+      VALUES (${cls.class}, ${clubYear.id}, ${cls.instructor_id})
+      RETURNING *`
+    results.push(record)
+  }
+  return results
+}
+
 const classService = {
   listByClubYear,
+  create,
 }
 
 export default classService

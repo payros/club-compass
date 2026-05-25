@@ -6,12 +6,13 @@ import { NextResponse } from 'next/server'
 export async function GET(request, { params }) {
   const pathParams = await params
   const clubYearLabel = pathParams['club_year_label']
-  const events = await eventsService.listByClubYear(clubYearLabel)
+  const { searchParams } = new URL(request.url)
+  const search = searchParams.get('search') || undefined
+  const events = await eventsService.listByClubYear(clubYearLabel, search)
   return NextResponse.json(events)
 }
 
 export async function POST(request, { params }) {
-
   const newEventData = await request.json()
   const pathParams = await params
   const clubYearLabel = pathParams['club_year_label']

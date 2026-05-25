@@ -6,6 +6,8 @@ import { NextResponse } from 'next/server'
 export async function GET(request, { params }) {
   const pathParams = await params
   const clubYearLabel = pathParams['club_year_label']
-  const children = await childrenService.listByClubYear(clubYearLabel)
+  const { searchParams } = new URL(request.url)
+  const search = searchParams.get('search') || undefined
+  const children = await childrenService.listByClubYear(clubYearLabel, search)
   return NextResponse.json(children)
 }

@@ -1,12 +1,44 @@
 import sql from 'src/lib/postgres'
 
-async function listByClubYear(clubYearLabel) {
+async function list(search = null) {
   try {
-    const result = await sql`SELECT ev.*, cy.label as club_year_label
-                            FROM adv_db.events as ev
-                            JOIN adv_db.club_years as cy ON ev.club_year_id = cy.id
-                            WHERE cy.label = ${clubYearLabel}
-                            ORDER BY ev.event_date DESC`
+    const result = search
+      ? await sql`
+          SELECT ev.*, cy.label AS club_year_label
+          FROM adv_db.events AS ev
+          JOIN adv_db.club_years AS cy ON ev.club_year_id = cy.id
+          WHERE ev.title ILIKE ${'%' + search + '%'}
+          ORDER BY ev.event_date DESC
+          LIMIT 10`
+      : await sql`
+          SELECT ev.*, cy.label AS club_year_label
+          FROM adv_db.events AS ev
+          JOIN adv_db.club_years AS cy ON ev.club_year_id = cy.id
+          ORDER BY ev.event_date DESC`
+    return result
+  } catch (err) {
+    console.error(err)
+  }
+  return []
+}
+
+async function listByClubYear(clubYearLabel, search = null) {
+  try {
+    const result = search
+      ? await sql`
+          SELECT ev.*, cy.label as club_year_label
+          FROM adv_db.events as ev
+          JOIN adv_db.club_years as cy ON ev.club_year_id = cy.id
+          WHERE cy.label = ${clubYearLabel}
+            AND ev.title ILIKE ${'%' + search + '%'}
+          ORDER BY ev.event_date DESC
+          LIMIT 10`
+      : await sql`
+          SELECT ev.*, cy.label as club_year_label
+          FROM adv_db.events as ev
+          JOIN adv_db.club_years as cy ON ev.club_year_id = cy.id
+          WHERE cy.label = ${clubYearLabel}
+          ORDER BY ev.event_date DESC`
     return result
   } catch (err) {
     console.error(err)
@@ -232,6 +264,7 @@ async function update(clubYearLabel, eventId, updatedEventData) {
 }
 
 const eventsService = {
+  list,
   create,
   listByClubYear,
   getById,
