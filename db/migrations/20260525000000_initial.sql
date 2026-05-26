@@ -1,6 +1,5 @@
 -- Initial migration: full schema + seed data
 -- Generated: 2026-05-25
-CREATE SCHEMA IF NOT EXISTS adv_db;
 SET search_path TO adv_db;
 
 -- Types
