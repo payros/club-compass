@@ -22,3 +22,10 @@ DROP TABLE IF EXISTS
   session,
   "user"
 CASCADE;
+
+DROP TYPE IF EXISTS
+  sex,
+  adventurer_class,
+  award_type,
+  staff_role
+CASCADE;
