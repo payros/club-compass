@@ -17,5 +17,6 @@ env "prod" {
   url = getenv("ATLAS_DB_URL")
   migration {
     dir = "file://db/migrations"
+    revisions_schema = "public"
   }
 }
