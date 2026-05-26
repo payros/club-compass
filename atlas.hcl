@@ -16,7 +16,7 @@ env "prod" {
   # Must include ?search_path=adv_db — e.g. postgres://user:pass@host:5432/db?search_path=adv_db&sslmode=require
   url = getenv("ATLAS_DB_URL")
   migration {
-    dir             = "file://db/migrations"
+    dir = "file://db/migrations"
     revisions_schema = "public"
   }
 }
