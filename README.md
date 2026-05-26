@@ -1,4 +1,4 @@
-# Adventurer's Club App
+# Adventurer's Club App - for Directors and Staff
 
 A CMS app for managing an Adventurers Club — keeping track of children, parents, staff, awards, events, and club years. Built to make life easier for director staff, and open source so other Adventurer/Pathfinder Clubs can use it too!
 
