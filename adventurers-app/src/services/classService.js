@@ -1,4 +1,4 @@
-import sql from 'src/lib/postgres'
+import sql from '@/lib/postgres'
 
 async function listByClubYear(clubYearLabel) {
   try {
@@ -25,6 +25,7 @@ async function create(clubYearLabel, classes) {
     const [record] = await sql`
       INSERT INTO adv_db.classes (class, club_year_id, instructor_id)
       VALUES (${cls.class}, ${clubYear.id}, ${cls.instructor_id})
+      ON CONFLICT (class, club_year_id) DO UPDATE SET instructor_id = EXCLUDED.instructor_id
       RETURNING *`
     results.push(record)
   }

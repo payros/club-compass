@@ -18,6 +18,13 @@ export default function View() {
     { label: name },
   ]
 
+  const actions = [
+    {
+      label: 'Edit Awards',
+      href: `/children/${childId}/edit-awards`,
+    },
+  ]
+
   const fields = child
     ? [
         { label: 'First Name', value: child.firstName },
@@ -78,6 +85,7 @@ export default function View() {
       loading={loading}
       fields={fields}
       relatedCards={relatedCards}
+      actions={actions}
     />
   )
 }
