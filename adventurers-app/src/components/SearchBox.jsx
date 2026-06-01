@@ -15,6 +15,8 @@ import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
  *   value          — controlled display value for the input
  *   maxSuggestions — max number of suggestions to show (default: 10)
  */
+const searchCache = {}
+
 function getEndpoint(type, clubYearLabel) {
   const base = clubYearLabel ? `/api/club-years/${clubYearLabel}` : '/api'
   const resourceMap = {
@@ -62,12 +64,21 @@ const SearchBox = ({ type, label, placeholder, handleSelect, clubYearLabel, valu
   const timerRef = useRef(null)
 
   async function fetchResults(q) {
+    const normalizedQ = q.trim().toLowerCase()
+    const cacheKey = `${type}:${clubYearLabel ?? ''}:${normalizedQ}`
+    if (searchCache[cacheKey] !== undefined) {
+      setResults(searchCache[cacheKey])
+      setLoading(false)
+      return
+    }
     const endpoint = getEndpoint(type, clubYearLabel)
-    const url = q.trim() ? `${endpoint}?search=${encodeURIComponent(q.trim())}` : endpoint
+    const url = normalizedQ ? `${endpoint}?search=${encodeURIComponent(normalizedQ)}` : endpoint
     try {
       const res = await fetch(url)
       if (res.ok) {
-        setResults(await res.json())
+        const data = await res.json()
+        searchCache[cacheKey] = data
+        setResults(data)
       } else {
         setResults([])
       }

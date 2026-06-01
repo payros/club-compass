@@ -122,6 +122,10 @@ const View = () => {
 
   const breadcrumbs = [{ label: clubYearLabel, href: `/${clubYearLabel}/dashboard` }, { label: 'Enroll Staff' }]
 
+  const isSubmitDisabled = !staffEntries.some(
+    (entry) => entry.first_name.trim() && entry.last_name.trim() && entry.staff_role
+  )
+
   return (
     <FormPage
       title="Enroll Staff"
@@ -133,6 +137,7 @@ const View = () => {
       submitLabel="Enroll Staff"
       submitLoadingLabel="Enrolling Staff…"
       loading={loading}
+      submitDisabled={isSubmitDisabled}
       maxWidth={600}
       current={current}
       total={total}

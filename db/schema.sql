@@ -212,6 +212,8 @@ ALTER TABLE "club_years_staff" ADD FOREIGN KEY ("club_year_id") REFERENCES "club
 
 ALTER TABLE "club_years_staff" ADD FOREIGN KEY ("staff_id") REFERENCES "staff" ("id");
 
+ALTER TABLE "classes" ADD CONSTRAINT "classes_class_club_year_id_key" UNIQUE ("class", "club_year_id");
+
 ALTER TABLE "classes" ADD FOREIGN KEY ("club_year_id") REFERENCES "club_years" ("id");
 
 ALTER TABLE "classes" ADD FOREIGN KEY ("instructor_id") REFERENCES "staff" ("id");
