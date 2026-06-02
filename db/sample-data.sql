@@ -53,6 +53,38 @@ VALUES (1, 1, 1),
        (1, 3, 9),
        (1, 4, 10);
 
+INSERT INTO parents (first_name, last_name, email, phone, address)
+VALUES ('Robert', 'Doe', 'robert.doe@example.com', '555-1001', '123 Maple St, Springfield'),
+       ('Susan', 'Smith', 'susan.smith@example.com', '555-1002', '456 Oak Ave, Shelbyville'),
+       ('Mark', 'Johnson', 'mark.johnson@example.com', '555-1003', '789 Pine Rd, Springfield'),
+       ('Linda', 'Brown', 'linda.brown@example.com', '555-1004', '321 Elm St, Shelbyville'),
+       ('Thomas', 'Davis', 'thomas.davis@example.com', '555-1005', '654 Cedar Ln, Springfield'),
+       ('Karen', 'Miller', 'karen.miller@example.com', '555-1006', '987 Birch Blvd, Shelbyville'),
+       ('Patricia', 'Wilson', 'patricia.wilson@example.com', '555-1007', '111 Walnut Dr, Springfield'),
+       ('Steven', 'Taylor', 'steven.taylor@example.com', '555-1008', '222 Spruce Ct, Shelbyville');
+
+-- parent_id → child_id
+-- Robert Doe → John Doe (1)
+-- Susan Smith → Jane Smith (2)
+-- Mark Johnson → Alex Johnson (3)
+-- Linda Brown → Emily Brown (4)
+-- Thomas Davis → Michael Davis (5), Sarah Miller (6)  [blended family]
+-- Karen Miller → Sarah Miller (6)
+-- Patricia Wilson → David Wilson (7), Laura Moore (8)  [blended family]
+-- Steven Taylor → James Taylor (9), Mia Anderson (10)  [blended family]
+INSERT INTO parents_children (parent_id, child_id)
+VALUES (1, 1),
+       (2, 2),
+       (3, 3),
+       (4, 4),
+       (5, 5),
+       (5, 6),
+       (6, 6),
+       (7, 7),
+       (7, 8),
+       (8, 9),
+       (8, 10);
+
 INSERT INTO events (club_year_id, title, event_date)
 VALUES (1, 'Summer Picnic', '2025-07-15'),
        (1, 'Fall Festival', '2025-10-05'),
