@@ -8,7 +8,9 @@ export async function GET(request, { params }) {
   const clubYearLabel = pathParams['club_year_label']
   const { searchParams } = new URL(request.url)
   const search = searchParams.get('search') || undefined
-  const events = await eventsService.listByClubYear(clubYearLabel, search)
+  const isAwardCeremonyParam = searchParams.get('is_award_ceremony')
+  const isAwardCeremony = isAwardCeremonyParam === 'true' ? true : isAwardCeremonyParam === 'false' ? false : null
+  const events = await eventsService.listByClubYear(clubYearLabel, search, isAwardCeremony)
   return NextResponse.json(events)
 }
 

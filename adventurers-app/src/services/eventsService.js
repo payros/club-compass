@@ -1,45 +1,53 @@
 import sql from 'src/lib/postgres'
 
-async function list(search = null) {
+async function list(search = null, isAwardCeremony = null) {
   try {
-    const result = search
-      ? await sql`
+    const ceremonyFilter = isAwardCeremony !== null ? sql`AND ev.award_ceremony = ${isAwardCeremony}` : sql``
+    if (search) {
+      return await sql`
           SELECT ev.*, cy.label AS club_year_label
           FROM adv_db.events AS ev
           JOIN adv_db.club_years AS cy ON ev.club_year_id = cy.id
           WHERE ev.title ILIKE ${'%' + search + '%'}
+          ${ceremonyFilter}
           ORDER BY ev.event_date DESC
           LIMIT 10`
-      : await sql`
+    } else {
+      return await sql`
           SELECT ev.*, cy.label AS club_year_label
           FROM adv_db.events AS ev
           JOIN adv_db.club_years AS cy ON ev.club_year_id = cy.id
+          ${isAwardCeremony !== null ? sql`WHERE ev.award_ceremony = ${isAwardCeremony}` : sql``}
           ORDER BY ev.event_date DESC`
-    return result
+    }
   } catch (err) {
     console.error(err)
   }
   return []
 }
 
-async function listByClubYear(clubYearLabel, search = null) {
+async function listByClubYear(clubYearLabel, search = null, isAwardCeremony = null) {
   try {
-    const result = search
-      ? await sql`
+    const ceremonyFilter = isAwardCeremony !== null ? sql`AND ev.award_ceremony = ${isAwardCeremony}` : sql``
+    if (search) {
+      return await sql`
           SELECT ev.*, cy.label as club_year_label
           FROM adv_db.events as ev
           JOIN adv_db.club_years as cy ON ev.club_year_id = cy.id
           WHERE cy.label = ${clubYearLabel}
             AND ev.title ILIKE ${'%' + search + '%'}
+            ${ceremonyFilter}
           ORDER BY ev.event_date DESC
           LIMIT 10`
-      : await sql`
+    } else {
+      return await sql`
           SELECT ev.*, cy.label as club_year_label
           FROM adv_db.events as ev
           JOIN adv_db.club_years as cy ON ev.club_year_id = cy.id
           WHERE cy.label = ${clubYearLabel}
+            ${ceremonyFilter}
           ORDER BY ev.event_date DESC`
-    return result
+    }
   } catch (err) {
     console.error(err)
   }
