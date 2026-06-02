@@ -57,7 +57,17 @@ function SuggestionRow({ type, item, clubYearLabel }) {
   )
 }
 
-const SearchBox = ({ type, label, placeholder, handleSelect, clubYearLabel, value, style, maxSuggestions = 10 }) => {
+const SearchBox = ({
+  type,
+  label,
+  placeholder,
+  handleSelect,
+  clubYearLabel,
+  value,
+  style,
+  maxSuggestions = 10,
+  extraQueryParams = null,
+}) => {
   const [query, setQuery] = useState(value ?? '')
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
@@ -65,14 +75,21 @@ const SearchBox = ({ type, label, placeholder, handleSelect, clubYearLabel, valu
 
   async function fetchResults(q) {
     const normalizedQ = q.trim().toLowerCase()
-    const cacheKey = `${type}:${clubYearLabel ?? ''}:${normalizedQ}`
+    const extraKey = extraQueryParams ? JSON.stringify(extraQueryParams) : ''
+    const cacheKey = `${type}:${clubYearLabel ?? ''}:${normalizedQ}:${extraKey}`
     if (searchCache[cacheKey] !== undefined) {
       setResults(searchCache[cacheKey])
       setLoading(false)
       return
     }
     const endpoint = getEndpoint(type, clubYearLabel)
-    const url = normalizedQ ? `${endpoint}?search=${encodeURIComponent(normalizedQ)}` : endpoint
+    const params = new URLSearchParams()
+    if (normalizedQ) params.set('search', normalizedQ)
+    if (extraQueryParams) {
+      Object.entries(extraQueryParams).forEach(([k, v]) => params.set(k, String(v)))
+    }
+    const qs = params.toString()
+    const url = qs ? `${endpoint}?${qs}` : endpoint
     try {
       const res = await fetch(url)
       if (res.ok) {

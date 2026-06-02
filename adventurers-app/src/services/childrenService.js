@@ -138,16 +138,93 @@ async function getParentsByChildId(childId) {
 async function getAwardsByChildId(childId) {
   try {
     const result = await sql`
-      SELECT a.*, ac.awarded_on
+      SELECT
+        a.id AS award_id,
+        a.name AS award_name,
+        ac.awarded_on,
+        ac.event_id,
+        e.title AS event_title,
+        ac.award_ceremony_id,
+        cer.title AS award_ceremony_title,
+        cer.event_date AS award_ceremony_date
       FROM adv_db.awards_children AS ac
       JOIN adv_db.awards AS a ON ac.award_id = a.id
+      LEFT JOIN adv_db.events AS e ON ac.event_id = e.id
+      LEFT JOIN adv_db.events AS cer ON ac.award_ceremony_id = cer.id
       WHERE ac.child_id = ${childId}
-      ORDER BY ac.awarded_on DESC`
+      ORDER BY ac.created_at DESC`
     return result
   } catch (err) {
     console.error(err)
   }
   return []
+}
+
+async function update(childId, updatedData) {
+  try {
+    const result = await sql.begin(async (sql) => {
+      const childIdInt = parseInt(childId, 10)
+      const { awards, ...childData } = updatedData
+
+      const fieldMap = {
+        firstName: 'first_name',
+        lastName: 'last_name',
+        dateOfBirth: 'date_of_birth',
+        allergies: 'allergies',
+        medicalConditions: 'medical_conditions',
+        sex: 'sex',
+      }
+
+      const updateFields = []
+      const updateValues = []
+      let paramIndex = 1
+
+      Object.entries(childData).forEach(([key, value]) => {
+        const dbKey = fieldMap[key] ?? key
+        updateFields.push(`${dbKey} = $${paramIndex++}`)
+        updateValues.push(value)
+      })
+
+      let updatedChild = null
+      if (updateFields.length > 0) {
+        const updateQuery = `UPDATE adv_db.children SET ${updateFields.join(', ')} WHERE id = $${paramIndex} RETURNING *`
+        updateValues.push(childIdInt)
+        const childResult = await sql.unsafe(updateQuery, updateValues)
+        updatedChild = childResult[0]
+      } else {
+        const childResult = await sql`SELECT * FROM adv_db.children WHERE id = ${childIdInt}`
+        updatedChild = childResult[0]
+      }
+
+      if (awards !== undefined) {
+        if (!Array.isArray(awards)) {
+          throw new Error('awards must be an array')
+        }
+
+        await sql`DELETE FROM adv_db.awards_children WHERE child_id = ${childIdInt}`
+
+        if (awards.length > 0) {
+          const values = awards.map((a) => [
+            childIdInt,
+            parseInt(a.awardId, 10),
+            a.eventId ? parseInt(a.eventId, 10) : null,
+            a.awardCeremonyId ? parseInt(a.awardCeremonyId, 10) : null,
+            a.awardedOn || null,
+          ])
+          await sql`
+            INSERT INTO adv_db.awards_children (child_id, award_id, event_id, award_ceremony_id, awarded_on)
+            VALUES ${sql(values)}`
+        }
+      }
+
+      return updatedChild
+    })
+
+    return result
+  } catch (err) {
+    console.error(err)
+    throw err
+  }
 }
 
 const childrenService = {
@@ -156,6 +233,7 @@ const childrenService = {
   getById,
   getParentsByChildId,
   getAwardsByChildId,
+  update,
 }
 
 export default childrenService
