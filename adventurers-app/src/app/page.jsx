@@ -1,11 +1,11 @@
 import { redirect } from 'next/navigation'
-import clubYearService from '@/services/clubYearService'
+import clubYearsService from '@/services/clubYearsService'
 
 const Home = async () => {
-  const clubYears = await clubYearService.list()
+  const clubYears = await clubYearsService.list()
 
   if (clubYears.length > 0) {
-    const latestClubYear = clubYears[0]
+    const [latestClubYear] = clubYears
     redirect(`/${latestClubYear.label}/dashboard`)
   } else {
     redirect('/club-years/new?flow=setup')
