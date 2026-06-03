@@ -216,6 +216,8 @@ ALTER TABLE "classes" ADD CONSTRAINT "classes_class_club_year_id_key" UNIQUE ("c
 
 ALTER TABLE "classes" ADD FOREIGN KEY ("club_year_id") REFERENCES "club_years" ("id");
 
+ALTER TABLE "classes_children" ADD CONSTRAINT "classes_children_club_year_id_child_id_key" UNIQUE ("club_year_id", "child_id");
+
 ALTER TABLE "classes" ADD FOREIGN KEY ("instructor_id") REFERENCES "staff" ("id");
 
 ALTER TABLE "events" ADD FOREIGN KEY ("club_year_id") REFERENCES "club_years" ("id");

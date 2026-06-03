@@ -7,7 +7,6 @@ const FormPage = ({
   title,
   description,
   breadcrumbs,
-  clubName,
   globalError,
   handleSubmit,
   submitLabel = 'Submit',
@@ -21,7 +20,7 @@ const FormPage = ({
   children,
 }) => {
   return (
-    <PageLayout breadcrumbs={breadcrumbs} clubName={clubName}>
+    <PageLayout breadcrumbs={breadcrumbs}>
       <PageTransition>
         <div style={{ maxWidth, margin: '2rem auto' }}>
           <Card.Root className="glass-card">

@@ -7,7 +7,7 @@ import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
  * SearchBox — generic typeahead search component.
  *
  * Props:
- *   type           — 'staff' | 'parent' | 'child' | 'award' | 'event'
+ *   type           — 'staff' | 'parent' | 'child' | 'award' | 'event' | 'family'
  *   label          — field label text
  *   placeholder    — input placeholder text
  *   handleSelect   — called with the selected item object
@@ -25,6 +25,7 @@ function getEndpoint(type, clubYearLabel) {
     child: 'children',
     award: 'awards',
     event: 'events',
+    family: 'families',
   }
   return `${base}/${resourceMap[type]}`
 }

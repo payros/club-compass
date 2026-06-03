@@ -136,7 +136,7 @@ async function update(clubYearLabel, eventId, updatedEventData) {
 
       Object.entries(eventData)
         // Exclude award_ceremony since updating it will make award linking/unlinking more complex.
-        .filter(([key, value]) => key !== 'award_ceremony')
+        .filter(([key]) => key !== 'award_ceremony')
         .forEach(([key, value]) => {
           updateFields.push(`${key} = $${paramIndex++}`)
           updateValues.push(value)
