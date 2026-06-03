@@ -1,6 +1,8 @@
 import { redirect } from 'next/navigation'
 import clubYearsService from '@/services/clubYearsService'
 
+export const dynamic = 'force-dynamic'
+
 const Home = async () => {
   console.error('[page] Home: fetching club years')
   const clubYears = await clubYearsService.list()
