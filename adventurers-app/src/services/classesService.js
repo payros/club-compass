@@ -32,9 +32,9 @@ async function create(clubYearLabel, classes) {
   return results
 }
 
-const classService = {
+const classesService = {
   listByClubYear,
   create,
 }
 
-export default classService
+export default classesService
