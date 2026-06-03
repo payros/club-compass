@@ -18,3 +18,5 @@ export const ADVENTURER_CLASSES = [
   'builders',
   'helping_hands',
 ]
+
+export const SEX_OPTIONS = ['female', 'male']

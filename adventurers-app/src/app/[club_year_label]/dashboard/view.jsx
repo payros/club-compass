@@ -43,7 +43,7 @@ const View = () => {
     },
     {
       label: 'Enroll Family',
-      href: `/${clubYearLabel}/families/new`,
+      href: `/${clubYearLabel}/families/enroll`,
     },
     {
       label: 'Add Event',
