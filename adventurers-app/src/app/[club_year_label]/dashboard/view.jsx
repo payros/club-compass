@@ -38,7 +38,7 @@ const View = () => {
       href: `/${clubYearLabel}/staff/enroll`,
     },
     {
-      label: 'Add Classes',
+      label: 'Update Classes',
       href: `/${clubYearLabel}/classes/new`,
     },
     {
@@ -58,6 +58,7 @@ const View = () => {
   const cards = [
     {
       title: 'Adventurers',
+      description: `${children.length} registered for ${clubYearLabel}`,
       href: `/${clubYearLabel}/adventurers`,
       headers: [
         { key: 'name', label: 'Name', sortable: true },
@@ -73,6 +74,7 @@ const View = () => {
     },
     {
       title: 'Events',
+      description: `${events.length} scheduled for ${clubYearLabel}`,
       href: `/${clubYearLabel}/events`,
       headers: [
         { key: 'title', label: 'Title', sortable: true },
@@ -86,7 +88,20 @@ const View = () => {
       onRowClick: (item) => router.push(`/${clubYearLabel}/events/${item.id}`),
     },
     {
+      title: 'Staff',
+      description: `${staff.length} helping in ${clubYearLabel}`,
+      href: `/${clubYearLabel}/staff`,
+      headers: [
+        { key: 'name', label: 'Name', sortable: false },
+        { key: 'role', label: 'Role', sortable: false },
+      ],
+      data: staff,
+      loading: loadingStaff,
+      onRowClick: (item) => router.push(`/${clubYearLabel}/staff/${item.id}`),
+    },
+    {
       title: 'Classes',
+      description: `Classes instructors in ${clubYearLabel}`,
       href: `/${clubYearLabel}/classes`,
       headers: [
         { key: 'class', label: 'Class', sortable: false },
@@ -96,19 +111,10 @@ const View = () => {
       loading: loadingClasses,
       onRowClick: (item) => router.push(`/${clubYearLabel}/classes/${item.id}`),
     },
-    {
-      title: 'Staff',
-      href: `/${clubYearLabel}/staff`,
-      headers: [
-        { key: 'name', label: 'Name', sortable: false },
-        { key: 'role', label: 'Role', sortable: false },
-      ],
-      data: staff,
-      loading: loadingStaff,
-      onRowClick: (item) => router.push(`/staff/${item.id}`),
-    },
+
     {
       title: 'Awards',
+      description: `${awards.length} offered in ${clubYearLabel}`,
       href: `/${clubYearLabel}/awards`,
       badge: awards?.length ?? 0,
       headers: [

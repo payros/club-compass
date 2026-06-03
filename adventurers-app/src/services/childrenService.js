@@ -20,7 +20,31 @@ async function listByClubYear(clubYearLabel, search) {
   try {
     const result = search
       ? await sql`
-          SELECT ch.id, ch.date_of_birth, cy.label, ch.first_name, ch.last_name, cl.class
+          SELECT
+            ch.id, ch.date_of_birth, cy.label, ch.first_name, ch.last_name, cl.class,
+            ch.sex, ch.allergies, ch.medical_conditions,
+            (
+              SELECT string_agg(CONCAT(p.first_name, ' ', p.last_name), ', ')
+              FROM adv_db.parents_children AS pc
+              JOIN adv_db.parents AS p ON pc.parent_id = p.id
+              WHERE pc.child_id = ch.id
+            ) AS parents,
+            (
+              SELECT CASE
+                WHEN COUNT(e.id) = 0 THEN NULL
+                ELSE ROUND(COUNT(ec.event_id) * 100.0 / COUNT(e.id))
+              END
+              FROM adv_db.events AS e
+              LEFT JOIN adv_db.events_children AS ec ON ec.event_id = e.id AND ec.child_id = ch.id
+              WHERE e.club_year_id = cy.id
+            ) AS attendance,
+            (
+              SELECT COUNT(ac.id)
+              FROM adv_db.awards_children AS ac
+              LEFT JOIN adv_db.events AS e ON ac.event_id = e.id
+              LEFT JOIN adv_db.events AS cer ON ac.award_ceremony_id = cer.id
+              WHERE ac.child_id = ch.id AND (e.club_year_id = cy.id OR cer.club_year_id = cy.id)
+            ) AS awards_earned
           FROM adv_db.classes_children as cc
           JOIN adv_db.club_years as cy ON cc.club_year_id = cy.id
           JOIN adv_db.children as ch ON cc.child_id = ch.id
@@ -29,7 +53,31 @@ async function listByClubYear(clubYearLabel, search) {
             AND (ch.first_name ILIKE ${'%' + search + '%'} OR ch.last_name ILIKE ${'%' + search + '%'})
           LIMIT 10`
       : await sql`
-          SELECT ch.id, ch.date_of_birth, cy.label, ch.first_name, ch.last_name, cl.class
+          SELECT
+            ch.id, ch.date_of_birth, cy.label, ch.first_name, ch.last_name, cl.class,
+            ch.sex, ch.allergies, ch.medical_conditions,
+            (
+              SELECT string_agg(CONCAT(p.first_name, ' ', p.last_name), ', ')
+              FROM adv_db.parents_children AS pc
+              JOIN adv_db.parents AS p ON pc.parent_id = p.id
+              WHERE pc.child_id = ch.id
+            ) AS parents,
+            (
+              SELECT CASE
+                WHEN COUNT(e.id) = 0 THEN NULL
+                ELSE ROUND(COUNT(ec.event_id) * 100.0 / COUNT(e.id))
+              END
+              FROM adv_db.events AS e
+              LEFT JOIN adv_db.events_children AS ec ON ec.event_id = e.id AND ec.child_id = ch.id
+              WHERE e.club_year_id = cy.id
+            ) AS attendance,
+            (
+              SELECT COUNT(ac.id)
+              FROM adv_db.awards_children AS ac
+              LEFT JOIN adv_db.events AS e ON ac.event_id = e.id
+              LEFT JOIN adv_db.events AS cer ON ac.award_ceremony_id = cer.id
+              WHERE ac.child_id = ch.id AND (e.club_year_id = cy.id OR cer.club_year_id = cy.id)
+            ) AS awards_earned
           FROM adv_db.classes_children as cc
           JOIN adv_db.club_years as cy ON cc.club_year_id = cy.id
           JOIN adv_db.children as ch ON cc.child_id = ch.id

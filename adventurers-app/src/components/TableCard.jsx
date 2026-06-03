@@ -36,7 +36,7 @@ function TableCard({
           </div>
           {href && (
             <Button asChild size="sm" variant="outline" colorPalette="brand">
-              <Link href={href}>View all</Link>
+              <Link href={href}>View</Link>
             </Button>
           )}
         </div>
