@@ -2,9 +2,9 @@ import { redirect } from 'next/navigation'
 import clubYearsService from '@/services/clubYearsService'
 
 const Home = async () => {
-  console.log('loading club years...')
+  console.error('[page] Home: fetching club years')
   const clubYears = await clubYearsService.list()
-  console.log('club years loaded:', clubYears)
+  console.error(`[page] Home: club years count = ${clubYears.length}`)
   if (clubYears.length > 0) {
     const [latestClubYear] = clubYears
     redirect(`/${latestClubYear.label}/dashboard`)
