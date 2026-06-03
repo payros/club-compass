@@ -4,9 +4,8 @@ import clubYearsService from '@/services/clubYearsService'
 export const dynamic = 'force-dynamic'
 
 const Home = async () => {
-  console.error('[page] Home: fetching club years')
   const clubYears = await clubYearsService.list()
-  console.error(`[page] Home: club years count = ${clubYears.length}`)
+
   if (clubYears.length > 0) {
     const [latestClubYear] = clubYears
     redirect(`/${latestClubYear.label}/dashboard`)
