@@ -1,5 +1,6 @@
+import { useState } from 'react'
 import { TableCell, Card, Table, Skeleton, Button, Spacer, Icon, Text } from '@chakra-ui/react'
-import { FaCaretDown, FaCaretUp, FaExternalLinkAlt } from 'react-icons/fa'
+import { FaCaretDown, FaCaretUp, FaExternalLinkAlt, FaArrowRight } from 'react-icons/fa'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 
@@ -16,9 +17,11 @@ function TableCard({
   handleSort,
   onRowClick,
   href,
+  action,
   maxH = '320px',
   fullWidth = false,
 }) {
+  const [titleHovered, setTitleHovered] = useState(false)
   return (
     <Card.Root className="glass-card" style={{ width: fullWidth ? '100%' : undefined }}>
       <Card.Header pb={2}>
@@ -31,12 +34,35 @@ function TableCard({
           }}
         >
           <div>
-            <Card.Title className="card-title">{title}</Card.Title>
+            {href ? (
+              <Link href={href} style={{ textDecoration: 'none', color: 'inherit' }}>
+                <span
+                  onMouseEnter={() => setTitleHovered(true)}
+                  onMouseLeave={() => setTitleHovered(false)}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+                >
+                  <Card.Title className="card-title">{title}</Card.Title>
+                  <Icon
+                    size="sm"
+                    style={{
+                      opacity: titleHovered ? 1 : 0,
+                      transition: 'opacity 0.15s',
+                      marginTop: '2px',
+                      color: 'var(--text-dark)',
+                    }}
+                  >
+                    <FaArrowRight />
+                  </Icon>
+                </span>
+              </Link>
+            ) : (
+              <Card.Title className="card-title">{title}</Card.Title>
+            )}
             {description && <Card.Description className="card-description">{description}</Card.Description>}
           </div>
-          {href && (
-            <Button asChild size="sm" variant="outline" colorPalette="brand">
-              <Link href={href}>View all</Link>
+          {action && (
+            <Button asChild size="md" variant="outline" colorPalette="brand">
+              <Link href={action.href}>{action.label}</Link>
             </Button>
           )}
         </div>

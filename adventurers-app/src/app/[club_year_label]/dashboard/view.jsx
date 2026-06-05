@@ -30,25 +30,7 @@ const View = () => {
     })
   }
 
-  const breadcrumbs = [{ label: clubYearLabel, href: `/${clubYearLabel}/dashboard` }, { label: 'Dashboard' }]
-
   const actions = [
-    {
-      label: 'Enroll Staff',
-      href: `/${clubYearLabel}/staff/enroll`,
-    },
-    {
-      label: 'Add Classes',
-      href: `/${clubYearLabel}/classes/new`,
-    },
-    {
-      label: 'Enroll Family',
-      href: `/${clubYearLabel}/families/enroll`,
-    },
-    {
-      label: 'Add Event',
-      href: `/${clubYearLabel}/events/new`,
-    },
     {
       label: 'View Directories',
       href: `/directories`,
@@ -58,7 +40,12 @@ const View = () => {
   const cards = [
     {
       title: 'Adventurers',
+      description: `${children.length} registered for ${clubYearLabel}`,
       href: `/${clubYearLabel}/adventurers`,
+      action: {
+        label: 'Enroll Family',
+        href: `/${clubYearLabel}/families/enroll`,
+      },
       headers: [
         { key: 'name', label: 'Name', sortable: true },
         { key: 'age', label: 'Age', sortable: true },
@@ -73,7 +60,12 @@ const View = () => {
     },
     {
       title: 'Events',
+      description: `${events.length} scheduled for ${clubYearLabel}`,
       href: `/${clubYearLabel}/events`,
+      action: {
+        label: 'Add Event',
+        href: `/${clubYearLabel}/events/new`,
+      },
       headers: [
         { key: 'title', label: 'Title', sortable: true },
         { key: 'eventDate', label: 'Date', sortable: true },
@@ -86,8 +78,29 @@ const View = () => {
       onRowClick: (item) => router.push(`/${clubYearLabel}/events/${item.id}`),
     },
     {
+      title: 'Staff',
+      description: `${staff.length} helping in ${clubYearLabel}`,
+      href: `/${clubYearLabel}/staff`,
+      action: {
+        label: 'Enroll Staff',
+        href: `/${clubYearLabel}/staff/enroll`,
+      },
+      headers: [
+        { key: 'name', label: 'Name', sortable: false },
+        { key: 'role', label: 'Role', sortable: false },
+      ],
+      data: staff,
+      loading: loadingStaff,
+      onRowClick: (item) => router.push(`/${clubYearLabel}/staff/${item.id}`),
+    },
+    {
       title: 'Classes',
+      description: `Classes instructors in ${clubYearLabel}`,
       href: `/${clubYearLabel}/classes`,
+      action: {
+        label: 'Update Instructors',
+        href: `/${clubYearLabel}/classes/new`,
+      },
       headers: [
         { key: 'class', label: 'Class', sortable: false },
         { key: 'instructor', label: 'Instructor', sortable: false },
@@ -96,19 +109,10 @@ const View = () => {
       loading: loadingClasses,
       onRowClick: (item) => router.push(`/${clubYearLabel}/classes/${item.id}`),
     },
-    {
-      title: 'Staff',
-      href: `/${clubYearLabel}/staff`,
-      headers: [
-        { key: 'name', label: 'Name', sortable: false },
-        { key: 'role', label: 'Role', sortable: false },
-      ],
-      data: staff,
-      loading: loadingStaff,
-      onRowClick: (item) => router.push(`/staff/${item.id}`),
-    },
+
     {
       title: 'Awards',
+      description: `${awards.length} offered in ${clubYearLabel}`,
       href: `/${clubYearLabel}/awards`,
       badge: awards?.length ?? 0,
       headers: [
@@ -122,7 +126,7 @@ const View = () => {
     },
   ]
 
-  return <DashboardPage breadcrumbs={breadcrumbs} actions={actions} cards={cards} />
+  return <DashboardPage actions={actions} cards={cards} />
 }
 
 export default View

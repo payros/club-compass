@@ -120,7 +120,7 @@ const View = () => {
     }
   }
 
-  const breadcrumbs = [{ label: clubYearLabel, href: `/${clubYearLabel}/dashboard` }, { label: 'Enroll Staff' }]
+  const breadcrumbs = [{ label: 'Enroll Staff' }]
 
   const isSubmitDisabled = !staffEntries.some(
     (entry) => entry.first_name.trim() && entry.last_name.trim() && entry.staff_role

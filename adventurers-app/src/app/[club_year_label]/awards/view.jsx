@@ -15,7 +15,7 @@ export default function View() {
   const router = useRouter()
   const { awards, loading } = useAwards(clubYearLabel)
 
-  const breadcrumbs = [{ label: clubYearLabel, href: `/${clubYearLabel}/dashboard` }, { label: 'Awards' }]
+  const breadcrumbs = [{ label: 'Awards' }]
 
   return (
     <CollectionPage

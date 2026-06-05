@@ -44,7 +44,7 @@ atlas migrate apply --dir "file://db/migrations" --url "$ATLAS_DB_URL"
 # Optionally load sample data
 if [ "$SAMPLE_DATA" = true ]; then
   echo "Loading sample data..."
-  PGPASSWORD="$POSTGRES_PASSWORD" psql -h localhost -p 5433 -U "$POSTGRES_USER" -d "$POSTGRES_DATABASE" -f db/sample-data.sql
+  PGPASSWORD="$POSTGRES_PASSWORD" psql -h 127.0.0.1 -p 5433 -U "$POSTGRES_USER" -d "$POSTGRES_DATABASE" -f db/sample-data.sql
 fi
 
 # Follow logs (Ctrl+C detaches; containers keep running)

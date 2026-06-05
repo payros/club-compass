@@ -102,11 +102,7 @@ const View = () => {
     }
   }
 
-  const breadcrumbs = [
-    { label: clubYearLabel, href: `/${clubYearLabel}/dashboard` },
-    { label: 'Classes', href: `/${clubYearLabel}/classes` },
-    { label: 'Add Classes' },
-  ]
+  const breadcrumbs = [{ label: 'Classes', href: `/${clubYearLabel}/classes` }, { label: 'Add Classes' }]
 
   const title = isUpdate ? 'Update Classes' : 'Add Classes'
   const description = isUpdate

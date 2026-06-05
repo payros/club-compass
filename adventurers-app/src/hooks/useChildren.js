@@ -9,16 +9,19 @@ function useChildren(clubYearLabel = null, { by, direction } = {}) {
 
   function transform(raw) {
     return raw.map((c) => {
-      const firstName = c.firstName ?? c.first_name
-      const lastName = c.lastName ?? c.last_name
-      const dob = c.dateOfBirth ?? c.date_of_birth
       const base = {
         id: c.id,
-        name: `${firstName} ${lastName}`,
-        age: dob ? fromDateOfBirthToAge(dob) : '—',
+        name: `${c.firstName} ${c.lastName}`,
+        age: c.dateOfBirth ? fromDateOfBirthToAge(c.dateOfBirth) : '—',
       }
       if (clubYearLabel) {
         base.class = fromSnakeCaseToTitleCase(c.class)
+        base.sex = c.sex === 'male' ? 'M' : c.sex === 'female' ? 'F' : '—'
+        base.allergies = c.allergies ?? '—'
+        base.medicalConditions = c.medicalConditions ?? '—'
+        base.parents = c.parents ?? '—'
+        base.attendance = c.attendance != null ? `${c.attendance}%` : '—'
+        base.awardsEarned = c.awardsEarned ?? 0
       } else {
         base.sex = c.sex ?? '—'
         base.allergies = c.allergies ?? '—'

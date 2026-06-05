@@ -12,11 +12,7 @@ export default function View() {
 
   const name = child ? `${child.firstName ?? child.first_name} ${child.lastName ?? child.last_name}` : 'Child'
 
-  const breadcrumbs = [
-    { label: 'Directories', href: '/directories' },
-    { label: 'Children', href: '/children' },
-    { label: name },
-  ]
+  const breadcrumbs = [{ label: 'Children', href: '/children' }, { label: name }]
 
   const fields = child
     ? [

@@ -12,11 +12,7 @@ export default function View() {
 
   const { event, loadingEvent } = useEvent(clubYearLabel, eventId)
 
-  const breadcrumbs = [
-    { label: clubYearLabel, href: `/${clubYearLabel}/dashboard` },
-    { label: 'Events', href: `/${clubYearLabel}/events` },
-    { label: event?.title ?? 'Event' },
-  ]
+  const breadcrumbs = [{ label: 'Events', href: `/${clubYearLabel}/events` }, { label: event?.title ?? 'Event' }]
 
   const fields = event
     ? [

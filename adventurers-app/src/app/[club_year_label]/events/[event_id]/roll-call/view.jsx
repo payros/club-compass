@@ -76,7 +76,6 @@ const View = () => {
   }, [])
 
   const breadcrumbs = [
-    { label: clubYearLabel, href: `/${clubYearLabel}/dashboard` },
     { label: 'Events', href: `/${clubYearLabel}/events` },
     { label: eventData?.title ?? 'Event', href: `/${clubYearLabel}/events/${eventId}` },
     { label: 'Roll Call' },

@@ -1,7 +1,7 @@
-"use client"
-import TableCard from "@/components/TableCard"
-import PageLayout from "@/components/PageLayout"
-import PageTransition from "@/components/PageTransition"
+'use client'
+import TableCard from '@/components/TableCard'
+import PageLayout from '@/components/PageLayout'
+import PageTransition from '@/components/PageTransition'
 
 /**
  * CollectionPage — Single full-width table card
@@ -20,7 +20,7 @@ import PageTransition from "@/components/PageTransition"
  * @param {function} handleSort
  */
 export default function CollectionPage({
-  breadcrumbs,
+  breadcrumbs = [],
   clubName,
   actions,
   title,
