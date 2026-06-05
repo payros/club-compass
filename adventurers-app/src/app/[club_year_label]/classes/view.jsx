@@ -1,21 +1,18 @@
-"use client"
-import { useParams } from "next/navigation"
-import useClasses from "@/hooks/useClasses"
-import CollectionPage from "@/components/pages/CollectionPage"
+'use client'
+import { useParams } from 'next/navigation'
+import useClasses from '@/hooks/useClasses'
+import CollectionPage from '@/components/pages/CollectionPage'
 
 const headers = [
-  { key: "class", label: "Class", sortable: false },
-  { key: "instructor", label: "Instructor", sortable: false },
+  { key: 'class', label: 'Class', sortable: false },
+  { key: 'instructor', label: 'Instructor', sortable: false },
 ]
 
 export default function View() {
-  const clubYearLabel = useParams()["club_year_label"]
+  const clubYearLabel = useParams()['club_year_label']
   const { classes, loading } = useClasses(clubYearLabel)
 
-  const breadcrumbs = [
-    { label: clubYearLabel, href: `/${clubYearLabel}/dashboard` },
-    { label: "Classes" },
-  ]
+  const breadcrumbs = [{ label: 'Classes' }]
 
   return (
     <CollectionPage

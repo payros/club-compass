@@ -13,7 +13,7 @@ export default function View() {
   const { children, loading } = useChildren()
   const router = useRouter()
 
-  const breadcrumbs = [{ label: 'Directories', href: '/directories' }, { label: 'Children' }]
+  const breadcrumbs = [{ label: 'Children' }]
 
   return (
     <CollectionPage

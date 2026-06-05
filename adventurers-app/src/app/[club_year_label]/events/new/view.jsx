@@ -76,11 +76,7 @@ const View = () => {
     }
   }
 
-  const breadcrumbs = [
-    { label: clubYearLabel, href: `/${clubYearLabel}/dashboard` },
-    { label: 'Events', href: `/${clubYearLabel}/events` },
-    { label: 'New Event' },
-  ]
+  const breadcrumbs = [{ label: 'Events', href: `/${clubYearLabel}/events` }, { label: 'New Event' }]
 
   return (
     <FormPage

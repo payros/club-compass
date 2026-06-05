@@ -12,11 +12,7 @@ export default function View() {
 
   const name = child ? `${child.firstName} ${child.lastName}` : 'Adventurer'
 
-  const breadcrumbs = [
-    { label: clubYearLabel, href: `/${clubYearLabel}/dashboard` },
-    { label: 'Adventurers', href: `/${clubYearLabel}/adventurers` },
-    { label: name },
-  ]
+  const breadcrumbs = [{ label: 'Adventurers', href: `/${clubYearLabel}/adventurers` }, { label: name }]
 
   const actions = [
     {

@@ -106,7 +106,7 @@ const View = () => {
     }
   }
 
-  const breadcrumbs = [{ label: clubYearLabel, href: `/${clubYearLabel}/dashboard` }, { label: 'Enroll Family' }]
+  const breadcrumbs = [{ label: 'Enroll Family' }]
 
   return (
     <FormPage

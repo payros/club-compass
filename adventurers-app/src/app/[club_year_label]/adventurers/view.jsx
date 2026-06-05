@@ -29,7 +29,7 @@ export default function View() {
     }))
   }
 
-  const breadcrumbs = [{ label: clubYearLabel, href: `/${clubYearLabel}/dashboard` }, { label: 'Adventurers' }]
+  const breadcrumbs = [{ label: 'Adventurers' }]
 
   return (
     <CollectionPage

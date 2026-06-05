@@ -109,13 +109,25 @@ body {
   color: rgba(255, 255, 255, 0.8) !important;
 }
 
-.breadcrumb-nav a {
+.breadcrumb-nav a,
+.breadcrumb-year-trigger {
   color: rgba(255, 255, 255, 0.8) !important;
   text-decoration: none;
   &:hover {
     color: #fff !important;
     text-decoration: underline;
   }
+}
+
+.breadcrumb-year-trigger {
+  font-size: 2rem;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
 }
 
 .breadcrumb-nav [aria-current='page'] {

@@ -59,13 +59,13 @@ const buttonRecipe = defineRecipe({
   variants: {
     variant: {
       outline: {
-        borderWidth: 0,
-        color: '{colors.accent.solid}',
-        borderColor: '{colors.brand.solid}',
+        borderWidth: 1,
+        color: '{colors.brand.emphasized}',
+        borderColor: '{colors.brand.emphasized}',
         _hover: {
-          bg: '{colors.accent.fg}',
-          borderColor: '{colors.accent.fg}',
-          color: '{colors.brand.emphasized}',
+          bg: '{colors.brand.emphasized}',
+          borderColor: '{colors.brand.emphasized}',
+          color: '{colors.brand.contrast}',
         },
       },
       solid: {

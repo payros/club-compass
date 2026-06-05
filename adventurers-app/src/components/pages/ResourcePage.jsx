@@ -18,7 +18,7 @@ import PageTransition from '@/components/PageTransition'
  * @param {Array} relatedCards - TableCard props arrays
  */
 export default function ResourcePage({
-  breadcrumbs,
+  breadcrumbs = [],
   clubName,
   actions,
   title,

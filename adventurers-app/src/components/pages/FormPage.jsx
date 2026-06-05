@@ -6,7 +6,7 @@ import PageTransition from '@/components/PageTransition'
 const FormPage = ({
   title,
   description,
-  breadcrumbs,
+  breadcrumbs = [],
   globalError,
   handleSubmit,
   submitLabel = 'Submit',

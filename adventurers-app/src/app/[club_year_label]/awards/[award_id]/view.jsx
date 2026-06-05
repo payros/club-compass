@@ -8,11 +8,7 @@ export default function View() {
   const router = useRouter()
   const { award, loading } = useAward(awardId, clubYearLabel)
 
-  const breadcrumbs = [
-    { label: clubYearLabel, href: `/${clubYearLabel}/dashboard` },
-    { label: 'Awards', href: `/${clubYearLabel}/awards` },
-    { label: award?.name ?? 'Award' },
-  ]
+  const breadcrumbs = [{ label: 'Awards', href: `/${clubYearLabel}/awards` }, { label: award?.name ?? 'Award' }]
 
   const fields = award
     ? [
