@@ -107,7 +107,7 @@ const View = () => {
       ],
       data: classes,
       loading: loadingClasses,
-      onRowClick: (item) => router.push(`/${clubYearLabel}/classes/${item.id}`),
+      onRowClick: (item) => router.push(`/${clubYearLabel}/classes/${item.slug}`),
     },
 
     {
