@@ -3,16 +3,15 @@ import clubYearsService from '@/services/clubYearsService'
 
 export const dynamic = 'force-dynamic'
 
-const Home = async () => {
+const DashboardPage = async () => {
   const clubYears = await clubYearsService.list()
+
   if (clubYears.length > 0) {
     const [latestClubYear] = clubYears
     redirect(`/${latestClubYear.label}/dashboard`)
-  } else {
-    redirect('/club-years/new?flow=setup')
   }
 
-  return <h1>Loading...</h1>
+  redirect('/club-years/new?flow=setup')
 }
 
-export default Home
+export default DashboardPage

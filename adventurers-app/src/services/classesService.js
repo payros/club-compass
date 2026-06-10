@@ -32,8 +32,48 @@ async function create(clubYearLabel, classes) {
   return results
 }
 
+async function getByName(clubYearLabel, className) {
+  try {
+    const [cls] = await sql`
+      SELECT cl.*, sf.first_name AS instructor_first_name, sf.last_name AS instructor_last_name
+      FROM adv_db.classes AS cl
+      JOIN adv_db.club_years AS cy ON cl.club_year_id = cy.id
+      JOIN adv_db.staff AS sf ON cl.instructor_id = sf.id
+      WHERE cy.label = ${clubYearLabel}
+        AND cl.class = ${className}::adv_db.adventurer_class`
+
+    if (!cls) return null
+
+    const children = await sql`
+      SELECT ch.*
+      FROM adv_db.children AS ch
+      JOIN adv_db.classes_children AS cc ON cc.child_id = ch.id
+      JOIN adv_db.club_years AS cy ON cc.club_year_id = cy.id
+      WHERE cc.class_id = ${cls.id}
+        AND cy.label = ${clubYearLabel}
+      ORDER BY ch.last_name, ch.first_name`
+
+    const awards = await sql`
+      SELECT DISTINCT a.*
+      FROM adv_db.awards AS a
+      JOIN adv_db.events_awards AS ea ON ea.award_id = a.id
+      JOIN adv_db.events AS e ON ea.event_id = e.id
+      JOIN adv_db.club_years AS cy ON e.club_year_id = cy.id
+      WHERE cy.label = ${clubYearLabel}
+        AND ea.class_id = ${cls.id}
+      ORDER BY a.name`
+
+    return { ...cls, children, awards }
+  } catch (err) {
+    console.error(err)
+  }
+
+  return null
+}
+
 const classesService = {
   listByClubYear,
+  getByName,
   create,
 }
 

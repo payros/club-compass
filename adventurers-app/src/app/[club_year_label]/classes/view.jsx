@@ -1,5 +1,5 @@
 'use client'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import useClasses from '@/hooks/useClasses'
 import CollectionPage from '@/components/pages/CollectionPage'
 
@@ -10,6 +10,7 @@ const headers = [
 
 export default function View() {
   const clubYearLabel = useParams()['club_year_label']
+  const router = useRouter()
   const { classes, loading } = useClasses(clubYearLabel)
 
   const breadcrumbs = [{ label: 'Classes' }]
@@ -24,6 +25,7 @@ export default function View() {
       data={classes}
       loading={loading}
       badge={classes?.length ?? 0}
+      onRowClick={(item) => item.slug && router.push(`/${clubYearLabel}/classes/${item.slug}`)}
     />
   )
 }

@@ -1,0 +1,64 @@
+'use client'
+import { useParams, useRouter } from 'next/navigation'
+import ResourcePage from '@/components/pages/ResourcePage'
+import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
+import useClass from '@/hooks/useClass'
+
+export default function View() {
+  const { club_year_label: clubYearLabel, class_name: className } = useParams()
+  const router = useRouter()
+  const { cls, loading } = useClass(clubYearLabel, className)
+
+  const title = className ? fromSnakeCaseToTitleCase(className) : 'Class'
+  const instructorName = cls ? `${cls.instructorFirstName ?? ''} ${cls.instructorLastName ?? ''}`.trim() || '—' : '—'
+
+  const breadcrumbs = [{ label: 'Classes', href: `/${clubYearLabel}/classes` }, { label: title }]
+
+  const fields = cls
+    ? [
+        { label: 'Class', value: fromSnakeCaseToTitleCase(cls.class) },
+        { label: 'Instructor', value: instructorName },
+        { label: 'Adventurers', value: cls.children?.length ?? 0 },
+        { label: 'Awards', value: cls.awards?.length ?? 0 },
+      ]
+    : []
+
+  const relatedCards = [
+    {
+      title: 'Adventurers',
+      badge: cls?.children?.length ?? 0,
+      headers: [{ key: 'name', label: 'Name', sortable: false }],
+      data: (cls?.children ?? []).map((c) => ({
+        id: c.id,
+        name: `${c.firstName} ${c.lastName}`,
+      })),
+      loading,
+      onRowClick: (item) => router.push(`/${clubYearLabel}/adventurers/${item.id}`),
+    },
+    {
+      title: 'Awards',
+      badge: cls?.awards?.length ?? 0,
+      headers: [
+        { key: 'name', label: 'Award', sortable: false },
+        { key: 'type', label: 'Type', sortable: false },
+      ],
+      data: (cls?.awards ?? []).map((a) => ({
+        id: a.id,
+        name: a.name ?? '—',
+        type: a.type ? fromSnakeCaseToTitleCase(a.type) : '—',
+      })),
+      loading,
+    },
+  ]
+
+  return (
+    <ResourcePage
+      breadcrumbs={breadcrumbs}
+      clubName={`${clubYearLabel} Club`}
+      title={title}
+      loading={loading}
+      fields={fields}
+      relatedCards={relatedCards}
+    />
+  )
+}

@@ -1,7 +1,6 @@
 import sql from 'src/lib/postgres'
 
 async function list() {
-  console.error('[clubYearsService] list() called')
   try {
     const result = await sql`SELECT * FROM adv_db.club_years ORDER BY start_date DESC`
     return result

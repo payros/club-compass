@@ -15,24 +15,12 @@ export default function View() {
   const { staff, loading: loadingStaff } = useStaff()
   const { awards, loading: loadingAwards } = useAwards()
 
-  const breadcrumbs = [{ label: 'Directories' }]
+  const latestClubYearLabel = clubYears?.[0]?.label
 
   const actions = [
     {
-      label: 'Add Club Year',
-      href: `/club-years/new`,
-    },
-    {
-      label: 'Add Child',
-      href: `/children/new`,
-    },
-    {
-      label: 'Add Parent',
-      href: `/parents/new`,
-    },
-    {
-      label: 'Add Staff',
-      href: `/staff/new`,
+      label: `View ${latestClubYearLabel ?? ''} Dashboard`,
+      href: `/dashboard`,
     },
   ]
 
@@ -40,7 +28,10 @@ export default function View() {
     {
       title: 'All Children',
       href: `/children`,
-      badge: children?.length ?? 0,
+      action: {
+        label: 'Add Child',
+        href: `/children/new`,
+      },
       headers: [
         { key: 'name', label: 'Name', sortable: true },
         { key: 'age', label: 'Age', sortable: true },
@@ -52,6 +43,10 @@ export default function View() {
     {
       title: 'All Parents',
       href: `/parents`,
+      action: {
+        label: 'Add Parent',
+        href: `/parents/new`,
+      },
       headers: [
         { key: 'name', label: 'Name', sortable: true },
         { key: 'phone', label: 'Phone', sortable: true },
@@ -63,6 +58,10 @@ export default function View() {
     {
       title: 'All Staff',
       href: `/staff`,
+      action: {
+        label: 'Add Staff',
+        href: `/staff/new`,
+      },
       headers: [
         { key: 'name', label: 'Name', sortable: true },
         { key: 'role', label: 'Role', sortable: true },
@@ -74,6 +73,10 @@ export default function View() {
     {
       title: 'Club Years',
       href: `/club-years`,
+      action: {
+        label: 'New Club Year',
+        href: `/club-years/new?flow=setup`,
+      },
       headers: [
         { key: 'clubName', label: 'Club Name', sortable: true },
         { key: 'label', label: 'Year Label', sortable: true },
@@ -97,5 +100,5 @@ export default function View() {
     },
   ]
 
-  return <DashboardPage breadcrumbs={breadcrumbs} actions={actions} cards={cards} />
+  return <DashboardPage actions={actions} cards={cards} />
 }

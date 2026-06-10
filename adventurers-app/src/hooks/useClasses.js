@@ -8,10 +8,9 @@ function useClasses(clubYearLabel) {
   function transform(raw) {
     return raw.map((c) => ({
       id: c.id,
+      slug: c.class ?? null,
       class: c.class ? fromSnakeCaseToTitleCase(c.class) : '—',
-      instructor:
-        `${c.instructorFirstName ?? c.instructor_first_name ?? ''} ${c.instructorLastName ?? c.instructor_last_name ?? ''}`.trim() ||
-        '—',
+      instructor: `${c.instructorFirstName ?? ''} ${c.instructorLastName ?? ''}`.trim() || '—',
     }))
   }
 

@@ -62,7 +62,9 @@ export default function AppHeader({ breadcrumbs = [] }) {
             <Text fontWeight={800} fontSize={{ base: '6xl' }} color="white" whiteSpace="nowrap" flexShrink={0}>
               {clubName}
             </Text>
-            <Breadcrumbs items={breadcrumbs} />
+            <Box onClick={(e) => e.stopPropagation()}>
+              <Breadcrumbs items={breadcrumbs} />
+            </Box>
           </Box>
         </Box>
 
