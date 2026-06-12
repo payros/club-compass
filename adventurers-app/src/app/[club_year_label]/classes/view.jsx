@@ -4,6 +4,7 @@ import useClasses from '@/hooks/useClasses'
 import CollectionPage from '@/components/pages/CollectionPage'
 
 const headers = [
+  { key: 'imageUrl', label: 'Logo', sortable: false, type: 'image' },
   { key: 'class', label: 'Class', sortable: false },
   { key: 'instructor', label: 'Instructor', sortable: false },
 ]
