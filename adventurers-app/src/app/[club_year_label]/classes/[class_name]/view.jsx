@@ -16,7 +16,6 @@ export default function View() {
 
   const fields = cls
     ? [
-        { label: 'Class', value: fromSnakeCaseToTitleCase(cls.class) },
         { label: 'Instructor', value: instructorName },
         { label: 'Adventurers', value: cls.children?.length ?? 0 },
         { label: 'Awards', value: cls.awards?.length ?? 0 },
@@ -46,6 +45,20 @@ export default function View() {
         id: a.id,
         name: a.name ?? '—',
         type: a.type ? fromSnakeCaseToTitleCase(a.type) : '—',
+      })),
+      loading,
+    },
+    {
+      title: 'Events',
+      badge: cls?.events?.length ?? 0,
+      headers: [
+        { key: 'name', label: 'Event', sortable: false },
+        { key: 'eventDate', label: 'Date', sortable: false },
+      ],
+      data: (cls?.events ?? []).map((e) => ({
+        id: e.id,
+        name: e.name ?? '—',
+        eventDate: e.eventDate ?? '—',
       })),
       loading,
     },

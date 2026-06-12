@@ -13,6 +13,8 @@ function useClasses(clubYearLabel) {
       class: c.class ? fromSnakeCaseToTitleCase(c.class) : '—',
       instructor: `${c.instructorFirstName ?? ''} ${c.instructorLastName ?? ''}`.trim() || '—',
       imageUrl: CLASS_LOGO_MAP[c.class]?.url ?? null,
+      enrolled: Number(c.enrolledCount) ?? 0,
+      awards: Number(c.awardsCount) ?? 0,
     }))
   }
 
