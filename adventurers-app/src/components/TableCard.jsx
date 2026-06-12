@@ -123,7 +123,14 @@ function TableCard({
                   >
                     {headers.map((header) => (
                       <TableCell key={header.key} color="rgba(255,255,255,0.9)" fontSize="sm">
-                        {header.hrefKey && item[header.hrefKey] ? (
+                        {header.type === 'image' && item[header.key] && (
+                          <img
+                            src={item[header.key]}
+                            alt=""
+                            style={{ height: '2rem', width: 'auto', objectFit: 'contain', display: 'block' }}
+                          />
+                        )}
+                        {header.type === 'link' && item[header.hrefKey] && (
                           <Link
                             href={item[header.hrefKey]}
                             onClick={(e) => e.stopPropagation()}
@@ -140,9 +147,8 @@ function TableCard({
                             {item[header.key]}
                             {header.hrefExternal && <FaExternalLinkAlt style={{ fontSize: '0.7em', opacity: 0.8 }} />}
                           </Link>
-                        ) : (
-                          item[header.key]
                         )}
+                        {!header.type && item[header.key]}
                       </TableCell>
                     ))}
                   </MotionRow>

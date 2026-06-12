@@ -102,6 +102,7 @@ const View = () => {
         href: `/${clubYearLabel}/classes/new`,
       },
       headers: [
+        { key: 'imageUrl', label: '', sortable: false, type: 'image' },
         { key: 'class', label: 'Class', sortable: false },
         { key: 'instructor', label: 'Instructor', sortable: false },
       ],

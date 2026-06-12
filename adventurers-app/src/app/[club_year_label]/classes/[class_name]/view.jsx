@@ -54,11 +54,12 @@ export default function View() {
   return (
     <ResourcePage
       breadcrumbs={breadcrumbs}
-      clubName={`${clubYearLabel} Club`}
       title={title}
       loading={loading}
       fields={fields}
       relatedCards={relatedCards}
+      imageUrl={cls?.imageUrl}
+      imagePadding={cls?.imagePadding}
     />
   )
 }
