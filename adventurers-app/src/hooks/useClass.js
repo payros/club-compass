@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { CLASS_LOGO_MAP } from '@/utils/consts'
+import { ADVENTURER_CLASSES } from '@/utils/consts'
 
 function useClass(clubYearLabel, className) {
   const [cls, setCls] = useState(null)
@@ -16,8 +16,8 @@ function useClass(clubYearLabel, className) {
           data
             ? {
                 ...data,
-                imageUrl: CLASS_LOGO_MAP[data.class]?.url ?? null,
-                imagePadding: CLASS_LOGO_MAP[data.class]?.padding ?? 10,
+                imageUrl: ADVENTURER_CLASSES[data.class]?.url ?? null,
+                imagePadding: ADVENTURER_CLASSES[data.class]?.padding ?? 10,
               }
             : null
         )

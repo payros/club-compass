@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
-import { CLASS_LOGO_MAP } from '@/utils/consts'
+import { ADVENTURER_CLASSES } from '@/utils/consts'
 
 function useClasses(clubYearLabel) {
   const [classes, setClasses] = useState([])
@@ -12,7 +12,7 @@ function useClasses(clubYearLabel) {
       slug: c.class ?? null,
       class: c.class ? fromSnakeCaseToTitleCase(c.class) : '—',
       instructor: `${c.instructorFirstName ?? ''} ${c.instructorLastName ?? ''}`.trim() || '—',
-      imageUrl: CLASS_LOGO_MAP[c.class]?.url ?? null,
+      imageUrl: ADVENTURER_CLASSES[c.class]?.url ?? null,
       enrolled: Number(c.enrolledCount) ?? 0,
       awards: Number(c.awardsCount) ?? 0,
     }))
