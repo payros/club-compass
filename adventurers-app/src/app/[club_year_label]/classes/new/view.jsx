@@ -16,7 +16,7 @@ const View = () => {
   const router = useRouter()
   const clubYearLabel = useParams()['club_year_label']
   const [assignments, setAssignments] = useState(
-    Object.fromEntries(ADVENTURER_CLASSES.map((c) => [c, emptyClassState()]))
+    Object.fromEntries(Object.keys(ADVENTURER_CLASSES).map((c) => [c, emptyClassState()]))
   )
   const [loading, setLoading] = useState(false)
   const [globalError, setGlobalError] = useState(null)
@@ -51,7 +51,7 @@ const View = () => {
       .finally(() => setPrefilling(false))
   }, [clubYearLabel])
 
-  const allAssigned = ADVENTURER_CLASSES.every((c) => assignments[c].instructor !== null)
+  const allAssigned = Object.keys(ADVENTURER_CLASSES).every((c) => assignments[c].instructor !== null)
 
   function updateClass(className, updates) {
     setAssignments((prev) => ({
@@ -76,7 +76,7 @@ const View = () => {
     setGlobalError(null)
     setLoading(true)
 
-    const classes = ADVENTURER_CLASSES.map((c) => ({
+    const classes = Object.keys(ADVENTURER_CLASSES).map((c) => ({
       class: c,
       instructor_id: assignments[c].instructor.id,
     }))
@@ -129,13 +129,28 @@ const View = () => {
       maxWidth={600}
     >
       <Stack gap={5} mb="2rem">
-        {ADVENTURER_CLASSES.map((className) => {
+        {Object.keys(ADVENTURER_CLASSES).map((className) => {
           const instructor = assignments[className].instructor
           const prefillValue = instructor ? `${instructor.firstName} ${instructor.lastName}`.trim() : ''
+          const { url } = ADVENTURER_CLASSES[className]
           return (
             <Field.Root key={className}>
-              <Box display="flex" gap={3} width="100%" alignItems="flex-start">
-                <Box flex={0.5}>
+              <Box display="flex" gap={3} width="100%" alignItems="center">
+                <Box
+                  flexShrink={0}
+                  width="80px"
+                  height="80px"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <img
+                    src={url}
+                    alt={`${fromSnakeCaseToTitleCase(className)} logo`}
+                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                  />
+                </Box>
+                <Box flex={1}>
                   <SearchBox
                     type="staff"
                     label={`${fromSnakeCaseToTitleCase(className)} Instructor`}

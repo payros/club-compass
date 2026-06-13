@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { ADVENTURER_CLASSES } from '@/utils/consts'
 
 function useClass(clubYearLabel, className) {
   const [cls, setCls] = useState(null)
@@ -11,7 +12,15 @@ function useClass(clubYearLabel, className) {
     fetch(`/api/club-years/${clubYearLabel}/classes/${className}`)
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
-        setCls(data)
+        setCls(
+          data
+            ? {
+                ...data,
+                imageUrl: ADVENTURER_CLASSES[data.class]?.url ?? null,
+                imagePadding: ADVENTURER_CLASSES[data.class]?.padding ?? 10,
+              }
+            : null
+        )
         setLoading(false)
       })
       .catch(() => {

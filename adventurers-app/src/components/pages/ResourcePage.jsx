@@ -1,5 +1,5 @@
 'use client'
-import { Card, Text, Skeleton } from '@chakra-ui/react'
+import { Card, Grid, GridItem, Text, Skeleton } from '@chakra-ui/react'
 import { FaExternalLinkAlt } from 'react-icons/fa'
 import Link from 'next/link'
 import TableCard from '@/components/TableCard'
@@ -26,68 +26,89 @@ export default function ResourcePage({
   loading,
   fields = [],
   relatedCards = [],
+  imageUrl,
+  imagePadding = 10,
 }) {
   return (
     <PageLayout breadcrumbs={breadcrumbs} actions={actions} clubName={clubName}>
       <PageTransition>
-        {/* Main info card */}
-        <Card.Root className="glass-card" mb={5}>
-          <Card.Header>
-            <Card.Title className="card-title" fontSize="1.3rem">
-              {loading ? <Skeleton height="6" width="200px" style={{ background: 'rgba(255,255,255,0.15)' }} /> : title}
-            </Card.Title>
-            {subtitle && (
-              <Card.Description className="card-description">
-                {loading ? (
-                  <Skeleton height="4" width="120px" mt={1} style={{ background: 'rgba(255,255,255,0.1)' }} />
-                ) : (
-                  subtitle
-                )}
-              </Card.Description>
-            )}
-          </Card.Header>
-          <Card.Body pt={0}>
-            {loading ? (
-              <div className="info-grid">
-                {[0, 1, 2, 3].map((i) => (
-                  <div key={i} className="info-item">
-                    <Skeleton height="3" width="80px" mb={1} style={{ background: 'rgba(255,255,255,0.1)' }} />
-                    <Skeleton height="5" width="140px" style={{ background: 'rgba(255,255,255,0.12)' }} />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="info-grid">
-                {fields.map((field, i) => (
-                  <div key={i} className="info-item">
-                    <label>{field.label}</label>
-                    {field.href ? (
-                      <p>
-                        <Link
-                          href={field.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            textDecoration: 'underline',
-                            color: 'inherit',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '0.3rem',
-                          }}
-                        >
-                          {field.value ?? '—'}
-                          <FaExternalLinkAlt style={{ fontSize: '0.7em', opacity: 0.8 }} />
-                        </Link>
-                      </p>
+        {/* Main info card (+ optional image card) */}
+        <Grid templateColumns={imageUrl ? '1fr 3fr' : '1fr'} gap={imageUrl ? 5 : 0} mb={5} alignItems="stretch">
+          {imageUrl && (
+            <GridItem>
+              <Card.Root className="glass-card" overflow="hidden" h="100%">
+                <img
+                  src={imageUrl}
+                  alt=""
+                  style={{ width: '100%', height: '100%', padding: imagePadding, objectFit: 'cover', display: 'block' }}
+                />
+              </Card.Root>
+            </GridItem>
+          )}
+          <GridItem>
+            <Card.Root className="glass-card" h="100%">
+              <Card.Header>
+                <Card.Title className="card-title" fontSize="1.3rem">
+                  {loading ? (
+                    <Skeleton height="6" width="200px" style={{ background: 'rgba(255,255,255,0.15)' }} />
+                  ) : (
+                    title
+                  )}
+                </Card.Title>
+                {subtitle && (
+                  <Card.Description className="card-description">
+                    {loading ? (
+                      <Skeleton height="4" width="120px" mt={1} style={{ background: 'rgba(255,255,255,0.1)' }} />
                     ) : (
-                      <p>{field.value ?? '—'}</p>
+                      subtitle
                     )}
+                  </Card.Description>
+                )}
+              </Card.Header>
+              <Card.Body pt={0}>
+                {loading ? (
+                  <div className="info-grid">
+                    {[0, 1, 2, 3].map((i) => (
+                      <div key={i} className="info-item">
+                        <Skeleton height="3" width="80px" mb={1} style={{ background: 'rgba(255,255,255,0.1)' }} />
+                        <Skeleton height="5" width="140px" style={{ background: 'rgba(255,255,255,0.12)' }} />
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            )}
-          </Card.Body>
-        </Card.Root>
+                ) : (
+                  <div className="info-grid">
+                    {fields.map((field, i) => (
+                      <div key={i} className="info-item">
+                        <label>{field.label}</label>
+                        {field.href ? (
+                          <p>
+                            <Link
+                              href={field.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                textDecoration: 'underline',
+                                color: 'inherit',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.3rem',
+                              }}
+                            >
+                              {field.value ?? '—'}
+                              <FaExternalLinkAlt style={{ fontSize: '0.7em', opacity: 0.8 }} />
+                            </Link>
+                          </p>
+                        ) : (
+                          <p>{field.value ?? '—'}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </Card.Body>
+            </Card.Root>
+          </GridItem>
+        </Grid>
 
         {/* Related table cards */}
         {relatedCards.length > 0 && (

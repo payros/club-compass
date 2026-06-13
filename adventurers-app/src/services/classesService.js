@@ -2,11 +2,20 @@ import sql from '@/lib/postgres'
 
 async function listByClubYear(clubYearLabel) {
   try {
-    const result = await sql`SELECT cl.*, sf.first_name AS instructor_first_name, sf.last_name AS instructor_last_name
-                            FROM adv_db.classes as cl
-                            JOIN adv_db.club_years as cy ON cl.club_year_id = cy.id
-                            JOIN adv_db.staff as sf ON cl.instructor_id = sf.id
-                            WHERE cy.label = ${clubYearLabel}`
+    const result = await sql`
+      SELECT cl.*,
+             sf.first_name AS instructor_first_name,
+             sf.last_name AS instructor_last_name,
+             COUNT(DISTINCT cc.child_id) AS enrolled_count,
+             COUNT(DISTINCT ea.award_id) AS awards_count
+      FROM adv_db.classes AS cl
+      JOIN adv_db.club_years AS cy ON cl.club_year_id = cy.id
+      JOIN adv_db.staff AS sf ON cl.instructor_id = sf.id
+      LEFT JOIN adv_db.classes_children AS cc ON cc.class_id = cl.id AND cc.club_year_id = cy.id
+      LEFT JOIN adv_db.events_awards AS ea ON ea.class_id = cl.id
+      LEFT JOIN adv_db.events AS e ON ea.event_id = e.id AND e.club_year_id = cy.id
+      WHERE cy.label = ${clubYearLabel}
+      GROUP BY cl.id, sf.first_name, sf.last_name`
 
     return result
   } catch (err) {
@@ -63,7 +72,16 @@ async function getByName(clubYearLabel, className) {
         AND ea.class_id = ${cls.id}
       ORDER BY a.name`
 
-    return { ...cls, children, awards }
+    const events = await sql`
+      SELECT DISTINCT e.id, e.title AS name, e.event_date
+      FROM adv_db.events AS e
+      JOIN adv_db.events_awards AS ea ON ea.event_id = e.id
+      JOIN adv_db.club_years AS cy ON e.club_year_id = cy.id
+      WHERE cy.label = ${clubYearLabel}
+        AND ea.class_id = ${cls.id}
+      ORDER BY e.event_date`
+
+    return { ...cls, children, awards, events }
   } catch (err) {
     console.error(err)
   }
