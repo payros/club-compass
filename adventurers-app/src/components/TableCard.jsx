@@ -21,7 +21,14 @@ function TableCard({
   maxH = '320px',
   width = 'small',
 }) {
-  const widthStyle = width === 'full' ? { width: '100%' } : width === 'large' ? { gridColumn: 'span 3' } : width === 'medium' ? { gridColumn: 'span 2' } : undefined
+  const widthStyle =
+    width === 'full'
+      ? { width: '100%' }
+      : width === 'large'
+        ? { gridColumn: 'span 3' }
+        : width === 'medium'
+          ? { gridColumn: 'span 2' }
+          : undefined
   const [titleHovered, setTitleHovered] = useState(false)
   return (
     <Card.Root className="glass-card" style={widthStyle}>
