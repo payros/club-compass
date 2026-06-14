@@ -65,6 +65,7 @@ export default function View() {
       width: 'medium',
       data: (child?.awards ?? []).map((a) => ({
         id: a.id,
+        patchImageUrl: a.patchImageUrl ?? null,
         name: a.name ?? '—',
         type: a.type ? fromSnakeCaseToTitleCase(a.type) : '—',
         awardedOn: a.awardedOn ? fromDateToString(a.awardedOn) : '—',
