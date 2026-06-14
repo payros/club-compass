@@ -12,7 +12,6 @@ export default function View() {
 
   const fields = award
     ? [
-        { label: 'Name', value: award.name ?? '—' },
         { label: 'Type', value: award.type ?? '—' },
         { label: 'Class', value: award.level ?? '—' },
         { label: 'Link', value: award.linkLabel ?? '—', href: award.link || undefined },
@@ -22,7 +21,6 @@ export default function View() {
   const relatedCards = [
     {
       title: 'Awarded Children',
-      badge: award?.childrenAwarded?.length ?? 0,
       headers: [
         { key: 'name', label: 'Name', sortable: false },
         { key: 'class', label: 'Class', sortable: false },
@@ -33,7 +31,7 @@ export default function View() {
       onRowClick: (item) => router.push(`/${clubYearLabel}/adventurers/${item.id}`),
     },
   ]
-
+  console.log('award?.patchImageUrl', award?.patchImageUrl)
   return (
     <ResourcePage
       breadcrumbs={breadcrumbs}
@@ -42,6 +40,7 @@ export default function View() {
       loading={loading}
       fields={fields}
       relatedCards={relatedCards}
+      imageUrl={award?.patchImageUrl}
     />
   )
 }

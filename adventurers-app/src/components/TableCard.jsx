@@ -19,11 +19,12 @@ function TableCard({
   href,
   action,
   maxH = '320px',
-  fullWidth = false,
+  width = 'small',
 }) {
+  const widthStyle = width === 'full' ? { width: '100%' } : width === 'large' ? { gridColumn: 'span 3' } : width === 'medium' ? { gridColumn: 'span 2' } : undefined
   const [titleHovered, setTitleHovered] = useState(false)
   return (
-    <Card.Root className="glass-card" style={{ width: fullWidth ? '100%' : undefined }}>
+    <Card.Root className="glass-card" style={widthStyle}>
       <Card.Header pb={2}>
         <div
           style={{
@@ -76,7 +77,10 @@ function TableCard({
                   <Table.ColumnHeader
                     key={header.key}
                     onClick={() => (header.sortable && handleSort ? handleSort(header.key) : null)}
-                    style={{ cursor: header.sortable ? 'pointer' : 'default' }}
+                    style={{
+                      cursor: header.sortable ? 'pointer' : 'default',
+                      minWidth: header.type === 'image' ? '3rem' : undefined,
+                    }}
                   >
                     {header.sortable ? (
                       <Button size="sm" variant="plain">
@@ -127,7 +131,13 @@ function TableCard({
                           <img
                             src={item[header.key]}
                             alt=""
-                            style={{ height: '2rem', width: 'auto', objectFit: 'contain', display: 'block' }}
+                            style={{
+                              height: '2rem',
+                              width: 'auto',
+                              objectFit: 'contain',
+                              display: 'block',
+                              margin: '0 auto',
+                            }}
                           />
                         )}
                         {header.type === 'link' && item[header.hrefKey] && (

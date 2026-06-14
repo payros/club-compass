@@ -56,11 +56,13 @@ export default function View() {
       title: 'Awards',
       badge: child?.awards?.length ?? 0,
       headers: [
+        { key: 'patchImageUrl', label: '', type: 'image', sortable: false },
         { key: 'name', label: 'Award', sortable: false },
         { key: 'type', label: 'Type', sortable: false },
         { key: 'eventTitle', label: 'Earned On', sortable: false, hrefKey: 'eventHref' },
         { key: 'awardedOn', label: 'Awarded On', sortable: false },
       ],
+      width: 'medium',
       data: (child?.awards ?? []).map((a) => ({
         id: a.id,
         name: a.name ?? '—',

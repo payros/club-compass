@@ -5,7 +5,7 @@ async function list(clubYearLabel = null, search = null) {
     if (clubYearLabel) {
       const result = search
         ? await sql`
-            SELECT DISTINCT a.id, a.name, a.level::text AS level, a.type::text AS type, a.link
+            SELECT DISTINCT a.id, a.name, a.level::text AS level, a.type::text AS type, a.link, a.patch_image_url
             FROM adv_db.awards AS a
             JOIN adv_db.events_awards AS ea ON ea.award_id = a.id
             JOIN adv_db.events AS ev ON ea.event_id = ev.id
@@ -15,7 +15,7 @@ async function list(clubYearLabel = null, search = null) {
             ORDER BY level ASC, a.name ASC
             LIMIT 10`
         : await sql`
-            SELECT DISTINCT a.id, a.name, a.level::text AS level, a.type::text AS type, a.link
+            SELECT DISTINCT a.id, a.name, a.level::text AS level, a.type::text AS type, a.link, a.patch_image_url
             FROM adv_db.awards AS a
             JOIN adv_db.events_awards AS ea ON ea.award_id = a.id
             JOIN adv_db.events AS ev ON ea.event_id = ev.id
@@ -26,13 +26,13 @@ async function list(clubYearLabel = null, search = null) {
     }
     const result = search
       ? await sql`
-          SELECT id, name, level::text AS level, type::text AS type, link
+          SELECT id, name, level::text AS level, type::text AS type, link, patch_image_url
           FROM adv_db.awards
           WHERE name ILIKE ${'%' + search + '%'}
           ORDER BY level ASC, name ASC
           LIMIT 10`
       : await sql`
-          SELECT id, name, level::text AS level, type::text AS type, link
+          SELECT id, name, level::text AS level, type::text AS type, link, patch_image_url
           FROM adv_db.awards
           ORDER BY level ASC, name ASC`
     return result
@@ -48,7 +48,7 @@ async function getById(id, clubYearLabel = null) {
     if (clubYearLabel) {
       result = await sql`
         SELECT
-          a.id, a.name, a.level::text AS level, a.type::text AS type, a.link,
+          a.id, a.name, a.level::text AS level, a.type::text AS type, a.link, a.patch_image_url,
           coalesce(json_agg(DISTINCT jsonb_build_object(
             'id', c.id,
             'firstName', c.first_name,
@@ -69,7 +69,7 @@ async function getById(id, clubYearLabel = null) {
     } else {
       result = await sql`
         SELECT
-          a.id, a.name, a.level::text AS level, a.type::text AS type, a.link,
+          a.id, a.name, a.level::text AS level, a.type::text AS type, a.link, a.patch_image_url,
           coalesce(json_agg(DISTINCT jsonb_build_object(
             'id', c.id,
             'firstName', c.first_name,

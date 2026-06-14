@@ -29,6 +29,7 @@ export default function View() {
       ],
       data: award?.childrenAwarded ?? [],
       loading,
+      width: 'large',
       onRowClick: (item) => router.push(`/children/${item.id}`),
     },
   ]
@@ -40,6 +41,7 @@ export default function View() {
       loading={loading}
       fields={fields}
       relatedCards={relatedCards}
+      imageUrl={award?.patchImageUrl}
     />
   )
 }

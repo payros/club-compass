@@ -127,6 +127,7 @@ export default function ResourcePage({
                 sortDirection={card.sortDirection}
                 handleSort={card.handleSort}
                 maxH={card.maxH ?? '260px'}
+                width={card.width ?? 'small'}
               />
             ))}
           </div>
