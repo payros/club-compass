@@ -16,6 +16,7 @@ function useAwards(clubYearLabel = null) {
         class: a.level ? fromSnakeCaseToTitleCase(a.level) : '—',
         link: a.link || null,
         linkLabel: a.link ? `${a.name ?? ''} ${type ?? ''} requirements`.trim() : '—',
+        patchImageUrl: a.patchImageUrl || null,
       }
     })
   }

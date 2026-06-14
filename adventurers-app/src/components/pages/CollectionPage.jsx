@@ -48,7 +48,7 @@ export default function CollectionPage({
           sortBy={sortBy}
           sortDirection={sortDirection}
           handleSort={handleSort}
-          fullWidth
+          width="full"
           maxH="calc(100vh - 200px)"
         />
       </PageTransition>

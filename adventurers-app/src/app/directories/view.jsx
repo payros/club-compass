@@ -90,10 +90,12 @@ export default function View() {
       href: `/awards`,
       badge: awards?.length ?? 0,
       headers: [
+        { key: 'patchImageUrl', label: '', sortable: false, type: 'image' },
         { key: 'name', label: 'Name', sortable: true },
         { key: 'level', label: 'Level', sortable: true },
         { key: 'class', label: 'Class', sortable: true },
       ],
+      width: 'medium',
       data: awards,
       loading: loadingAwards,
       onRowClick: (item) => router.push(`/awards/${item.id}`),

@@ -47,14 +47,23 @@ function SuggestionRow({ type, item, clubYearLabel }) {
   }
 
   return (
-    <>
-      <Text fontWeight="medium">{name}</Text>
-      {subtitle && (
-        <Text fontSize="xs" fontStyle="italic" color="fg.muted">
-          {subtitle}
-        </Text>
+    <Box display="flex" alignItems="center" gap={2}>
+      {type === 'award' && item.patchImageUrl && (
+        <img
+          src={item.patchImageUrl}
+          alt=""
+          style={{ height: '2rem', width: 'auto', objectFit: 'contain', flexShrink: 0 }}
+        />
       )}
-    </>
+      <Box>
+        <Text fontWeight="medium">{name}</Text>
+        {subtitle && (
+          <Text fontSize="xs" fontStyle="italic" color="fg.muted">
+            {subtitle}
+          </Text>
+        )}
+      </Box>
+    </Box>
   )
 }
 

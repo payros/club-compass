@@ -29,7 +29,8 @@ function useAward(awardId, clubYearLabel = null) {
             type: type ?? '—',
             link: data.link || null,
             linkLabel: data.link ? `${data.name ?? ''} ${type ?? ''} requirements`.trim() : '—',
-            childrenAwarded: (data.children_awarded ?? []).map((c) => ({
+            patchImageUrl: data.patchImageUrl || null,
+            childrenAwarded: (data.childrenAwarded ?? []).map((c) => ({
               id: c.id,
               name: `${c.firstName} ${c.lastName}`,
               class: c.class ? fromSnakeCaseToTitleCase(c.class) : '—',

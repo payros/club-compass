@@ -4,6 +4,7 @@ import useAwards from '@/hooks/useAwards'
 import CollectionPage from '@/components/pages/CollectionPage'
 
 const headers = [
+  { key: 'patchImageUrl', label: 'Logo', type: 'image', sortable: false },
   { key: 'name', label: 'Name', sortable: false },
   { key: 'type', label: 'Type', sortable: false },
   { key: 'class', label: 'Class', sortable: false },
@@ -24,7 +25,6 @@ export default function View() {
       headers={headers}
       data={awards}
       loading={loading}
-      badge={awards?.length ?? 0}
       onRowClick={(item) => router.push(`/awards/${item.id}`)}
     />
   )
