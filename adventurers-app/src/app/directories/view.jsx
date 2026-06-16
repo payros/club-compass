@@ -95,6 +95,10 @@ export default function View() {
         { key: 'level', label: 'Level', sortable: true },
         { key: 'class', label: 'Class', sortable: true },
       ],
+      action: {
+        label: 'New Award',
+        href: `/awards/new`,
+      },
       width: 'medium',
       data: awards,
       loading: loadingAwards,

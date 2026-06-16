@@ -39,6 +39,12 @@ ALLOWED_EMAILS=you@example.com,colleague@example.com
 
 # Club display name
 NEXT_PUBLIC_CLUB_NAME=Your Club Name
+
+# Cloudflare R2 image storage (optional — omit to use local disk in dev)
+# R2_ENDPOINT is the S3-compatible API URL from your R2 bucket settings, including the bucket name
+R2_ENDPOINT=https://<account_id>.r2.cloudflarestorage.com/<bucket-name>
+R2_ACCESS_KEY_ID=your_r2_access_key_id
+R2_SECRET_ACCESS_KEY=your_r2_secret_access_key
 ```
 
 ### 2. Install Atlas CLI
@@ -114,6 +120,32 @@ Events have two modes controlled by an **Award Ceremony** flag:
 - Sign-in is handled via **Google OAuth** (powered by [Better Auth](https://www.better-auth.com/)).
 - All routes are protected — unauthenticated users are redirected to `/login`.
 - Access is restricted to emails listed in the `ALLOWED_EMAILS` environment variable.
+
+### File Storage
+
+Files such as award patch images and other documents can be stored either on local disk (dev default) or in **Cloudflare R2** (recommended for production).
+
+**How it works:**
+- The database stores a storage key (e.g. `awards/42/patch.webp`), never a public URL.
+- When the API returns an award, the server generates a short-lived **presigned URL** (1 hour) that the browser uses to load the image directly from R2. The bucket stays private.
+- In development with no R2 credentials set, images are written to `public/img/patches/` and served as static files.
+
+**Setting up Cloudflare R2:**
+
+1. Log in to the [Cloudflare dashboard](https://dash.cloudflare.com/) and go to **R2 Object Storage**.
+2. Click **Create bucket** and give it a name (e.g. `adventurers-app`). Leave it **private** (do not enable public access).
+3. Inside the bucket, go to **Settings → S3 API** and copy the **S3 API endpoint** (format: `https://<account_id>.r2.cloudflarestorage.com`).
+4. Go to **R2 → Manage R2 API Tokens** (top-right of the R2 overview page) and create a new API token with **Object Read & Write** permissions scoped to your bucket.
+5. Copy the **Access Key ID** and **Secret Access Key** shown — they are only displayed once.
+6. Add the following to your `.env` (append the bucket name to the endpoint):
+
+```env
+R2_ENDPOINT=https://<account_id>.r2.cloudflarestorage.com/<bucket-name>
+R2_ACCESS_KEY_ID=your_access_key_id
+R2_SECRET_ACCESS_KEY=your_secret_access_key
+```
+
+When these variables are present, R2 is used automatically. Remove or leave them unset to fall back to local disk.
 
 ---
 

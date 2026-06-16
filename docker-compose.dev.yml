@@ -20,6 +20,11 @@ services:
       ALLOWED_EMAILS: ${ALLOWED_EMAILS}
       # Club display name
       NEXT_PUBLIC_CLUB_NAME: ${NEXT_PUBLIC_CLUB_NAME}
+      # Storage backend: 'local' (default, uses public/img/patches/) or 's3' (Cloudflare R2)
+      # Cloudflare R2 — set R2_ENDPOINT to use R2 storage; omit to use local disk
+      R2_ENDPOINT: ${R2_ENDPOINT:-}
+      R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID:-}
+      R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY:-}
     volumes:
       - ./adventurers-app/src:/app/src
       - ./adventurers-app/public:/app/public
