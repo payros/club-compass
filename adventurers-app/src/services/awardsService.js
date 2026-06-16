@@ -90,5 +90,23 @@ async function getById(id, clubYearLabel = null) {
   return null
 }
 
-const awardsService = { list, getById }
+async function create({ name, level, type, link }) {
+  const levelValue = level || null
+  const result = await sql`
+    INSERT INTO adv_db.awards (name, level, type, link)
+    VALUES (${name}, ${levelValue}::adv_db.adventurer_class, ${type}::adv_db.award_type, ${link ?? null})
+    RETURNING id, name, level::text AS level, type::text AS type, link`
+  return result[0]
+}
+
+async function updatePatchImageUrl(id, url) {
+  const result = await sql`
+    UPDATE adv_db.awards
+    SET patch_image_url = ${url}
+    WHERE id = ${id}
+    RETURNING id, patch_image_url`
+  return result[0]
+}
+
+const awardsService = { list, getById, create, updatePatchImageUrl }
 export default awardsService
