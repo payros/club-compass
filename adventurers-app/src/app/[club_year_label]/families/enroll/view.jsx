@@ -122,14 +122,14 @@ const View = () => {
       maxWidth={600}
     >
       {/* Typeahead: enroll existing family */}
-      {/* <Box mb={4}>
+      <Box mb={4}>
         <SearchBox
           type="family"
           label="Find existing family"
           placeholder="Search by parent or child first or last name"
           handleSelect={handleSelectFamilyMember}
         />
-      </Box> */}
+      </Box>
 
       {parentEntries.map((entry, index) => (
         <Card.Root

@@ -1,15 +1,6 @@
 import familiesService from '@/services/familiesService'
 import { NextResponse } from 'next/server'
 
-export async function GET(request, { params }) {
-  const pathParams = await params
-  const clubYearLabel = pathParams['club_year_label']
-  const { searchParams } = new URL(request.url)
-  const search = searchParams.get('search') || undefined
-  const families = await familiesService.list(search, clubYearLabel)
-  return NextResponse.json(families)
-}
-
 export async function POST(request, { params }) {
   const pathParams = await params
   const clubYearLabel = pathParams['club_year_label']

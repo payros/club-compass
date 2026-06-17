@@ -1,34 +1,40 @@
 import sql from 'src/lib/postgres'
 
-async function list(search, clubYearLabel) {
+async function list(search) {
   try {
-    if (clubYearLabel) {
-      const result = await sql`
-          SELECT sf.*, cys.staff_role
-          FROM adv_db.staff sf
-          JOIN adv_db.club_years_staff cys ON cys.staff_id = sf.id
-          JOIN adv_db.club_years cy ON cys.club_year_id = cy.id
-          WHERE cy.label = ${clubYearLabel}
-          ${search ? sql`AND (sf.first_name ILIKE ${'%' + search + '%'} OR sf.last_name ILIKE ${'%' + search + '%'})` : sql``}
-          ORDER BY sf.last_name ASC
-          ${search ? sql`LIMIT 10` : sql``}`
-      return result
-    }
     const result = await sql`
-        SELECT sf.*,
-          (SELECT cys.staff_role
-           FROM adv_db.club_years_staff cys
-           WHERE cys.staff_id = sf.id
-           ORDER BY cys.id DESC LIMIT 1) AS last_role
-        FROM adv_db.staff sf
-        ${search ? sql`WHERE sf.first_name ILIKE ${'%' + search + '%'} OR sf.last_name ILIKE ${'%' + search + '%'}` : sql``}
-        ORDER BY sf.last_name ASC
-        ${search ? sql`LIMIT 10` : sql``}`
+        SELECT c.id, c.first_name, c.last_name, 'child' as "type" FROM adv_db.children as c
+        ${search ? sql`WHERE c.first_name ILIKE ${'%' + search + '%'} OR c.last_name ILIKE ${'%' + search + '%'}` : sql``}
+        UNION
+        SELECT p.id, p.first_name, p.last_name, 'parent' as "type" FROM adv_db.parents as p
+        ${search ? sql`WHERE p.first_name ILIKE ${'%' + search + '%'} OR p.last_name ILIKE ${'%' + search + '%'}` : sql``}
+        ORDER BY last_name ASC, type DESC
+        LIMIT 10`
     return result
   } catch (err) {
     console.error(err)
   }
   return []
+}
+
+async function getByMember(id, type) {
+  // For parent:
+  // 1: Find all children from parents_children table
+  // 2: Find all parents from parents_children table for those children (other caregivers)
+  // For child:
+  // 1: Find all parents from parents_children table
+  // 2: Find all children from parents_children table for those parents (sibilings)
+  try {
+    const result = await sql`
+      SELECT * FROM (
+      ) AS combined
+      WHERE "type" = ${type}
+    `
+    return result[0]
+  } catch (err) {
+    console.error(err)
+  }
+  return { parents: [], children: [] }
 }
 
 async function enroll(clubYearLabel, familyMembers) {
@@ -126,5 +132,5 @@ async function enroll(clubYearLabel, familyMembers) {
   return results
 }
 
-const staffService = { list, enroll }
-export default staffService
+const familiesService = { list, enroll, getByMember }
+export default familiesService
