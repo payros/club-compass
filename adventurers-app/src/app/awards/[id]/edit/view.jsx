@@ -1,13 +1,32 @@
 'use client'
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { useParams, useRouter } from 'next/navigation'
 import FormPage from '@/components/pages/FormPage'
 import AwardsForm from '@/components/forms/AwardsForm'
 
-const View = () => {
+export default function View() {
+  const { id } = useParams()
   const router = useRouter()
+  const [award, setAward] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [contentLoading, setContentLoading] = useState(true)
   const [globalError, setGlobalError] = useState(null)
+
+  useEffect(() => {
+    fetch(`/api/awards/${id}`)
+      .then((res) => {
+        if (!res.ok) throw new Error('Not found')
+        return res.json()
+      })
+      .then((data) => {
+        setAward(data)
+        setContentLoading(false)
+      })
+      .catch(() => {
+        setGlobalError('Could not load award data. Please try again.')
+        setContentLoading(false)
+      })
+  }, [id])
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -34,68 +53,69 @@ const View = () => {
       link: formData.get('link') || null,
     }
 
-    let newId
     try {
-      const response = await fetch('/api/awards', {
-        method: 'POST',
+      const response = await fetch(`/api/awards/${id}`, {
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       })
       const result = await response.json()
       if (!response.ok) {
-        setGlobalError(result?.error ?? 'The award could not be created. Please try again.')
+        setGlobalError(result?.error ?? 'The award could not be updated. Please try again.')
         setLoading(false)
         return
       }
-      newId = result.id
     } catch (err) {
       console.error(err)
-      setGlobalError('The award could not be created. Please try again.')
+      setGlobalError('The award could not be updated. Please try again.')
       setLoading(false)
       return
     }
 
-    if (patchFile?.size > 0 && newId) {
+    if (patchFile?.size > 0) {
       try {
         const uploadData = new FormData()
         uploadData.append('file', patchFile)
-        const uploadRes = await fetch(`/api/awards/${newId}/photo`, {
+        const uploadRes = await fetch(`/api/awards/${id}/photo`, {
           method: 'POST',
           body: uploadData,
         })
         if (!uploadRes.ok) {
           const uploadResult = await uploadRes.json()
-          // Award was created — redirect anyway, but surface the upload error
-          setGlobalError(uploadResult?.error ?? 'Award created, but patch image upload failed.')
+          // Award was updated — redirect anyway, but surface the upload error
+          setGlobalError(uploadResult?.error ?? 'Award updated, but patch image upload failed.')
           setLoading(false)
-          router.push(`/awards/${newId}`)
+          router.push(`/awards/${id}`)
           return
         }
       } catch (err) {
         console.error(err)
-        // Non-fatal: award exists, image just didn't upload
+        // Non-fatal: award updated, image just didn't upload
       }
     }
 
-    router.push(`/awards/${newId}`)
+    router.push(`/awards/${id}`)
   }
 
-  const breadcrumbs = [{ label: 'Awards', href: '/awards' }, { label: 'New Award' }]
+  const breadcrumbs = [
+    { label: 'Awards', href: '/awards' },
+    { label: award?.name ?? 'Award', href: `/awards/${id}` },
+    { label: 'Edit' },
+  ]
 
   return (
     <FormPage
-      title="New Award"
-      description="Fill in the information below to add a new award."
+      title="Edit Award"
+      description="Update the award details below."
       breadcrumbs={breadcrumbs}
       globalError={globalError}
       handleSubmit={handleSubmit}
-      submitLabel="Create Award"
-      submitLoadingLabel="Creating Award…"
+      submitLabel="Save Changes"
+      submitLoadingLabel="Saving…"
       loading={loading}
+      contentLoading={contentLoading}
     >
-      <AwardsForm />
+      <AwardsForm data={award ?? {}} />
     </FormPage>
   )
 }
-
-export default View

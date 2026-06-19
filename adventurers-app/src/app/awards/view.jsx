@@ -17,6 +17,13 @@ export default function View() {
 
   const breadcrumbs = [{ label: 'Awards' }]
 
+  const actions = [
+    {
+      label: 'New Award',
+      href: `/awards/new`,
+    },
+  ]
+
   return (
     <CollectionPage
       breadcrumbs={breadcrumbs}
@@ -26,6 +33,7 @@ export default function View() {
       data={awards}
       loading={loading}
       onRowClick={(item) => router.push(`/awards/${item.id}`)}
+      actions={actions}
     />
   )
 }

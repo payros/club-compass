@@ -5,7 +5,7 @@ import { getStorageAdapter, resolveImageUrl } from '@/lib/storage/index.js'
 
 export const dynamic = 'force-dynamic'
 
-const MAX_BYTES = 1024 * 1024 // 1 MB input limit
+const MAX_BYTES = parseInt(process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE ?? '1048576', 10)
 const ALLOWED_MIME = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
 
 export async function POST(request, { params }) {
