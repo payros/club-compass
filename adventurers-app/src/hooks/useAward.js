@@ -25,7 +25,7 @@ function useAward(awardId, clubYearLabel = null) {
           const type = data.type ? fromSnakeCaseToTitleCase(data.type) : null
           setAward({
             ...data,
-            level: data.level ? fromSnakeCaseToTitleCase(data.level) : '—',
+            level: data.level ? fromSnakeCaseToTitleCase(data.level) : 'No level (multi-level award)',
             type: type ?? '—',
             link: data.link || null,
             linkLabel: data.link ? `${data.name ?? ''} ${type ?? ''} requirements`.trim() : '—',
@@ -33,7 +33,7 @@ function useAward(awardId, clubYearLabel = null) {
             childrenAwarded: (data.childrenAwarded ?? []).map((c) => ({
               id: c.id,
               name: `${c.firstName} ${c.lastName}`,
-              class: c.class ? fromSnakeCaseToTitleCase(c.class) : '—',
+              class: c.class ? fromSnakeCaseToTitleCase(c.class) : '',
               earnedOn: c.earnedOn ? fromDateToString(c.earnedOn) : '—',
               eventId: c.eventId,
             })),

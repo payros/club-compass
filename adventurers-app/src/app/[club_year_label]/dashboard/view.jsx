@@ -120,7 +120,6 @@ const View = () => {
         { key: 'patchImageUrl', label: '', sortable: false, type: 'image' },
         { key: 'name', label: 'Name', sortable: false },
         { key: 'level', label: 'Level', sortable: false },
-        { key: 'class', label: 'Class', sortable: false },
       ],
       data: awards,
       width: 'medium',

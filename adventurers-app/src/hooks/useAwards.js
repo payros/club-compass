@@ -12,7 +12,7 @@ function useAwards(clubYearLabel = null) {
         id: a.id,
         name: a.name ?? '—',
         type: type ?? '—',
-        level: a.level ? fromSnakeCaseToTitleCase(a.level) : '—',
+        level: a.level ? fromSnakeCaseToTitleCase(a.level) : 'No level (multi-level award)',
         class: a.level ? fromSnakeCaseToTitleCase(a.level) : '—',
         link: a.link || null,
         linkLabel: a.link ? `${a.name ?? ''} ${type ?? ''} requirements`.trim() : '—',

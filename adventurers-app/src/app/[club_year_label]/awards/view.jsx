@@ -7,7 +7,7 @@ const headers = [
   { key: 'patchImageUrl', label: '', type: 'image', sortable: false },
   { key: 'name', label: 'Name', sortable: false },
   { key: 'type', label: 'Type', sortable: false },
-  { key: 'class', label: 'Class', sortable: false },
+  { key: 'level', label: 'Level', sortable: false },
   { key: 'linkLabel', label: 'Link', hrefKey: 'link', hrefExternal: true, sortable: false },
 ]
 
@@ -28,7 +28,7 @@ export default function View() {
       data={awards}
       loading={loading}
       badge={awards?.length ?? 0}
-      onRowClick={(item) => router.push(`/${clubYearLabel}/awards/${item.id}`)}
+      onRowClick={(item) => router.push(`/awards/${item.id}`)}
     />
   )
 }
