@@ -48,6 +48,7 @@ export default function View() {
       fields={fields}
       relatedCards={relatedCards}
       imageUrl={award?.patchImageUrl}
+      actions={actions}
     />
   )
 }

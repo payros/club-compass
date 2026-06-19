@@ -19,9 +19,8 @@ export default function View() {
 
   const fields = award
     ? [
-        { label: 'Name', value: award.name ?? '—' },
         { label: 'Type', value: award.type ?? '—' },
-        { label: 'Class', value: award.level ?? '—' },
+        { label: 'Level', value: award.level ?? 'No level (multi-level award)' },
         { label: 'Link', value: award.linkLabel ?? '—', href: award.link || undefined },
       ]
     : []
