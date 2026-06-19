@@ -1,5 +1,5 @@
 'use client'
-import { Button, Field, Input, Switch, NativeSelect, IconButton } from '@chakra-ui/react'
+import { Button, Field, Input, Switch, IconButton, Portal, Select, createListCollection } from '@chakra-ui/react'
 import { useParams, useRouter } from 'next/navigation'
 import { useState, useMemo } from 'react'
 import { FaRegTrashAlt } from 'react-icons/fa'
@@ -13,6 +13,17 @@ const View = () => {
   const [eventAwards, setEventAwards] = useState([])
   const [awardList, setAwardList] = useState([])
   const [classList, setClassList] = useState([])
+
+  const classCollection = useMemo(
+    () =>
+      createListCollection({
+        items: [
+          { label: 'All Classes', value: 'all' },
+          ...classList.map((c) => ({ label: fromSnakeCaseToTitleCase(c.class), value: String(c.id) })),
+        ],
+      }),
+    [classList]
+  )
   const [loading, setLoading] = useState(false)
   const [globalError, setGlobalError] = useState(null)
 
@@ -48,7 +59,19 @@ const View = () => {
 
     const formData = new FormData(event.target)
     const data = Object.fromEntries(formData.entries())
-    data.awards = eventAwards
+
+    // Expand awards with multiple class selections into separate entries
+    const expandedAwards = []
+    for (const award of eventAwards) {
+      if (award.class_ids && award.class_ids.length > 0) {
+        for (const classId of award.class_ids) {
+          expandedAwards.push({ award_id: award.award_id, class_id: classId })
+        }
+      } else {
+        expandedAwards.push({ award_id: award.award_id, class_id: null })
+      }
+    }
+    data.awards = expandedAwards
 
     setLoading(true)
     try {
@@ -123,24 +146,47 @@ const View = () => {
                 setEventAwards(newAwards)
               }}
             />
-            <NativeSelect.Root style={{ flexShrink: 0, width: 'auto' }}>
-              <NativeSelect.Field
-                value={eventAward.class_id || ''} // Controlled value
-                onChange={(e) => {
-                  const newAwards = [...eventAwards]
-                  newAwards[index].class_id = e.target.value
-                  setEventAwards(newAwards)
-                }}
-              >
-                <option value="">Select Class</option> // Add a default option if needed
-                {classList.map((classOption) => (
-                  <option key={classOption.id} value={classOption.id}>
-                    {fromSnakeCaseToTitleCase(classOption.class)}
-                  </option>
-                ))}
-              </NativeSelect.Field>
-              <NativeSelect.Indicator />
-            </NativeSelect.Root>
+            <Select.Root
+              multiple
+              collection={classCollection}
+              size="sm"
+              width="180px"
+              value={eventAward.class_ids || []}
+              onValueChange={({ value }) => {
+                const newAwards = [...eventAwards]
+                if (value.includes('all')) {
+                  const allIds = classList.map((c) => String(c.id))
+                  const currentIds = newAwards[index].class_ids || []
+                  const allSelected = allIds.every((id) => currentIds.includes(id))
+                  newAwards[index].class_ids = allSelected ? [] : allIds
+                } else {
+                  newAwards[index].class_ids = value
+                }
+                setEventAwards(newAwards)
+              }}
+            >
+              <Select.HiddenSelect />
+              <Select.Control>
+                <Select.Trigger>
+                  <Select.ValueText placeholder="Select Class" />
+                </Select.Trigger>
+                <Select.IndicatorGroup>
+                  <Select.Indicator />
+                </Select.IndicatorGroup>
+              </Select.Control>
+              <Portal>
+                <Select.Positioner>
+                  <Select.Content>
+                    {classCollection.items.map((item) => (
+                      <Select.Item item={item} key={item.value}>
+                        {item.label}
+                        <Select.ItemIndicator />
+                      </Select.Item>
+                    ))}
+                  </Select.Content>
+                </Select.Positioner>
+              </Portal>
+            </Select.Root>
             <IconButton
               variant="ghost"
               aria-label="Remove Award"
@@ -159,7 +205,7 @@ const View = () => {
           size="sm"
           variant="outline"
           colorPalette="brand"
-          onClick={() => setEventAwards([...eventAwards, { award_id: null, class_id: null }])}
+          onClick={() => setEventAwards([...eventAwards, { award_id: null, class_ids: [] }])}
         >
           Add Award
         </Button>

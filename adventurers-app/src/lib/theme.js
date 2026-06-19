@@ -1,4 +1,4 @@
-import { createSystem, defaultConfig, defineConfig, defineRecipe } from '@chakra-ui/react'
+import { createSystem, defaultConfig, defineConfig, defineRecipe, defineSlotRecipe } from '@chakra-ui/react'
 
 const config = defineConfig({
   theme: {
@@ -79,12 +79,25 @@ const buttonRecipe = defineRecipe({
   },
 })
 
+const selectRecipe = defineSlotRecipe({
+  slots: ['trigger'],
+  base: {
+    trigger: {
+      minH: '40px',
+      h: '40px',
+    },
+  },
+})
+
 export const system = createSystem(defaultConfig, {
   ...config,
   theme: {
     ...config.theme,
     recipes: {
       button: buttonRecipe,
+    },
+    slotRecipes: {
+      select: selectRecipe,
     },
   },
 })
