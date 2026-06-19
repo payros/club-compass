@@ -99,6 +99,16 @@ async function create({ name, level, type, link }) {
   return result[0]
 }
 
+async function update(id, { name, level, type, link }) {
+  const levelValue = level || null
+  const result = await sql`
+    UPDATE adv_db.awards
+    SET name = ${name}, level = ${levelValue}::adv_db.adventurer_class, type = ${type}::adv_db.award_type, link = ${link ?? null}
+    WHERE id = ${id}
+    RETURNING id, name, level::text AS level, type::text AS type, link`
+  return result[0]
+}
+
 async function updatePatchImageUrl(id, url) {
   const result = await sql`
     UPDATE adv_db.awards
@@ -108,5 +118,5 @@ async function updatePatchImageUrl(id, url) {
   return result[0]
 }
 
-const awardsService = { list, getById, create, updatePatchImageUrl }
+const awardsService = { list, getById, create, update, updatePatchImageUrl }
 export default awardsService

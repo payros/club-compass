@@ -10,6 +10,13 @@ export default function View() {
 
   const breadcrumbs = [{ label: 'Awards', href: `/${clubYearLabel}/awards` }, { label: award?.name ?? 'Award' }]
 
+  const actions = [
+    {
+      label: 'Edit Award',
+      href: `/awards/${awardId}/edit`,
+    },
+  ]
+
   const fields = award
     ? [
         { label: 'Type', value: award.type ?? '—' },

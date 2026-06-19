@@ -10,6 +10,13 @@ export default function View() {
 
   const breadcrumbs = [{ label: 'Awards', href: '/awards' }, { label: award?.name ?? 'Award' }]
 
+  const actions = [
+    {
+      label: 'Edit Award',
+      href: `/awards/${id}/edit`,
+    },
+  ]
+
   const fields = award
     ? [
         { label: 'Name', value: award.name ?? '—' },
@@ -42,6 +49,7 @@ export default function View() {
       fields={fields}
       relatedCards={relatedCards}
       imageUrl={award?.patchImageUrl}
+      actions={actions}
     />
   )
 }

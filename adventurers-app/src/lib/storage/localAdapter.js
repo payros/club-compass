@@ -1,8 +1,8 @@
 import fs from 'fs/promises'
 import path from 'path'
 
-// Writes to /public/img/patches/{filename} and serves at /img/patches/{filename}
-const PATCHES_DIR = path.join(process.cwd(), 'public', 'img', 'patches')
+// Writes to /public/uploads/{filename} and serves at /uploads/{filename}
+const PATCHES_DIR = path.join(process.cwd(), 'public', 'uploads')
 
 async function ensureDir(dir) {
   await fs.mkdir(dir, { recursive: true })
@@ -30,7 +30,7 @@ async function put(key, buffer) {
  * @returns {string} public URL path e.g. "/img/patches/42.webp"
  */
 function getUrl(key) {
-  return `/img/patches/${keyToFilename(key)}`
+  return `/uploads/${keyToFilename(key)}`
 }
 
 /**
