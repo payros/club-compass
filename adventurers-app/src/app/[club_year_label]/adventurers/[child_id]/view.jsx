@@ -16,6 +16,10 @@ export default function View() {
 
   const actions = [
     {
+      label: 'Edit Adventurer',
+      href: `/${clubYearLabel}/adventurers/${childId}/edit`,
+    },
+    {
       label: 'Edit Awards',
       href: `/children/${childId}/edit-awards`,
     },

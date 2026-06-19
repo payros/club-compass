@@ -1,0 +1,141 @@
+'use client'
+import { Field, HStack, Input, NativeSelect } from '@chakra-ui/react'
+import { SEX_OPTIONS } from '@/utils/consts'
+import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
+
+/**
+ * ChildForm — reusable child fields (without class).
+ *
+ * Uncontrolled mode (edit page): pass `data` with the existing child record.
+ *   Fields use `name` attributes so FormData can be read on submit.
+ *
+ * Controlled mode (enroll page): pass `entry` (snake_case keys) and `onChange(field, value)`.
+ *   Fields are controlled inputs; no `name` attributes are needed.
+ */
+const ChildForm = ({ data = {}, entry = null, onChange = null }) => {
+  const controlled = entry !== null && onChange !== null
+
+  if (controlled) {
+    return (
+      <>
+        <HStack gap={3}>
+          <Field.Root flex={1} required>
+            <Field.Label>First Name</Field.Label>
+            <Input
+              placeholder="First name"
+              value={entry.first_name}
+              onChange={(e) => onChange('first_name', e.target.value)}
+            />
+          </Field.Root>
+          <Field.Root flex={1} required>
+            <Field.Label>Last Name</Field.Label>
+            <Input
+              placeholder="Last name"
+              value={entry.last_name}
+              onChange={(e) => onChange('last_name', e.target.value)}
+            />
+          </Field.Root>
+        </HStack>
+        <HStack gap={3}>
+          <Field.Root flex={1}>
+            <Field.Label>Sex</Field.Label>
+            <NativeSelect.Root>
+              <NativeSelect.Field value={entry.sex} onChange={(e) => onChange('sex', e.target.value)}>
+                <option value="">Select a sex</option>
+                {SEX_OPTIONS.map((sex) => (
+                  <option key={sex} value={sex}>
+                    {fromSnakeCaseToTitleCase(sex)}
+                  </option>
+                ))}
+              </NativeSelect.Field>
+              <NativeSelect.Indicator />
+            </NativeSelect.Root>
+          </Field.Root>
+          <Field.Root flex={1}>
+            <Field.Label>Date of Birth</Field.Label>
+            <Input
+              type="date"
+              value={entry.date_of_birth}
+              onChange={(e) => onChange('date_of_birth', e.target.value)}
+            />
+          </Field.Root>
+        </HStack>
+        <HStack gap={3}>
+          <Field.Root flex={1}>
+            <Field.Label>Allergies</Field.Label>
+            <Input
+              placeholder="Allergies"
+              value={entry.allergies}
+              onChange={(e) => onChange('allergies', e.target.value)}
+            />
+          </Field.Root>
+          <Field.Root flex={1}>
+            <Field.Label>Medical Conditions</Field.Label>
+            <Input
+              placeholder="Medical conditions"
+              value={entry.medical_conditions}
+              onChange={(e) => onChange('medical_conditions', e.target.value)}
+            />
+          </Field.Root>
+        </HStack>
+      </>
+    )
+  }
+
+  // Uncontrolled mode
+  const dobValue =
+    (data.dateOfBirth ?? data.date_of_birth)
+      ? new Date(data.dateOfBirth ?? data.date_of_birth).toISOString().split('T')[0]
+      : ''
+
+  return (
+    <>
+      <HStack gap={3}>
+        <Field.Root flex={1} required>
+          <Field.Label>First Name</Field.Label>
+          <Input name="firstName" placeholder="First name" defaultValue={data.firstName ?? data.first_name ?? ''} />
+        </Field.Root>
+        <Field.Root flex={1} required>
+          <Field.Label>Last Name</Field.Label>
+          <Input name="lastName" placeholder="Last name" defaultValue={data.lastName ?? data.last_name ?? ''} />
+        </Field.Root>
+      </HStack>
+      <HStack gap={3}>
+        <Field.Root flex={1}>
+          <Field.Label>Sex</Field.Label>
+          <NativeSelect.Root>
+            <NativeSelect.Field name="sex" defaultValue={data.sex ?? ''}>
+              <option value="">Not specified</option>
+              {SEX_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {fromSnakeCaseToTitleCase(option)}
+                </option>
+              ))}
+            </NativeSelect.Field>
+            <NativeSelect.Indicator />
+          </NativeSelect.Root>
+        </Field.Root>
+        <Field.Root flex={1}>
+          <Field.Label>Date of Birth</Field.Label>
+          <Input name="dateOfBirth" type="date" defaultValue={dobValue} />
+        </Field.Root>
+      </HStack>
+      <HStack gap={3}>
+        <Field.Root flex={1}>
+          <Field.Label>Allergies</Field.Label>
+          <Input name="allergies" placeholder="Allergies" defaultValue={data.allergies ?? ''} />
+        </Field.Root>
+        <Field.Root flex={1}>
+          <Field.Label>Medical Conditions</Field.Label>
+          <Input
+            name="medicalConditions"
+            placeholder="Medical conditions"
+            defaultValue={data.medicalConditions ?? data.medical_conditions ?? ''}
+          />
+        </Field.Root>
+      </HStack>
+    </>
+  )
+}
+
+export default ChildForm

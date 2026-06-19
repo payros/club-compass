@@ -14,6 +14,13 @@ export default function View() {
 
   const breadcrumbs = [{ label: 'Children', href: '/children' }, { label: name }]
 
+  const actions = [
+    {
+      label: 'Edit Child',
+      href: `/children/${id}/edit`,
+    },
+  ]
+
   const fields = child
     ? [
         { label: 'First Name', value: child.firstName ?? child.first_name },
@@ -80,6 +87,7 @@ export default function View() {
       loading={loading}
       fields={fields}
       relatedCards={relatedCards}
+      actions={actions}
     />
   )
 }

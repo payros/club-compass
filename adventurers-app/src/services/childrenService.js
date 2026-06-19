@@ -214,7 +214,7 @@ async function update(childId, updatedData) {
   try {
     const result = await sql.begin(async (sql) => {
       const childIdInt = parseInt(childId, 10)
-      const { awards, ...childData } = updatedData
+      const { awards, classId, clubYearLabel, ...childData } = updatedData
 
       const fieldMap = {
         firstName: 'first_name',
@@ -267,9 +267,41 @@ async function update(childId, updatedData) {
         }
       }
 
+      if (classId && clubYearLabel) {
+        const classIdInt = parseInt(classId, 10)
+        await sql`
+          INSERT INTO adv_db.classes_children (club_year_id, class_id, child_id)
+          VALUES (
+            (SELECT id FROM adv_db.club_years WHERE label = ${clubYearLabel}),
+            ${classIdInt},
+            ${childIdInt}
+          )
+          ON CONFLICT (club_year_id, child_id) DO UPDATE SET class_id = ${classIdInt}`
+      }
+
       return updatedChild
     })
 
+    return result
+  } catch (err) {
+    console.error(err)
+    throw err
+  }
+}
+
+async function create(data) {
+  try {
+    const [result] = await sql`
+      INSERT INTO adv_db.children (first_name, last_name, date_of_birth, sex, allergies, medical_conditions)
+      VALUES (
+        ${data.firstName},
+        ${data.lastName},
+        ${data.dateOfBirth || null},
+        ${data.sex || null},
+        ${data.allergies || null},
+        ${data.medicalConditions || null}
+      )
+      RETURNING *`
     return result
   } catch (err) {
     console.error(err)
@@ -283,6 +315,7 @@ const childrenService = {
   getById,
   getParentsByChildId,
   getAwardsByChildId,
+  create,
   update,
 }
 
