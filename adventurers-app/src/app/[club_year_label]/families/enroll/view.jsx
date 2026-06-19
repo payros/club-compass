@@ -1,12 +1,10 @@
 'use client'
-import { Button, Field, Input, Card, NativeSelect, IconButton, Stack, HStack, Box, Text } from '@chakra-ui/react'
+import { Button, Field, Input, Card, IconButton, Stack, HStack } from '@chakra-ui/react'
 import { useParams, useRouter } from 'next/navigation'
 import { useState, useRef } from 'react'
 import { FaRegTrashAlt } from 'react-icons/fa'
-import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
 import FormPage from '@/components/pages/FormPage'
-import SearchBox from '@/components/SearchBox'
-import { SEX_OPTIONS } from '@/utils/consts'
+import AdventurerForm from '@/components/forms/AdventurerForm'
 import useClasses from '@/hooks/useClasses'
 
 const emptyParentEntry = () => ({
@@ -244,92 +242,11 @@ const View = () => {
                 </IconButton>
               )}
             </HStack>
-            <Stack gap={3}>
-              <HStack gap={3}>
-                <Field.Root flex={1} required>
-                  <Field.Label>First Name</Field.Label>
-                  <Input
-                    placeholder="First name"
-                    value={entry.first_name}
-                    onChange={(e) => handleChange(index, 'first_name', e.target.value, 'child')}
-                  />
-                </Field.Root>
-                <Field.Root flex={1} required>
-                  <Field.Label>Last Name</Field.Label>
-                  <Input
-                    placeholder="Last name"
-                    value={entry.last_name}
-                    onChange={(e) => handleChange(index, 'last_name', e.target.value, 'child')}
-                  />
-                </Field.Root>
-              </HStack>
-              <HStack gap={3}>
-                <Field.Root>
-                  <Field.Label>Sex</Field.Label>
-                  <NativeSelect.Root>
-                    <NativeSelect.Field
-                      value={entry.sex}
-                      onChange={(e) => handleChange(index, 'sex', e.target.value, 'child')}
-                    >
-                      <option value="">Select a sex</option>
-                      {SEX_OPTIONS.map((sex) => (
-                        <option key={sex} value={sex}>
-                          {fromSnakeCaseToTitleCase(sex)}
-                        </option>
-                      ))}
-                    </NativeSelect.Field>
-                    <NativeSelect.Indicator />
-                  </NativeSelect.Root>
-                </Field.Root>
-                <Field.Root>
-                  <Field.Label> Date of Birth</Field.Label>
-                  <Input
-                    type="date"
-                    value={entry.date_of_birth}
-                    onChange={(e) => handleChange(index, 'date_of_birth', e.target.value, 'child')}
-                  />
-                </Field.Root>
-              </HStack>
-              <HStack gap={3}>
-                <Field.Root>
-                  <Field.Label>Allergies</Field.Label>
-                  <Input
-                    type="allergies"
-                    placeholder="allergies"
-                    value={entry.allergies}
-                    onChange={(e) => handleChange(index, 'allergies', e.target.value, 'child')}
-                  />
-                </Field.Root>
-                <Field.Root>
-                  <Field.Label>Medical Conditions</Field.Label>
-                  <Input
-                    type="medical_conditions"
-                    placeholder="Medical Conditions"
-                    value={entry.medical_conditions}
-                    onChange={(e) => handleChange(index, 'medical_conditions', e.target.value, 'child')}
-                  />
-                </Field.Root>
-              </HStack>
-              <HStack gap={3}>
-                <Field.Root>
-                  <Field.Label>Class</Field.Label>
-                  <NativeSelect.Root>
-                    <NativeSelect.Field
-                      value={entry.class_id}
-                      onChange={(e) => handleChange(index, 'class_id', e.target.value, 'child')}
-                    >
-                      <option value="">Select a class</option>
-                      {classes.map((c) => (
-                        <option key={c.id} value={c.id}>
-                          {fromSnakeCaseToTitleCase(c.class)}
-                        </option>
-                      ))}
-                    </NativeSelect.Field>
-                    <NativeSelect.Indicator />
-                  </NativeSelect.Root>
-                </Field.Root>
-              </HStack>
-            </Stack>
+            <AdventurerForm
+              entry={entry}
+              onChange={(field, value) => handleChange(index, field, value, 'child')}
+              classes={classes}
+            />
           </Card.Body>
         </Card.Root>
       ))}
