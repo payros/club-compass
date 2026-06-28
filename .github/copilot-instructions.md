@@ -1,13 +1,13 @@
-# Copilot Instructions — Adventurers Club App
+# Copilot Instructions — Club Compass App
 
 ## Project Overview
 
-A Next.js 14 (App Router) CMS for managing an Adventurers Club: children, parents, staff, awards, events, and club years. Runs fully containerized via Docker Compose (Next.js + PostgreSQL).
+A Next.js 14 (App Router) CMS for managing a club (Club Compass): children, parents, staff, awards, events, and club years. Runs fully containerized via Docker Compose (Next.js + PostgreSQL).
 
 ## Dev Workflow
 
 - **Start dev environment:** run `./dev.sh` from the repo root (kills existing containers, creates `my_network`, builds and starts `docker-compose.dev.yml`).
-- **Source files are volume-mounted** (`adventurers-app/src` → `/app/src`), so edits take effect without rebuilding.
+- **Source files are volume-mounted** (`club-compass/src` → `/app/src`), so edits take effect without rebuilding.
 - **Env vars** live in `.env` at repo root and are injected into the container via `docker-compose.dev.yml`.
 - **Production build:** `./prod.sh` (multi-stage) or `./prod-without-multistage.sh`.
 
@@ -75,5 +75,5 @@ This distinction is central to the awards tracking flow — always check `award_
 - **Services** export a plain object of async functions (e.g. `const awardsService = { list, getById }`).
 - **Hooks** return `{ data, loading }` and handle all fetch + transform logic; views should not contain raw `fetch` calls unless it's a detail/resource page with multiple parallel fetches.
 - **API routes** are thin: call one service method, return `NextResponse.json(result)`.
-- **Path alias:** `@/` maps to `adventurers-app/src/` (configured in `jsconfig.json`).
+- **Path alias:** `@/` maps to `club-compass/src/` (configured in `jsconfig.json`).
 - **Breadcrumbs** are built in the view and passed down through page templates.

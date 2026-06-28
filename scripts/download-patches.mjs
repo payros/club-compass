@@ -1,7 +1,7 @@
 /**
  * download-patches.mjs
  *
- * Downloads award patch images into adventurers-app/public/img/patches/
+ * Downloads award patch images into club-compass/public/img/patches/
  * and generates a SQL migration file.
  *
  * Strategy:
@@ -21,7 +21,7 @@ import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(__dirname, '..')
-const PATCHES_DIR = path.join(ROOT, 'adventurers-app', 'public', 'img', 'patches')
+const PATCHES_DIR = path.join(ROOT, 'club-compass', 'public', 'img', 'patches')
 const MIGRATION_FILE = path.join(ROOT, 'db', 'migrations', '20260614000000_awards_patch_image_urls.sql')
 const ADS_BASE = 'https://www.adventsource.org'
 const ADS_CATALOG_ROOT = `${ADS_BASE}/store/adventurer-club/investiture-patches-and-pins`
