@@ -2,10 +2,10 @@
 # https://docs.docker.com/compose/compose-file/#version-top-level-element
 
 services:
-  adventurers-app:
-    container_name: adventurers-app
+  club-compass:
+    container_name: club-compass
     build:
-      context: ./adventurers-app
+      context: ./club-compass
       dockerfile: dev.Dockerfile
     environment:
       DATABASE_URL: ${DATABASE_URL}
@@ -26,8 +26,8 @@ services:
       R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID:-}
       R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY:-}
     volumes:
-      - ./adventurers-app/src:/app/src
-      - ./adventurers-app/public:/app/public
+      - ./club-compass/src:/app/src
+      - ./club-compass/public:/app/public
       # It's not necessary to sync the `.next` directory
     ports:
       - 3000:3000
@@ -48,7 +48,7 @@ services:
   #   ports:
   #     - 3000:3000
   #   depends_on:
-  #     - adventurers-app
+  #     - club-compass
   #   restart: always
   #   networks:
   #     - my_network
