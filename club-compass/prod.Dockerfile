@@ -7,7 +7,7 @@ WORKDIR /app
 RUN apk add --no-cache postgresql-client bash
 
 # Install dependencies based on the preferred package manager
-COPY adventurers-app/package.json adventurers-app/yarn.lock* adventurers-app/package-lock.json* adventurers-app/pnpm-lock.yaml* ./
+COPY club-compass/package.json club-compass/yarn.lock* club-compass/package-lock.json* club-compass/pnpm-lock.yaml* ./
 # Omit --production flag for TypeScript devDependencies
 RUN \
   if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
@@ -17,10 +17,10 @@ RUN \
   else echo "Warning: Lockfile not found. It is recommended to commit lockfiles to version control." && yarn install; \
   fi
 
-COPY adventurers-app/src ./src
-COPY adventurers-app/public ./public
-COPY adventurers-app/next.config.js .
-COPY adventurers-app/jsconfig.json .
+COPY club-compass/src ./src
+COPY club-compass/public ./public
+COPY club-compass/next.config.js .
+COPY club-compass/jsconfig.json .
 
 # Server-side vars read by Next.js / Better Auth at build time.
 ARG BETTER_AUTH_SECRET
