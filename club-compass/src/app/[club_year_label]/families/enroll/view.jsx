@@ -1,29 +1,35 @@
 'use client'
-import { Button, Field, Input, Card, IconButton, Stack, HStack } from '@chakra-ui/react'
+import { Button, Field, Input, Card, IconButton, Stack, HStack, Box } from '@chakra-ui/react'
 import { useParams, useRouter } from 'next/navigation'
 import { useState, useRef } from 'react'
 import { FaRegTrashAlt } from 'react-icons/fa'
 import FormPage from '@/components/pages/FormPage'
 import AdventurerForm from '@/components/forms/AdventurerForm'
+import SearchBox from '@/components/SearchBox'
 import useClasses from '@/hooks/useClasses'
 
 const emptyParentEntry = () => ({
-  first_name: '',
-  last_name: '',
+  firstName: '',
+  lastName: '',
   email: '',
   phone: '',
   address: '',
 })
 
 const emptyChildEntry = () => ({
-  first_name: '',
-  last_name: '',
+  firstName: '',
+  lastName: '',
   allergies: '',
-  medical_conditions: '',
+  medicalConditions: '',
   sex: '',
-  date_of_birth: '',
-  class_id: '',
+  dateOfBirth: '',
+  classId: '',
 })
+
+const normalizeDateOfBirth = (value) => {
+  if (!value) return ''
+  return value.includes('T') ? value.split('T')[0] : value
+}
 
 const View = () => {
   const router = useRouter()
@@ -35,10 +41,27 @@ const View = () => {
   const cardRefs = useRef([])
   const { classes, loading: classesLoading } = useClasses(clubYearLabel)
 
-  function handleSelectFamilyMember(familyMember) {
-    // Use family member to call the api and get all family members by child or parent. This could be two separate api endpoints or one.
-
-    // Then populate the parentEntries and childEntries with the results. This will allow the user to see all family members and edit their information if needed before submitting.
+  async function handleSelectFamilyMember(familyMember) {
+    try {
+      // Use family member to call the api and get all family members by id and type of a member
+      const familyData = await fetch(`/api/families?id=${familyMember.id}&type=${familyMember.type}`)
+      const { children, parents } = await familyData.json()
+      // Then populate the parentEntries and childEntries with the results.
+      // This will allow the user to see all family members and edit their information if needed before submitting.
+      setChildEntries(() => {
+        return children.map((child) => ({
+          ...emptyChildEntry(),
+          ...child,
+          dateOfBirth: normalizeDateOfBirth(child.dateOfBirth),
+        }))
+      })
+      setParentEntries(() => {
+        return parents.map((parent) => ({ ...emptyParentEntry(), ...parent }))
+      })
+    } catch (error) {
+      setGlobalError('Could not load adventurer data. Please try again.')
+      setContentLoading(false)
+    }
 
     return false
   }
@@ -120,14 +143,14 @@ const View = () => {
       maxWidth={600}
     >
       {/* Typeahead: enroll existing family */}
-      {/* <Box mb={4}>
+      <Box mb={4}>
         <SearchBox
           type="family"
           label="Find existing family"
           placeholder="Search by parent or child first or last name"
           handleSelect={handleSelectFamilyMember}
         />
-      </Box> */}
+      </Box>
 
       {parentEntries.map((entry, index) => (
         <Card.Root
@@ -159,16 +182,16 @@ const View = () => {
                   <Field.Label>First Name</Field.Label>
                   <Input
                     placeholder="First name"
-                    value={entry.first_name}
-                    onChange={(e) => handleChange(index, 'first_name', e.target.value)}
+                    value={entry.firstName}
+                    onChange={(e) => handleChange(index, 'firstName', e.target.value)}
                   />
                 </Field.Root>
                 <Field.Root flex={1} required>
                   <Field.Label>Last Name</Field.Label>
                   <Input
                     placeholder="Last name"
-                    value={entry.last_name}
-                    onChange={(e) => handleChange(index, 'last_name', e.target.value)}
+                    value={entry.lastName}
+                    onChange={(e) => handleChange(index, 'lastName', e.target.value)}
                   />
                 </Field.Root>
               </HStack>

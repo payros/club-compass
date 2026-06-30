@@ -44,6 +44,8 @@ function SuggestionRow({ type, item, clubYearLabel }) {
     if (item.clubYearLabel) subtitle = item.clubYearLabel
   } else if (type === 'award') {
     if (item.level) subtitle = fromSnakeCaseToTitleCase(item.level)
+  } else if (type === 'family') {
+    if (item.type) subtitle = fromSnakeCaseToTitleCase(item.type)
   }
 
   return (

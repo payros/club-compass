@@ -9,7 +9,7 @@ import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
  * Uncontrolled mode (edit page): pass `data` with the existing child record.
  *   Fields use `name` attributes so FormData can be read on submit.
  *
- * Controlled mode (enroll page): pass `entry` (snake_case keys) and `onChange(field, value)`.
+ * Controlled mode (enroll page): pass `entry` (camelCase keys) and `onChange(field, value)`.
  *   Fields are controlled inputs; no `name` attributes are needed.
  */
 const ChildForm = ({ data = {}, entry = null, onChange = null }) => {
@@ -23,16 +23,16 @@ const ChildForm = ({ data = {}, entry = null, onChange = null }) => {
             <Field.Label>First Name</Field.Label>
             <Input
               placeholder="First name"
-              value={entry.first_name}
-              onChange={(e) => onChange('first_name', e.target.value)}
+              value={entry.firstName}
+              onChange={(e) => onChange('firstName', e.target.value)}
             />
           </Field.Root>
           <Field.Root flex={1} required>
             <Field.Label>Last Name</Field.Label>
             <Input
               placeholder="Last name"
-              value={entry.last_name}
-              onChange={(e) => onChange('last_name', e.target.value)}
+              value={entry.lastName}
+              onChange={(e) => onChange('lastName', e.target.value)}
             />
           </Field.Root>
         </HStack>
@@ -53,11 +53,7 @@ const ChildForm = ({ data = {}, entry = null, onChange = null }) => {
           </Field.Root>
           <Field.Root flex={1}>
             <Field.Label>Date of Birth</Field.Label>
-            <Input
-              type="date"
-              value={entry.date_of_birth}
-              onChange={(e) => onChange('date_of_birth', e.target.value)}
-            />
+            <Input type="date" value={entry.dateOfBirth} onChange={(e) => onChange('dateOfBirth', e.target.value)} />
           </Field.Root>
         </HStack>
         <HStack gap={3}>
@@ -73,8 +69,8 @@ const ChildForm = ({ data = {}, entry = null, onChange = null }) => {
             <Field.Label>Medical Conditions</Field.Label>
             <Input
               placeholder="Medical conditions"
-              value={entry.medical_conditions}
-              onChange={(e) => onChange('medical_conditions', e.target.value)}
+              value={entry.medicalConditions}
+              onChange={(e) => onChange('medicalConditions', e.target.value)}
             />
           </Field.Root>
         </HStack>

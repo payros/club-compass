@@ -9,7 +9,7 @@ import ChildForm from '@/components/forms/ChildForm'
  * Uncontrolled mode (edit page): pass `data` (child record with optional `data.class.id`)
  *   and `classes` array. The class field uses `name="classId"` for FormData.
  *
- * Controlled mode (enroll page): pass `entry` (snake_case keys with `class_id`),
+ * Controlled mode (enroll page): pass `entry` (camelCase keys with `classId`),
  *   `onChange(field, value)`, and `classes` array.
  */
 const AdventurerForm = ({ data = {}, entry = null, onChange = null, classes = [] }) => {
@@ -22,7 +22,7 @@ const AdventurerForm = ({ data = {}, entry = null, onChange = null, classes = []
         <Field.Root>
           <Field.Label>Class</Field.Label>
           <NativeSelect.Root>
-            <NativeSelect.Field value={entry.class_id} onChange={(e) => onChange('class_id', e.target.value)}>
+            <NativeSelect.Field value={entry.classId} onChange={(e) => onChange('classId', e.target.value)}>
               <option value="">Select a class</option>
               {classes.map((c) => (
                 <option key={c.id} value={c.id}>
