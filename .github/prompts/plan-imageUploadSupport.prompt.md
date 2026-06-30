@@ -37,22 +37,22 @@ Add image upload support for children and awards without storing binaries in Pos
 
 - /Users/payros/Documents/Websites/Adventurers App/db/schema.sql - add child image reference column in desired state schema
 - /Users/payros/Documents/Websites/Adventurers App/db/migrations - add migration for children image column
-- /Users/payros/Documents/Websites/Adventurers App/adventurers-app/src/services/childrenService.js - include child image field in list/get/update maps
-- /Users/payros/Documents/Websites/Adventurers App/adventurers-app/src/services/awardsService.js - include patch_image_url in list/get and add update method for image field
-- /Users/payros/Documents/Websites/Adventurers App/adventurers-app/src/app/api/children/[id]/route.js - keep JSON patch support for metadata updates
-- /Users/payros/Documents/Websites/Adventurers App/adventurers-app/src/app/api/awards/[id]/route.js - add PATCH support if absent
-- /Users/payros/Documents/Websites/Adventurers App/adventurers-app/src/app/api/children/[id]/photo/route.js - new upload/delete endpoint
-- /Users/payros/Documents/Websites/Adventurers App/adventurers-app/src/app/api/awards/[id]/photo/route.js - new upload/delete endpoint
-- /Users/payros/Documents/Websites/Adventurers App/adventurers-app/src/lib/storage - new adapter modules (local + S3-compatible)
-- /Users/payros/Documents/Websites/Adventurers App/adventurers-app/src/hooks/useChild.js - pass through child image URL
-- /Users/payros/Documents/Websites/Adventurers App/adventurers-app/src/hooks/useChildren.js - include optional thumbnail field in transformed rows
-- /Users/payros/Documents/Websites/Adventurers App/adventurers-app/src/hooks/useAward.js - include patch image URL in transformed payload
-- /Users/payros/Documents/Websites/Adventurers App/adventurers-app/src/hooks/useAwards.js - include patch thumbnail in list transform
-- /Users/payros/Documents/Websites/Adventurers App/adventurers-app/src/app/children/[id]/view.jsx - render child image block
-- /Users/payros/Documents/Websites/Adventurers App/adventurers-app/src/app/awards/[id]/view.jsx - render patch image block
-- /Users/payros/Documents/Websites/Adventurers App/adventurers-app/src/app/[club_year_label]/families/enroll/view.jsx - optional upload-at-enrollment UI
+- /Users/payros/Documents/Websites/Adventurers App/club-compass/src/services/childrenService.js - include child image field in list/get/update maps
+- /Users/payros/Documents/Websites/Adventurers App/club-compass/src/services/awardsService.js - include patch_image_url in list/get and add update method for image field
+- /Users/payros/Documents/Websites/Adventurers App/club-compass/src/app/api/children/[id]/route.js - keep JSON patch support for metadata updates
+- /Users/payros/Documents/Websites/Adventurers App/club-compass/src/app/api/awards/[id]/route.js - add PATCH support if absent
+- /Users/payros/Documents/Websites/Adventurers App/club-compass/src/app/api/children/[id]/photo/route.js - new upload/delete endpoint
+- /Users/payros/Documents/Websites/Adventurers App/club-compass/src/app/api/awards/[id]/photo/route.js - new upload/delete endpoint
+- /Users/payros/Documents/Websites/Adventurers App/club-compass/src/lib/storage - new adapter modules (local + S3-compatible)
+- /Users/payros/Documents/Websites/Adventurers App/club-compass/src/hooks/useChild.js - pass through child image URL
+- /Users/payros/Documents/Websites/Adventurers App/club-compass/src/hooks/useChildren.js - include optional thumbnail field in transformed rows
+- /Users/payros/Documents/Websites/Adventurers App/club-compass/src/hooks/useAward.js - include patch image URL in transformed payload
+- /Users/payros/Documents/Websites/Adventurers App/club-compass/src/hooks/useAwards.js - include patch thumbnail in list transform
+- /Users/payros/Documents/Websites/Adventurers App/club-compass/src/app/children/[id]/view.jsx - render child image block
+- /Users/payros/Documents/Websites/Adventurers App/club-compass/src/app/awards/[id]/view.jsx - render patch image block
+- /Users/payros/Documents/Websites/Adventurers App/club-compass/src/app/[club_year_label]/families/enroll/view.jsx - optional upload-at-enrollment UI
 - /Users/payros/Documents/Websites/Adventurers App/docker-compose.dev.yml - add uploads volume mount for local backend
-- /Users/payros/Documents/Websites/Adventurers App/adventurers-app/.env.example (or env docs) - storage mode and S3-compatible env vars
+- /Users/payros/Documents/Websites/Adventurers App/club-compass/.env.example (or env docs) - storage mode and S3-compatible env vars
 
 **Verification**
 

@@ -1,6 +1,6 @@
-# Adventurer's Club App - for Directors and Staff
+# Club Compass - An Adventurers Club app for Directors and Staff
 
-A CMS app for managing an Adventurers Club — keeping track of children, parents, staff, awards, events, and club years. Built to make life easier for director staff, and open source so other Adventurer/Pathfinder Clubs can use it too!
+A CMS app for managing your club — keeping track of children, parents, staff, awards, events, and club years. Built to make life easier for director staff, and open source so other Adventurer/Pathfinder Clubs can use it too!
 
 ---
 
@@ -74,7 +74,7 @@ That's it! This script will:
 - Optionally load dev sample data (with `--sample-data`)
 - Follow container logs (Ctrl+C detaches; containers keep running)
 
-> **Hot reloading:** Source files in `adventurers-app/src/` are volume-mounted into the container, so your edits take effect immediately without needing to rebuild.
+> **Hot reloading:** Source files in `club-compass/src/` are volume-mounted into the container, so your edits take effect immediately without needing to rebuild.
 
 > **Stopping containers:** Ctrl+C detaches from logs but leaves containers running. Run `docker compose -f docker-compose.dev.yml down` to stop them, or just run `./dev.sh` again (it kills all containers at the start).
 
@@ -133,7 +133,7 @@ Files such as award patch images and other documents can be stored either on loc
 **Setting up Cloudflare R2:**
 
 1. Log in to the [Cloudflare dashboard](https://dash.cloudflare.com/) and go to **R2 Object Storage**.
-2. Click **Create bucket** and give it a name (e.g. `adventurers-app`). Leave it **private** (do not enable public access).
+2. Click **Create bucket** and give it a name (e.g. `club-compass-app`). Leave it **private** (do not enable public access).
 3. Inside the bucket, go to **Settings → S3 API** and copy the **S3 API endpoint** (format: `https://<account_id>.r2.cloudflarestorage.com`).
 4. Go to **R2 → Manage R2 API Tokens** (top-right of the R2 overview page) and create a new API token with **Object Read & Write** permissions scoped to your bucket.
 5. Copy the **Access Key ID** and **Secret Access Key** shown — they are only displayed once.

@@ -1,0 +1,267 @@
+'use client'
+import { Button, Field, Input, Card, IconButton, Stack, HStack } from '@chakra-ui/react'
+import { useParams, useRouter } from 'next/navigation'
+import { useState, useRef } from 'react'
+import { FaRegTrashAlt } from 'react-icons/fa'
+import FormPage from '@/components/pages/FormPage'
+import AdventurerForm from '@/components/forms/AdventurerForm'
+import useClasses from '@/hooks/useClasses'
+
+const emptyParentEntry = () => ({
+  first_name: '',
+  last_name: '',
+  email: '',
+  phone: '',
+  address: '',
+})
+
+const emptyChildEntry = () => ({
+  first_name: '',
+  last_name: '',
+  allergies: '',
+  medical_conditions: '',
+  sex: '',
+  date_of_birth: '',
+  class_id: '',
+})
+
+const View = () => {
+  const router = useRouter()
+  const clubYearLabel = useParams()['club_year_label']
+  const [parentEntries, setParentEntries] = useState([emptyParentEntry()])
+  const [childEntries, setChildEntries] = useState([emptyChildEntry()])
+  const [loading, setLoading] = useState(false)
+  const [globalError, setGlobalError] = useState(null)
+  const cardRefs = useRef([])
+  const { classes, loading: classesLoading } = useClasses(clubYearLabel)
+
+  function handleSelectFamilyMember(familyMember) {
+    // Use family member to call the api and get all family members by child or parent. This could be two separate api endpoints or one.
+
+    // Then populate the parentEntries and childEntries with the results. This will allow the user to see all family members and edit their information if needed before submitting.
+
+    return false
+  }
+
+  function handleChange(index, field, value, type) {
+    if (type == 'child') {
+      setChildEntries((prev) => {
+        const updated = [...prev]
+        updated[index] = { ...updated[index], [field]: value }
+        return updated
+      })
+    } else {
+      setParentEntries((prev) => {
+        const updated = [...prev]
+        updated[index] = { ...updated[index], [field]: value }
+        return updated
+      })
+    }
+  }
+
+  function addEntry(type = 'parent') {
+    if (type === 'child') {
+      setChildEntries((prev) => [...prev, emptyChildEntry()])
+    } else {
+      setParentEntries((prev) => [...prev, emptyParentEntry()])
+    }
+  }
+
+  function removeEntry(index, type = 'parent') {
+    if (type === 'child') {
+      setChildEntries((prev) => prev.filter((_, i) => i !== index))
+    } else {
+      setParentEntries((prev) => prev.filter((_, i) => i !== index))
+    }
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault()
+    setGlobalError(null)
+    setLoading(true)
+
+    try {
+      const response = await fetch(`/api/club-years/${clubYearLabel}/families`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ parents: parentEntries, children: childEntries }),
+      })
+
+      if (!response.ok) {
+        const result = await response.json().catch(() => null)
+        const message = result?.error ?? 'Family could not be enrolled. Please try again.'
+        console.error('Enroll family POST failed:', message)
+        setGlobalError(message)
+        setLoading(false)
+        return
+      }
+
+      router.push(`/${clubYearLabel}/dashboard`)
+    } catch (error) {
+      console.error('Enroll family submission error:', error)
+      setGlobalError('Family could not be enrolled. Please try again.')
+      setLoading(false)
+    }
+  }
+
+  const breadcrumbs = [{ label: 'Enroll Family' }]
+
+  return (
+    <FormPage
+      title="Enroll Family"
+      description={`Fill in the information below to enroll a family in the the ${clubYearLabel} club year.`}
+      breadcrumbs={breadcrumbs}
+      globalError={globalError}
+      handleSubmit={handleSubmit}
+      submitLabel="Enroll Family"
+      submitLoadingLabel="Enrolling Family…"
+      loading={loading}
+      contentLoading={classesLoading}
+      maxWidth={600}
+    >
+      {/* Typeahead: enroll existing family */}
+      <Box mb={4}>
+        <SearchBox
+          type="family"
+          label="Find existing family"
+          placeholder="Search by parent or child first or last name"
+          handleSelect={handleSelectFamilyMember}
+        />
+      </Box>
+
+      {parentEntries.map((entry, index) => (
+        <Card.Root
+          key={index}
+          ref={(el) => (cardRefs.current[index] = el)}
+          mb={2}
+          bg="transparent"
+          borderWidth={0}
+          boxShadow="none"
+        >
+          <Card.Body px="0.5rem" py="1rem">
+            <HStack justify="space-between" mb={3}>
+              <span style={{ fontWeight: 400 }}>Parent {index + 1}</span>
+              {parentEntries.length > 1 && (
+                <IconButton
+                  variant="ghost"
+                  aria-label="Remove parent"
+                  size="sm"
+                  type="button"
+                  onClick={() => removeEntry(index, 'parent')}
+                >
+                  <FaRegTrashAlt />
+                </IconButton>
+              )}
+            </HStack>
+            <Stack gap={3}>
+              <HStack gap={3}>
+                <Field.Root flex={1} required>
+                  <Field.Label>First Name</Field.Label>
+                  <Input
+                    placeholder="First name"
+                    value={entry.first_name}
+                    onChange={(e) => handleChange(index, 'first_name', e.target.value)}
+                  />
+                </Field.Root>
+                <Field.Root flex={1} required>
+                  <Field.Label>Last Name</Field.Label>
+                  <Input
+                    placeholder="Last name"
+                    value={entry.last_name}
+                    onChange={(e) => handleChange(index, 'last_name', e.target.value)}
+                  />
+                </Field.Root>
+              </HStack>
+              <HStack gap={3}>
+                <Field.Root>
+                  <Field.Label>Email</Field.Label>
+                  <Input
+                    type="email"
+                    placeholder="email@example.com"
+                    value={entry.email}
+                    onChange={(e) => handleChange(index, 'email', e.target.value)}
+                  />
+                </Field.Root>
+                <Field.Root>
+                  <Field.Label>Phone</Field.Label>
+                  <Input
+                    type="tel"
+                    placeholder="Phone number"
+                    value={entry.phone}
+                    onChange={(e) => handleChange(index, 'phone', e.target.value)}
+                  />
+                </Field.Root>
+              </HStack>
+              <HStack gap={3}>
+                <Field.Root>
+                  <Field.Label>Address</Field.Label>
+                  <Input
+                    type="address"
+                    placeholder="Address"
+                    value={entry.address}
+                    onChange={(e) => handleChange(index, 'address', e.target.value)}
+                  />
+                </Field.Root>
+              </HStack>
+            </Stack>
+          </Card.Body>
+        </Card.Root>
+      ))}
+      <Button
+        disabled={loading}
+        size="sm"
+        variant="outline"
+        colorPalette="brand"
+        type="button"
+        onClick={() => addEntry('parent')}
+      >
+        Add Another Parent
+      </Button>
+
+      {childEntries.map((entry, index) => (
+        <Card.Root
+          key={index}
+          ref={(el) => (cardRefs.current[index] = el)}
+          mb={2}
+          bg="transparent"
+          borderWidth={0}
+          boxShadow="none"
+        >
+          <Card.Body px="0.5rem" py="1rem">
+            <HStack justify="space-between" mb={3}>
+              <span style={{ fontWeight: 400 }}>Child {index + 1}</span>
+              {childEntries.length > 1 && (
+                <IconButton
+                  variant="ghost"
+                  aria-label="Remove child"
+                  size="sm"
+                  type="button"
+                  onClick={() => removeEntry(index, 'child')}
+                >
+                  <FaRegTrashAlt />
+                </IconButton>
+              )}
+            </HStack>
+            <AdventurerForm
+              entry={entry}
+              onChange={(field, value) => handleChange(index, field, value, 'child')}
+              classes={classes}
+            />
+          </Card.Body>
+        </Card.Root>
+      ))}
+      <Button
+        disabled={loading}
+        size="sm"
+        variant="outline"
+        colorPalette="brand"
+        type="button"
+        onClick={() => addEntry('child')}
+      >
+        Add Another child
+      </Button>
+    </FormPage>
+  )
+}
+
+export default View
