@@ -1,8 +1,7 @@
 import familiesService from '@/services/familiesService'
 import { NextResponse } from 'next/server'
 
-export async function GET(request, { params }) {
-  const pathParams = await params
+export async function GET(request) {
   const { searchParams } = new URL(request.url)
   const search = searchParams.get('search') || undefined
   const id = searchParams.get('id') || undefined
