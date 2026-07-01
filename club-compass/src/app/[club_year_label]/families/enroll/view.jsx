@@ -38,13 +38,17 @@ const View = () => {
   const [childEntries, setChildEntries] = useState([emptyChildEntry()])
   const [loading, setLoading] = useState(false)
   const [globalError, setGlobalError] = useState(null)
+  const [highlightedParentIndices, setHighlightedParentIndices] = useState(new Set())
+  const [highlightedChildIndices, setHighlightedChildIndices] = useState(new Set())
   const cardRefs = useRef([])
   const { classes, loading: classesLoading } = useClasses(clubYearLabel)
 
   async function handleSelectFamilyMember(familyMember) {
     try {
       // Use family member to call the api and get all family members by id and type of a member
-      const familyData = await fetch(`/api/families?id=${familyMember.id}&type=${familyMember.type}`)
+      const familyData = await fetch(
+        `/api/club-years/${clubYearLabel}/families?id=${familyMember.id}&type=${familyMember.type}`
+      )
       const { children, parents } = await familyData.json()
       // Then populate the parentEntries and childEntries with the results.
       // This will allow the user to see all family members and edit their information if needed before submitting.
@@ -58,6 +62,12 @@ const View = () => {
       setParentEntries(() => {
         return parents.map((parent) => ({ ...emptyParentEntry(), ...parent }))
       })
+      setHighlightedParentIndices(new Set(parents.map((_, i) => i)))
+      setHighlightedChildIndices(new Set(children.map((_, i) => i)))
+      setTimeout(() => {
+        setHighlightedParentIndices(new Set())
+        setHighlightedChildIndices(new Set())
+      }, 3000)
     } catch (error) {
       setGlobalError('Could not load adventurer data. Please try again.')
       setContentLoading(false)
@@ -101,6 +111,14 @@ const View = () => {
   async function handleSubmit(event) {
     event.preventDefault()
     setGlobalError(null)
+
+    const isParentValid = (p) => p.firstName.trim() && p.lastName.trim()
+    const isChildValid = (c) => c.firstName.trim() && c.lastName.trim() && c.classId
+    if (!parentEntries.every(isParentValid) || !childEntries.every(isChildValid)) {
+      setGlobalError('Please fill out all required fields.')
+      return
+    }
+
     setLoading(true)
 
     try {
@@ -160,6 +178,11 @@ const View = () => {
           bg="transparent"
           borderWidth={0}
           boxShadow="none"
+          style={{
+            boxShadow: highlightedParentIndices.has(index) ? '0 0 0 2px #38A169' : undefined,
+            transition: 'box-shadow 0.3s',
+            borderRadius: '8px',
+          }}
         >
           <Card.Body px="0.5rem" py="1rem">
             <HStack justify="space-between" mb={3}>
@@ -179,7 +202,9 @@ const View = () => {
             <Stack gap={3}>
               <HStack gap={3}>
                 <Field.Root flex={1} required>
-                  <Field.Label>First Name</Field.Label>
+                  <Field.Label>
+                    First Name <Field.RequiredIndicator />
+                  </Field.Label>
                   <Input
                     placeholder="First name"
                     value={entry.firstName}
@@ -187,7 +212,9 @@ const View = () => {
                   />
                 </Field.Root>
                 <Field.Root flex={1} required>
-                  <Field.Label>Last Name</Field.Label>
+                  <Field.Label>
+                    Last Name <Field.RequiredIndicator />
+                  </Field.Label>
                   <Input
                     placeholder="Last name"
                     value={entry.lastName}
@@ -249,6 +276,11 @@ const View = () => {
           bg="transparent"
           borderWidth={0}
           boxShadow="none"
+          style={{
+            boxShadow: highlightedChildIndices.has(index) ? '0 0 0 2px #38A169' : undefined,
+            transition: 'box-shadow 0.3s',
+            borderRadius: '8px',
+          }}
         >
           <Card.Body px="0.5rem" py="1rem">
             <HStack justify="space-between" mb={3}>

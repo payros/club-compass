@@ -20,7 +20,9 @@ const ChildForm = ({ data = {}, entry = null, onChange = null }) => {
       <>
         <HStack gap={3}>
           <Field.Root flex={1} required>
-            <Field.Label>First Name</Field.Label>
+            <Field.Label>
+              First Name <Field.RequiredIndicator />
+            </Field.Label>
             <Input
               placeholder="First name"
               value={entry.firstName}
@@ -28,7 +30,9 @@ const ChildForm = ({ data = {}, entry = null, onChange = null }) => {
             />
           </Field.Root>
           <Field.Root flex={1} required>
-            <Field.Label>Last Name</Field.Label>
+            <Field.Label>
+              Last Name <Field.RequiredIndicator />
+            </Field.Label>
             <Input
               placeholder="Last name"
               value={entry.lastName}

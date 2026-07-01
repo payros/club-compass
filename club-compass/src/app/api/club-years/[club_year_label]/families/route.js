@@ -1,6 +1,22 @@
 import familiesService from '@/services/familiesService'
 import { NextResponse } from 'next/server'
 
+export async function GET(request, { params }) {
+  const { club_year_label } = await params
+  const { searchParams } = new URL(request.url)
+  const id = searchParams.get('id') || undefined
+  const type = searchParams.get('type') || undefined
+
+  if (id && type) {
+    const familyMember = await familiesService.getByMember(id, type, club_year_label)
+    return NextResponse.json(familyMember)
+  }
+
+  const search = searchParams.get('search') || undefined
+  const families = await familiesService.list(search)
+  return NextResponse.json(families)
+}
+
 export async function POST(request, { params }) {
   const pathParams = await params
   const clubYearLabel = pathParams['club_year_label']

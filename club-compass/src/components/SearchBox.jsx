@@ -140,7 +140,19 @@ const SearchBox = ({
       type === 'event' ? item.title : `${item.firstName ?? ''} ${item.lastName ?? ''}`.trim() || item.name
     setResults([])
     const result = handleSelect(item)
-    if (result === false) {
+    if (result instanceof Promise) {
+      setLoading(true)
+      result
+        .then((resolved) => {
+          if (resolved === false) {
+            setQuery('')
+          } else {
+            setQuery(displayName)
+          }
+        })
+        .catch(() => setQuery(''))
+        .finally(() => setLoading(false))
+    } else if (result === false) {
       setQuery('')
     } else {
       setQuery(displayName)
