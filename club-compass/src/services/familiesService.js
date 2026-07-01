@@ -18,7 +18,7 @@ async function list(search) {
 }
 
 /* This function return an object with all the linked family members for a given member */
-async function getByMember(id, type) {
+async function getByMember(id, type, clubYearLabel) {
   try {
     const memberId = Number.parseInt(id, 10)
     if (Number.isNaN(memberId)) {
@@ -26,13 +26,22 @@ async function getByMember(id, type) {
     }
 
     const normalizedType = String(type || '').toLowerCase()
+    const classJoin = clubYearLabel
+      ? sql`
+          LEFT JOIN adv_db.classes_children AS cc ON cc.child_id = ch.id
+            AND cc.club_year_id = (SELECT id FROM adv_db.club_years WHERE label = ${clubYearLabel})
+          LEFT JOIN adv_db.classes AS cl ON cl.id = cc.class_id`
+      : sql``
+    const classFields = clubYearLabel ? sql`, cl.id AS class_id, cl.class AS class_name` : sql``
 
     if (normalizedType === 'parent') {
       const [childrenResult, parentsResult] = await Promise.all([
         sql`
           SELECT ch.id, ch.first_name, ch.last_name, ch.allergies, ch.medical_conditions, ch.sex, ch.date_of_birth
+          ${classFields}
           FROM adv_db.parents_children AS pc
           JOIN adv_db.children AS ch ON ch.id = pc.child_id
+          ${classJoin}
           WHERE pc.parent_id = ${memberId}
           ORDER BY ch.last_name ASC, ch.first_name ASC
         `,
@@ -60,9 +69,11 @@ async function getByMember(id, type) {
         `,
         sql`
           SELECT DISTINCT ch.id, ch.first_name, ch.last_name, ch.allergies, ch.medical_conditions, ch.sex, ch.date_of_birth
+          ${classFields}
           FROM adv_db.parents_children AS pc
           JOIN adv_db.parents_children AS pc2 ON pc2.parent_id = pc.parent_id
           JOIN adv_db.children AS ch ON ch.id = pc2.child_id
+          ${classJoin}
           WHERE pc.child_id = ${memberId}
           ORDER BY ch.last_name ASC, ch.first_name ASC
         `,
@@ -169,6 +180,33 @@ async function enroll(clubYearLabel, familyMembers) {
           class_id = EXCLUDED.class_id`
 
       createdChildren.push(childRecord)
+    }
+
+    // Unenroll children linked to known parents who are absent from this submission
+    const existingParentIds = familyMembers.parents
+      .map((p) => (p.id != null && p.id !== '' ? Number(p.id) : null))
+      .filter((id) => id !== null)
+
+    if (existingParentIds.length > 0) {
+      const linkedRows = await sql`
+        SELECT DISTINCT child_id
+        FROM adv_db.parents_children
+        WHERE parent_id = ANY(${existingParentIds})`
+
+      const enrolledChildIds = new Set(
+        familyMembers.children
+          .map((c) => (c.id != null && c.id !== '' ? Number(c.id) : null))
+          .filter((id) => id !== null)
+      )
+
+      const childIdsToUnenroll = linkedRows.map((row) => row.childId).filter((id) => !enrolledChildIds.has(id))
+
+      if (childIdsToUnenroll.length > 0) {
+        await sql`
+          DELETE FROM adv_db.classes_children
+          WHERE club_year_id = ${clubYear.id}
+            AND child_id = ANY(${childIdsToUnenroll})`
+      }
     }
 
     // Insert parent-child relationships for all combinations in a single query

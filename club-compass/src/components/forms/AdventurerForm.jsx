@@ -19,8 +19,10 @@ const AdventurerForm = ({ data = {}, entry = null, onChange = null, classes = []
     return (
       <Stack gap={3}>
         <ChildForm entry={entry} onChange={onChange} />
-        <Field.Root>
-          <Field.Label>Class</Field.Label>
+        <Field.Root required>
+          <Field.Label>
+            Class <Field.RequiredIndicator />
+          </Field.Label>
           <NativeSelect.Root>
             <NativeSelect.Field value={entry.classId} onChange={(e) => onChange('classId', e.target.value)}>
               <option value="">Select a class</option>
