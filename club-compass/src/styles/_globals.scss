@@ -110,6 +110,12 @@ body {
 }
 
 .breadcrumb-nav a,
+.breadcrumb-year-trigger,
+.breadcrumb-nav [aria-current='page'] {
+  font-size: 2rem !important;
+}
+
+.breadcrumb-nav a,
 .breadcrumb-year-trigger {
   color: rgba(255, 255, 255, 0.8) !important;
   text-decoration: none;
@@ -133,6 +139,14 @@ body {
 .breadcrumb-nav [aria-current='page'] {
   color: #fff !important;
   font-weight: 600;
+}
+
+@media (max-width: 48em) {
+  .breadcrumb-nav a,
+  .breadcrumb-year-trigger,
+  .breadcrumb-nav [aria-current='page'] {
+    font-size: 1.25rem !important;
+  }
 }
 
 /* Glass button */
