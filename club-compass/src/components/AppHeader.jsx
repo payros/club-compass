@@ -59,7 +59,13 @@ export default function AppHeader({ breadcrumbs = [] }) {
             style={{ height: '118px', width: 'auto', paddingTop: '20px' }}
           />
           <Box display="flex" flexDirection="column">
-            <Text fontWeight={800} fontSize={{ base: '6xl' }} color="white" whiteSpace="nowrap" flexShrink={0}>
+            <Text
+              fontWeight={800}
+              fontSize={{ base: '3xl', md: '5xl', lg: '6xl' }}
+              color="white"
+              whiteSpace="nowrap"
+              flexShrink={0}
+            >
               {clubName}
             </Text>
             <Box onClick={(e) => e.stopPropagation()}>

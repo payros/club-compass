@@ -81,17 +81,21 @@ export default function Breadcrumbs({ items = [] }) {
               )}
             </Breadcrumb.Item>
             {dropdownYears.length === 0 && (
-              <Breadcrumb.Separator style={{ color: 'rgba(255,255,255,0.75)' }} ml={2} mr={1}>
+              <Breadcrumb.Separator
+                hideBelow={items.length > 0 ? 'md' : undefined}
+                style={{ color: 'rgba(255,255,255,0.75)' }}
+                ml={2}
+                mr={1}
+              >
                 <FaChevronRight style={{ fontSize: '1.2rem' }} />
               </Breadcrumb.Separator>
             )}
-            <Breadcrumb.Item>
+            <Breadcrumb.Item hideBelow={items.length > 0 ? 'lg' : undefined}>
               <Breadcrumb.Link asChild>
                 <Link
                   href={`/${currentClubYearLabel}/dashboard`}
                   style={{
                     color: 'rgba(255,255,255,0.75)',
-                    fontSize: '2rem',
                   }}
                 >
                   Dashboard
@@ -106,7 +110,6 @@ export default function Breadcrumbs({ items = [] }) {
                 href="/directories"
                 style={{
                   color: 'rgba(255,255,255,0.75)',
-                  fontSize: '2rem',
                 }}
               >
                 Directories
@@ -115,7 +118,12 @@ export default function Breadcrumbs({ items = [] }) {
           </Breadcrumb.Item>
         )}
         {items.length > 0 && (
-          <Breadcrumb.Separator style={{ color: 'rgba(255,255,255,0.75)' }} ml={2} mr={1}>
+          <Breadcrumb.Separator
+            hideBelow={dropdownYears.length > 0 ? 'lg' : undefined}
+            style={{ color: 'rgba(255,255,255,0.75)' }}
+            ml={2}
+            mr={1}
+          >
             <FaChevronRight style={{ fontSize: '1.2rem' }} />
           </Breadcrumb.Separator>
         )}
@@ -124,9 +132,9 @@ export default function Breadcrumbs({ items = [] }) {
 
           return (
             <React.Fragment key={i}>
-              <Breadcrumb.Item>
+              <Breadcrumb.Item hideBelow={!isLast ? 'md' : undefined}>
                 {isLast ? (
-                  <Breadcrumb.CurrentLink style={{ color: '#fff', fontWeight: 600, fontSize: '2rem' }}>
+                  <Breadcrumb.CurrentLink style={{ color: '#fff', fontWeight: 600 }}>
                     {item.label}
                   </Breadcrumb.CurrentLink>
                 ) : (
@@ -135,7 +143,6 @@ export default function Breadcrumbs({ items = [] }) {
                       href={item.href ?? '#'}
                       style={{
                         color: 'rgba(255,255,255,0.75)',
-                        fontSize: '2rem',
                       }}
                     >
                       {item.label}
@@ -144,7 +151,7 @@ export default function Breadcrumbs({ items = [] }) {
                 )}
               </Breadcrumb.Item>
               {!isLast && (
-                <Breadcrumb.Separator style={{ color: 'rgba(255,255,255,0.75)' }} ml={2} mr={1}>
+                <Breadcrumb.Separator hideBelow="md" style={{ color: 'rgba(255,255,255,0.75)' }} ml={2} mr={1}>
                   <FaChevronRight style={{ fontSize: '1.2rem' }} />
                 </Breadcrumb.Separator>
               )}
