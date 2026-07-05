@@ -19,10 +19,6 @@ export default function View() {
       label: 'Edit Adventurer',
       href: `/${clubYearLabel}/adventurers/${childId}/edit`,
     },
-    {
-      label: 'Edit Awards',
-      href: `/children/${childId}/edit-awards`,
-    },
   ]
 
   const fields = child
@@ -41,7 +37,6 @@ export default function View() {
   const relatedCards = [
     {
       title: 'Parents / Guardians',
-      badge: child?.parents?.length ?? 0,
       headers: [
         { key: 'name', label: 'Name', sortable: false },
         { key: 'phone', label: 'Phone', sortable: false },
@@ -58,7 +53,7 @@ export default function View() {
     },
     {
       title: 'Awards',
-      badge: child?.awards?.length ?? 0,
+      description: `Earned ${clubYearLabel ? 'in ' + clubYearLabel : 'this club year'}`,
       headers: [
         { key: 'patchImageUrl', label: '', type: 'image', sortable: false },
         { key: 'name', label: 'Award', sortable: false },

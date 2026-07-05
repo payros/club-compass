@@ -26,20 +26,5 @@ async function getById(id) {
   return null
 }
 
-async function getChildrenByParentId(parentId) {
-  try {
-    const result = await sql`
-      SELECT ch.*
-      FROM adv_db.parents_children AS pc
-      JOIN adv_db.children AS ch ON pc.child_id = ch.id
-      WHERE pc.parent_id = ${parentId}
-      ORDER BY ch.last_name ASC`
-    return result
-  } catch (err) {
-    console.error(err)
-  }
-  return []
-}
-
-const parentsService = { list, getById, getChildrenByParentId }
+const parentsService = { list, getById }
 export default parentsService

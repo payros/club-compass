@@ -27,6 +27,16 @@ CREATE TYPE "award_type" AS ENUM (
   'other'
 );
 
+CREATE TYPE "grade_level" AS ENUM (
+  'pre-k',
+  'k',
+  '1st',
+  '2nd',
+  '3rd',
+  '4th',
+  '5th'
+);
+
 CREATE TYPE "staff_role" AS ENUM (
   'director',
   'associate_director',
@@ -56,6 +66,7 @@ CREATE TABLE "parents" (
   "email" varchar,
   "phone" varchar,
   "address" varchar,
+  "is_emergency_contact" boolean NOT NULL DEFAULT false,
   "created_at" timestamp DEFAULT (now())
 );
 
@@ -65,8 +76,10 @@ CREATE TABLE "children" (
   "last_name" varchar NOT NULL,
   "allergies" varchar,
   "medical_conditions" varchar,
+  "physical_restrictions" varchar,
   "sex" sex,
   "date_of_birth" timestamp,
+  "grade" grade_level,
   "created_at" timestamp DEFAULT (now())
 );
 
@@ -91,6 +104,7 @@ CREATE TABLE "club_years" (
   "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   "start_date" timestamp,
   "club_name" varchar,
+  "church_name" varchar,
   "end_date" timestamp,
   "label" varchar UNIQUE,
   "created_at" timestamp DEFAULT (now())

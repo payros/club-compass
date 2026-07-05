@@ -69,6 +69,7 @@ This distinction is central to the awards tracking flow — always check `award_
 
 - PostgreSQL in `adv_db` schema. Init scripts: `postgres/01-configuration.sql` → `02-schema.sql` → `03-seed-data.sql` → `04-sample-data.sql`.
 - All services import `sql` from `src/lib/postgres.js` and use tagged-template literals for queries.
+- **`postgres.js` uses `transform: postgres.camel`** — all snake_case column names from the DB (e.g. `club_name`, `start_date`, `enrolled_adventurers`) are **automatically converted to camelCase** (`clubName`, `startDate`, `enrolledAdventurers`) in every query result. **Always use camelCase when reading fields from any API response or service return value.** Never use snake_case keys on objects returned from services or API routes (e.g. use `clubYear.clubName`, not `clubYear.club_name`).
 
 ## Key Conventions
 

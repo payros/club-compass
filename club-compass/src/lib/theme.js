@@ -38,6 +38,16 @@ const config = defineConfig({
           focusRing: { value: '#f4c542' },
           placeholder: { value: 'rgba(244, 197, 66, 0.5)' },
         },
+        accentInverted: {
+          solid: { value: '#f4c542' },
+          contrast: { value: '#1e564a' },
+          fg: { value: '#1e564a' },
+          muted: { value: 'rgba(232, 154, 45, 0.15)' },
+          subtle: { value: 'rgba(244, 197, 66, 0.15)' },
+          emphasized: { value: '#2f7a6a' },
+          focusRing: { value: '#2f7a6a' },
+          placeholder: { value: 'rgba(244, 197, 66, 0.5)' },
+        },
         // "glass" palette — for white-on-dark glass UI elements (buttons, borders)
         glass: {
           solid: { value: 'rgba(255,255,255,0.2)' },
@@ -73,6 +83,17 @@ const buttonRecipe = defineRecipe({
           bg: '{colors.accent.emphasized}',
           borderColor: '{colors.accent.emphasized}',
           color: '{colors.brand.placeholder}',
+        },
+      },
+      solidInverted: {
+        borderWidth: 1,
+        color: '{colors.contrast.solid}',
+        borderColor: '{colors.accentInverted.solid}',
+        backgroundColor: '{colors.accentInverted.solid}',
+        _hover: {
+          bg: '{colors.accentInverted.emphasized}',
+          borderColor: '{colors.accentInverted.emphasized}',
+          color: '{colors.accent.contrast}',
         },
       },
     },

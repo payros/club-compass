@@ -1,8 +1,8 @@
 'use client'
-import { Field, Input } from '@chakra-ui/react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import FormPage from '@/components/pages/FormPage'
+import ClubYearForm from '@/components/forms/ClubYearForm'
 import { useFlow } from '@/hooks/useFlow'
 
 const View = () => {
@@ -63,23 +63,7 @@ const View = () => {
       current={current}
       total={total}
     >
-      <Field.Root>
-        <Field.Label>Club Name</Field.Label>
-        <Input name="clubName" placeholder="Enter the official name of your club" />
-      </Field.Root>
-      <Field.Root invalid={!!labelError}>
-        <Field.Label>Year Label</Field.Label>
-        <Input name="label" placeholder="e.g. 2025-2026" />
-        {labelError && <Field.ErrorText>{labelError}</Field.ErrorText>}
-      </Field.Root>
-      <Field.Root>
-        <Field.Label>Start Date</Field.Label>
-        <Input name="startDate" type="date" />
-      </Field.Root>
-      <Field.Root>
-        <Field.Label>End Date</Field.Label>
-        <Input name="endDate" type="date" />
-      </Field.Root>
+      <ClubYearForm labelError={labelError} />
     </FormPage>
   )
 }
