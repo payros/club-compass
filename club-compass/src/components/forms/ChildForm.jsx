@@ -1,6 +1,6 @@
 'use client'
 import { Field, HStack, Input, NativeSelect } from '@chakra-ui/react'
-import { SEX_OPTIONS } from '@/utils/consts'
+import { SEX_OPTIONS, GRADE_OPTIONS } from '@/utils/consts'
 import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
 
 /**
@@ -78,6 +78,30 @@ const ChildForm = ({ data = {}, entry = null, onChange = null }) => {
             />
           </Field.Root>
         </HStack>
+        <HStack gap={3}>
+          <Field.Root flex={1}>
+            <Field.Label>Grade</Field.Label>
+            <NativeSelect.Root>
+              <NativeSelect.Field value={entry.grade} onChange={(e) => onChange('grade', e.target.value)}>
+                <option value="">Select a grade</option>
+                {GRADE_OPTIONS.map(({ value, label }) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </NativeSelect.Field>
+              <NativeSelect.Indicator />
+            </NativeSelect.Root>
+          </Field.Root>
+          <Field.Root flex={1}>
+            <Field.Label>Physical Restrictions</Field.Label>
+            <Input
+              placeholder="Physical restrictions"
+              value={entry.physicalRestrictions}
+              onChange={(e) => onChange('physicalRestrictions', e.target.value)}
+            />
+          </Field.Root>
+        </HStack>
       </>
     )
   }
@@ -131,6 +155,30 @@ const ChildForm = ({ data = {}, entry = null, onChange = null }) => {
             name="medicalConditions"
             placeholder="Medical conditions"
             defaultValue={data.medicalConditions ?? data.medical_conditions ?? ''}
+          />
+        </Field.Root>
+      </HStack>
+      <HStack gap={3}>
+        <Field.Root flex={1}>
+          <Field.Label>Grade</Field.Label>
+          <NativeSelect.Root>
+            <NativeSelect.Field name="grade" defaultValue={data.grade ?? ''}>
+              <option value="">Select a grade</option>
+              {GRADE_OPTIONS.map(({ value, label }) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </NativeSelect.Field>
+            <NativeSelect.Indicator />
+          </NativeSelect.Root>
+        </Field.Root>
+        <Field.Root flex={1}>
+          <Field.Label>Physical Restrictions</Field.Label>
+          <Input
+            name="physicalRestrictions"
+            placeholder="Physical restrictions"
+            defaultValue={data.physicalRestrictions ?? data.physical_restrictions ?? ''}
           />
         </Field.Root>
       </HStack>

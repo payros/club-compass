@@ -19,6 +19,10 @@ export default function View() {
       label: 'Edit Child',
       href: `/children/${id}/edit`,
     },
+    {
+      label: 'Edit Awards',
+      href: `/children/${id}/edit-awards`,
+    },
   ]
 
   const fields = child

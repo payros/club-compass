@@ -119,5 +119,22 @@ async function enroll(clubYearLabel, staffMembers) {
   return results
 }
 
-const staffService = { list, listByClubYear, getById, getByIdForClubYear, enroll }
+async function getByRole(clubYearLabel, role) {
+  try {
+    const [result] = await sql`
+      SELECT sf.*
+      FROM adv_db.staff AS sf
+      JOIN adv_db.club_years_staff AS cys ON cys.staff_id = sf.id
+      JOIN adv_db.club_years AS cy ON cys.club_year_id = cy.id
+      WHERE cy.label = ${clubYearLabel}
+        AND cys.staff_role = ${role}
+      LIMIT 1`
+    return result ?? null
+  } catch (err) {
+    console.error(err)
+  }
+  return null
+}
+
+const staffService = { list, listByClubYear, getById, getByIdForClubYear, enroll, getByRole }
 export default staffService

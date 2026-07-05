@@ -309,10 +309,56 @@ async function create(data) {
   }
 }
 
+async function getByParentId(parentId, clubYearLabel) {
+  try {
+    const result = await sql`
+      SELECT * FROM (
+        SELECT DISTINCT ON (ch.id) ch.*,
+          (
+            SELECT jsonb_build_object('firstName', p2.first_name, 'lastName', p2.last_name, 'phone', p2.phone)
+            FROM adv_db.parents_children AS pc2
+            JOIN adv_db.parents AS p2 ON pc2.parent_id = p2.id
+            WHERE pc2.child_id = ch.id AND p2.is_emergency_contact = true
+            LIMIT 1
+          ) AS emergency_contact,
+          (
+            SELECT coalesce(json_agg(jsonb_build_object(
+              'id', a.id,
+              'name', a.name,
+              'level', a.level::text,
+              'type', a.type::text
+            )), '[]'::json)
+            FROM adv_db.awards_children AS ac2
+            JOIN adv_db.awards AS a ON ac2.award_id = a.id
+            WHERE ac2.child_id = ch.id
+          ) AS awards
+        FROM adv_db.parents_children AS pc
+        JOIN adv_db.children AS ch ON pc.child_id = ch.id
+        ${
+          clubYearLabel
+            ? sql`
+          JOIN adv_db.classes_children AS cc ON cc.child_id = ch.id
+          JOIN adv_db.club_years AS cy ON cy.id = cc.club_year_id
+        `
+            : sql``
+        }
+        WHERE pc.parent_id = ${parentId}
+        ${clubYearLabel ? sql`AND cy.label = ${clubYearLabel}` : sql``}
+        ORDER BY ch.id
+      ) AS deduped
+      ORDER BY last_name ASC`
+    return result
+  } catch (err) {
+    console.error(err)
+  }
+  return []
+}
+
 const childrenService = {
   list,
   listByClubYear,
   getById,
+  getByParentId,
   getParentsByChildId,
   getAwardsByChildId,
   create,

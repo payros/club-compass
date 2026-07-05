@@ -37,7 +37,7 @@ async function getByMember(id, type, clubYearLabel) {
     if (normalizedType === 'parent') {
       const [childrenResult, parentsResult] = await Promise.all([
         sql`
-          SELECT ch.id, ch.first_name, ch.last_name, ch.allergies, ch.medical_conditions, ch.sex, ch.date_of_birth
+          SELECT ch.id, ch.first_name, ch.last_name, ch.allergies, ch.medical_conditions, ch.physical_restrictions, ch.sex, ch.date_of_birth, ch.grade
           ${classFields}
           FROM adv_db.parents_children AS pc
           JOIN adv_db.children AS ch ON ch.id = pc.child_id
@@ -46,7 +46,7 @@ async function getByMember(id, type, clubYearLabel) {
           ORDER BY ch.last_name ASC, ch.first_name ASC
         `,
         sql`
-          SELECT DISTINCT p.id, p.first_name, p.last_name, p.email, p.phone, p.address
+          SELECT DISTINCT p.id, p.first_name, p.last_name, p.email, p.phone, p.address, p.is_emergency_contact
           FROM adv_db.parents_children AS pc1
           JOIN adv_db.parents_children AS pc2 ON pc2.child_id = pc1.child_id
           JOIN adv_db.parents AS p ON p.id = pc2.parent_id
@@ -61,14 +61,14 @@ async function getByMember(id, type, clubYearLabel) {
     if (normalizedType === 'child') {
       const [parentsResult, childrenResult] = await Promise.all([
         sql`
-          SELECT p.id, p.first_name, p.last_name, p.email, p.phone, p.address
+          SELECT p.id, p.first_name, p.last_name, p.email, p.phone, p.address, p.is_emergency_contact
           FROM adv_db.parents_children AS pc
           JOIN adv_db.parents AS p ON p.id = pc.parent_id
           WHERE pc.child_id = ${memberId}
           ORDER BY p.last_name ASC, p.first_name ASC
         `,
         sql`
-          SELECT DISTINCT ch.id, ch.first_name, ch.last_name, ch.allergies, ch.medical_conditions, ch.sex, ch.date_of_birth
+          SELECT DISTINCT ch.id, ch.first_name, ch.last_name, ch.allergies, ch.medical_conditions, ch.physical_restrictions, ch.sex, ch.date_of_birth, ch.grade
           ${classFields}
           FROM adv_db.parents_children AS pc
           JOIN adv_db.parents_children AS pc2 ON pc2.parent_id = pc.parent_id
@@ -101,7 +101,7 @@ async function enroll(clubYearLabel, familyMembers) {
       let parentRecord
       if (parentId) {
         ;[parentRecord] = await sql`
-          INSERT INTO adv_db.parents (id, first_name, last_name, email, phone, address)
+          INSERT INTO adv_db.parents (id, first_name, last_name, email, phone, address, is_emergency_contact)
           OVERRIDING SYSTEM VALUE
           VALUES (
             ${parentId},
@@ -109,24 +109,27 @@ async function enroll(clubYearLabel, familyMembers) {
             ${parent.lastName},
             ${parent.email || null},
             ${parent.phone || null},
-            ${parent.address || null}
+            ${parent.address || null},
+            ${parent.isEmergencyContact ?? false}
           )
           ON CONFLICT (id) DO UPDATE SET
             first_name = EXCLUDED.first_name,
             last_name = EXCLUDED.last_name,
             email = EXCLUDED.email,
             phone = EXCLUDED.phone,
-            address = EXCLUDED.address
+            address = EXCLUDED.address,
+            is_emergency_contact = EXCLUDED.is_emergency_contact
           RETURNING *`
       } else {
         ;[parentRecord] = await sql`
-          INSERT INTO adv_db.parents (first_name, last_name, email, phone, address)
+          INSERT INTO adv_db.parents (first_name, last_name, email, phone, address, is_emergency_contact)
           VALUES (
             ${parent.firstName},
             ${parent.lastName},
             ${parent.email || null},
             ${parent.phone || null},
-            ${parent.address || null}
+            ${parent.address || null},
+            ${parent.isEmergencyContact ?? false}
           )
           RETURNING *`
       }
@@ -140,7 +143,7 @@ async function enroll(clubYearLabel, familyMembers) {
       let childRecord
       if (childId) {
         ;[childRecord] = await sql`
-          INSERT INTO adv_db.children (id, first_name, last_name, allergies, medical_conditions, sex, date_of_birth)
+          INSERT INTO adv_db.children (id, first_name, last_name, allergies, medical_conditions, physical_restrictions, sex, date_of_birth, grade)
           OVERRIDING SYSTEM VALUE
           VALUES (
             ${childId},
@@ -148,27 +151,33 @@ async function enroll(clubYearLabel, familyMembers) {
             ${child.lastName},
             ${child.allergies || null},
             ${child.medicalConditions || null},
+            ${child.physicalRestrictions || null},
             ${child.sex || null},
-            ${child.dateOfBirth || null}
+            ${child.dateOfBirth || null},
+            ${child.grade || null}
           )
           ON CONFLICT (id) DO UPDATE SET
             first_name = EXCLUDED.first_name,
             last_name = EXCLUDED.last_name,
             allergies = EXCLUDED.allergies,
             medical_conditions = EXCLUDED.medical_conditions,
+            physical_restrictions = EXCLUDED.physical_restrictions,
             sex = EXCLUDED.sex,
-            date_of_birth = EXCLUDED.date_of_birth
+            date_of_birth = EXCLUDED.date_of_birth,
+            grade = EXCLUDED.grade
           RETURNING *`
       } else {
         ;[childRecord] = await sql`
-          INSERT INTO adv_db.children (first_name, last_name, allergies, medical_conditions, sex, date_of_birth)
+          INSERT INTO adv_db.children (first_name, last_name, allergies, medical_conditions, physical_restrictions, sex, date_of_birth, grade)
           VALUES (
             ${child.firstName},
             ${child.lastName},
             ${child.allergies || null},
             ${child.medicalConditions || null},
+            ${child.physicalRestrictions || null},
             ${child.sex || null},
-            ${child.dateOfBirth || null}
+            ${child.dateOfBirth || null},
+            ${child.grade || null}
           )
           RETURNING *`
       }

@@ -1,5 +1,7 @@
-h1:WoCTYKy4u150p7CsXClzgUSrwjrEDJD4ejKGN6UXGyk=
+h1:bUmettBmEA/p8QKycRh4BXdSEs3r2A/u5RSEZ3HXVmA=
 20260525000000_initial.sql h1:KUrJSmoYeIVju4Z5dcBFxwaw9UjRbytsGOi/eX6s1L0=
 20260601000000_classes_unique_class_club_year.sql h1:IZUNrumCBQEpJ8ij9REYlNazn/Qn6CrcT/lb1KzkcUU=
 20260602000000_classes_children_unique_constraint.sql h1:AxfOqnGcnSPklYMch7qI55G2XE+Ikvw0iCoP6aC+occ=
 20260614000000_awards_patch_image_urls.sql h1:1mtz9j0HeAKHpSmQdgV36Eqg8UhadTUl/J9by7eK2hY=
+20260702000000_form_fields.sql h1:FCkseoCDqKnoRY1qcbFmsrDE+sYcMbA0TcWYNAsiFK8=
+20260704000000_insert_class_pins.sql h1:/WDwJmp1rpa+H90LwMSGRjMJV+Csr6gGVMNE0I0nwP4=

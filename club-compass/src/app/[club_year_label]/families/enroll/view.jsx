@@ -1,5 +1,5 @@
 'use client'
-import { Button, Field, Input, Card, IconButton, Stack, HStack, Box } from '@chakra-ui/react'
+import { Button, Checkbox, Field, Input, Card, IconButton, Stack, HStack, Box } from '@chakra-ui/react'
 import { useParams, useRouter } from 'next/navigation'
 import { useState, useRef } from 'react'
 import { FaRegTrashAlt } from 'react-icons/fa'
@@ -14,6 +14,7 @@ const emptyParentEntry = () => ({
   email: '',
   phone: '',
   address: '',
+  isEmergencyContact: false,
 })
 
 const emptyChildEntry = () => ({
@@ -21,9 +22,11 @@ const emptyChildEntry = () => ({
   lastName: '',
   allergies: '',
   medicalConditions: '',
+  physicalRestrictions: '',
   sex: '',
   dateOfBirth: '',
   classId: '',
+  grade: '',
 })
 
 const normalizeDateOfBirth = (value) => {
@@ -38,6 +41,7 @@ const View = () => {
   const [childEntries, setChildEntries] = useState([emptyChildEntry()])
   const [loading, setLoading] = useState(false)
   const [globalError, setGlobalError] = useState(null)
+  const [sameAddress, setSameAddress] = useState(false)
   const [highlightedParentIndices, setHighlightedParentIndices] = useState(new Set())
   const [highlightedChildIndices, setHighlightedChildIndices] = useState(new Set())
   const cardRefs = useRef([])
@@ -62,6 +66,8 @@ const View = () => {
       setParentEntries(() => {
         return parents.map((parent) => ({ ...emptyParentEntry(), ...parent }))
       })
+      const addresses = parents.map((p) => p.address ?? '')
+      setSameAddress(parents.length > 1 && addresses.every((a) => a === addresses[0]))
       setHighlightedParentIndices(new Set(parents.map((_, i) => i)))
       setHighlightedChildIndices(new Set(children.map((_, i) => i)))
       setTimeout(() => {
@@ -86,6 +92,9 @@ const View = () => {
     } else {
       setParentEntries((prev) => {
         const updated = [...prev]
+        if (field === 'address' && sameAddress) {
+          return updated.map((entry) => ({ ...entry, address: value }))
+        }
         updated[index] = { ...updated[index], [field]: value }
         return updated
       })
@@ -118,6 +127,10 @@ const View = () => {
       setGlobalError('Please fill out all required fields.')
       return
     }
+    if (!parentEntries.some((p) => p.isEmergencyContact)) {
+      setGlobalError('At least one parent must be marked as an emergency contact.')
+      return
+    }
 
     setLoading(true)
 
@@ -137,7 +150,9 @@ const View = () => {
         return
       }
 
-      router.push(`/${clubYearLabel}/dashboard`)
+      const result = await response.json()
+      const parentIds = result.parents.map((p) => p.id).join(',')
+      router.push(`/${clubYearLabel}/families/enroll/success?parentIds=${parentIds}`)
     } catch (error) {
       console.error('Enroll family submission error:', error)
       setGlobalError('Family could not be enrolled. Please try again.')
@@ -252,6 +267,33 @@ const View = () => {
                     onChange={(e) => handleChange(index, 'address', e.target.value)}
                   />
                 </Field.Root>
+              </HStack>
+              <HStack gap={3} wrap="wrap">
+                <Checkbox.Root
+                  checked={entry.isEmergencyContact}
+                  onCheckedChange={(e) => handleChange(index, 'isEmergencyContact', !!e.checked, 'parent')}
+                >
+                  <Checkbox.HiddenInput />
+                  <Checkbox.Control />
+                  <Checkbox.Label>Emergency Contact</Checkbox.Label>
+                </Checkbox.Root>
+                {index === 0 && (
+                  <Checkbox.Root
+                    checked={sameAddress}
+                    onCheckedChange={(e) => {
+                      const checked = !!e.checked
+                      setSameAddress(checked)
+                      if (checked) {
+                        const sharedAddress = parentEntries[0].address
+                        setParentEntries((prev) => prev.map((p) => ({ ...p, address: sharedAddress })))
+                      }
+                    }}
+                  >
+                    <Checkbox.HiddenInput />
+                    <Checkbox.Control />
+                    <Checkbox.Label>Same address for all parents</Checkbox.Label>
+                  </Checkbox.Root>
+                )}
               </HStack>
             </Stack>
           </Card.Body>

@@ -2,20 +2,20 @@
 -- Never runs in production.
 SET search_path TO adv_db;
 
-INSERT INTO club_years (label, club_name, start_date, end_date) 
-VALUES ('25-26', 'Little Eagles', '2025-08-15', '2026-05-28');
+INSERT INTO club_years (label, club_name, church_name, start_date, end_date) 
+VALUES ('25-26', 'Little Eagles', 'Grace Community Church', '2025-08-15', '2026-05-28');
 
-INSERT INTO children (first_name, last_name, allergies, medical_conditions, sex, date_of_birth) 
-VALUES ('John', 'Doe', 'Peanuts', 'Asthma', 'male', '2015-03-10'),
-       ('Jane', 'Smith', 'Dairy', 'Eczema', 'female', '2016-07-22'),
-       ('Alex', 'Johnson', 'Wheat', 'Allergies', 'male', '2014-11-05'),
-       ('Emily', 'Brown', 'Shellfish', 'Hypertension', 'female', '2017-02-18'),
-       ('Michael', 'Davis', 'Eggs', 'Diabetes', 'male', '2013-09-30'),
-       ('Sarah', 'Miller', 'Peanuts', 'Asthma', 'female', '2018-05-12'),
-       ('David', 'Wilson', 'Dairy', 'Eczema', 'male', '2019-08-25'),
-       ('Laura', 'Moore', 'Wheat', 'Allergies', 'female', '2016-04-08'),
-       ('James', 'Taylor', 'Shellfish', 'Hypertension', 'male', '2017-01-15'),
-       ('Mia', 'Anderson', 'Eggs', 'Diabetes', 'female', '2018-06-20');
+INSERT INTO children (first_name, last_name, allergies, medical_conditions, physical_restrictions, sex, date_of_birth, grade) 
+VALUES ('John', 'Doe', 'Peanuts', 'Asthma', 'Limited running due to asthma', 'male', '2015-03-10', '5th'),
+       ('Jane', 'Smith', 'Dairy', 'Eczema', NULL, 'female', '2016-07-22', '4th'),
+       ('Alex', 'Johnson', 'Wheat', 'Allergies', NULL, 'male', '2014-11-05', '5th'),
+       ('Emily', 'Brown', 'Shellfish', 'Hypertension', NULL, 'female', '2017-02-18', '3rd'),
+       ('Michael', 'Davis', 'Eggs', 'Diabetes', 'Requires snack breaks for blood sugar', 'male', '2013-09-30', '5th'),
+       ('Sarah', 'Miller', 'Peanuts', 'Asthma', NULL, 'female', '2018-05-12', '2nd'),
+       ('David', 'Wilson', 'Dairy', 'Eczema', NULL, 'male', '2019-08-25', '1st'),
+       ('Laura', 'Moore', 'Wheat', 'Allergies', NULL, 'female', '2016-04-08', '4th'),
+       ('James', 'Taylor', 'Shellfish', 'Hypertension', NULL, 'male', '2017-01-15', '3rd'),
+       ('Mia', 'Anderson', 'Eggs', 'Diabetes', 'Requires snack breaks for blood sugar', 'female', '2018-06-20', '2nd');
 
 INSERT INTO staff (first_name, last_name, email, phone, background_check_expiration)
 VALUES ('Alice', 'Johnson', 'alice.johnson@example.com', '555-1234', '2024-08-15'),
@@ -23,10 +23,12 @@ VALUES ('Alice', 'Johnson', 'alice.johnson@example.com', '555-1234', '2024-08-15
        ('Charlie', 'Brown', 'charlie.brown@example.com', '555-9012', '2024-10-10'),
        ('Diana', 'Wilson', 'diana.wilson@example.com', '555-3456', '2024-11-05'),
        ('Ethan', 'Moore', 'ethan.moore@example.com', '555-7890', '2024-12-10'),
-       ('Fiona', 'Taylor', 'fiona.taylor@example.com', '555-2345', '2024-07-15');
+       ('Fiona', 'Taylor', 'fiona.taylor@example.com', '555-2345', '2024-07-15'),
+       ('Grace', 'Harper', 'grace.harper@example.com', '555-4321', '2025-06-01');
 
 INSERT INTO club_years_staff (club_year_id, staff_id, staff_role)
-VALUES (1, 1, 'instructor'),
+VALUES (1, 7, 'director'),
+       (1, 1, 'instructor'),
        (1, 2, 'instructor'),
        (1, 3, 'instructor'),
        (1, 4, 'instructor'),
@@ -53,15 +55,15 @@ VALUES (1, 1, 1),
        (1, 3, 9),
        (1, 4, 10);
 
-INSERT INTO parents (first_name, last_name, email, phone, address)
-VALUES ('Robert', 'Doe', 'robert.doe@example.com', '555-1001', '123 Maple St, Springfield'),
-       ('Susan', 'Smith', 'susan.smith@example.com', '555-1002', '456 Oak Ave, Shelbyville'),
-       ('Mark', 'Johnson', 'mark.johnson@example.com', '555-1003', '789 Pine Rd, Springfield'),
-       ('Linda', 'Brown', 'linda.brown@example.com', '555-1004', '321 Elm St, Shelbyville'),
-       ('Thomas', 'Davis', 'thomas.davis@example.com', '555-1005', '654 Cedar Ln, Springfield'),
-       ('Karen', 'Miller', 'karen.miller@example.com', '555-1006', '987 Birch Blvd, Shelbyville'),
-       ('Patricia', 'Wilson', 'patricia.wilson@example.com', '555-1007', '111 Walnut Dr, Springfield'),
-       ('Steven', 'Taylor', 'steven.taylor@example.com', '555-1008', '222 Spruce Ct, Shelbyville');
+INSERT INTO parents (first_name, last_name, email, phone, address, is_emergency_contact)
+VALUES ('Robert', 'Doe', 'robert.doe@example.com', '555-1001', '123 Maple St, Springfield', true),
+       ('Susan', 'Smith', 'susan.smith@example.com', '555-1002', '456 Oak Ave, Shelbyville', true),
+       ('Mark', 'Johnson', 'mark.johnson@example.com', '555-1003', '789 Pine Rd, Springfield', true),
+       ('Linda', 'Brown', 'linda.brown@example.com', '555-1004', '321 Elm St, Shelbyville', true),
+       ('Thomas', 'Davis', 'thomas.davis@example.com', '555-1005', '654 Cedar Ln, Springfield', true),
+       ('Karen', 'Miller', 'karen.miller@example.com', '555-1006', '987 Birch Blvd, Shelbyville', false),
+       ('Patricia', 'Wilson', 'patricia.wilson@example.com', '555-1007', '111 Walnut Dr, Springfield', true),
+       ('Steven', 'Taylor', 'steven.taylor@example.com', '555-1008', '222 Spruce Ct, Shelbyville', true);
 
 -- parent_id → child_id
 -- Robert Doe → John Doe (1)
@@ -96,8 +98,8 @@ VALUES (1, 'Summer Picnic', '2025-07-15'),
 -- =============================================
 -- Club Year 2: 24-25
 -- =============================================
-INSERT INTO club_years (label, club_name, start_date, end_date)
-VALUES ('24-25', 'Little Eagles', '2024-08-16', '2025-05-29');
+INSERT INTO club_years (label, club_name, church_name, start_date, end_date)
+VALUES ('24-25', 'Little Eagles', 'Grace Community Church', '2024-08-16', '2025-05-29');
 
 -- Staff assignments for 24-25 (club_year_id = 2)
 INSERT INTO club_years_staff (club_year_id, staff_id, staff_role)
@@ -140,8 +142,8 @@ VALUES (2, 'Kickoff BBQ',        '2024-08-24'),
 -- =============================================
 -- Club Year 3: 23-24
 -- =============================================
-INSERT INTO club_years (label, club_name, start_date, end_date)
-VALUES ('23-24', 'Trailblazers', '2023-08-18', '2024-05-30');
+INSERT INTO club_years (label, club_name, church_name, start_date, end_date)
+VALUES ('23-24', 'Trailblazers', 'Grace Community Church', '2023-08-18', '2024-05-30');
 
 -- Staff assignments for 23-24 (club_year_id = 3)
 INSERT INTO club_years_staff (club_year_id, staff_id, staff_role)
@@ -184,8 +186,8 @@ VALUES (3, 'Welcome Potluck',     '2023-09-09'),
 -- =============================================
 -- Club Year 4: 22-23
 -- =============================================
-INSERT INTO club_years (label, club_name, start_date, end_date)
-VALUES ('22-23', 'Trailblazers', '2022-08-19', '2023-05-26');
+INSERT INTO club_years (label, club_name, church_name, start_date, end_date)
+VALUES ('22-23', 'Trailblazers', 'Grace Community Church', '2022-08-19', '2023-05-26');
 
 -- Staff assignments for 22-23 (club_year_id = 4)
 INSERT INTO club_years_staff (club_year_id, staff_id, staff_role)
@@ -226,8 +228,8 @@ VALUES (4, 'Opening Night',       '2022-09-03'),
 -- =============================================
 -- Club Year 5: 21-22
 -- =============================================
-INSERT INTO club_years (label, club_name, start_date, end_date)
-VALUES ('21-22', 'Trailblazers', '2021-08-20', '2022-05-27');
+INSERT INTO club_years (label, club_name, church_name, start_date, end_date)
+VALUES ('21-22', 'Trailblazers', 'Grace Community Church', '2021-08-20', '2022-05-27');
 
 -- Staff assignments for 21-22 (club_year_id = 5)
 INSERT INTO club_years_staff (club_year_id, staff_id, staff_role)
