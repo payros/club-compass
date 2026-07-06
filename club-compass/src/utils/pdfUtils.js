@@ -66,13 +66,13 @@ export async function generateRegistrationPdf(parent, children, clubYear, clubDi
 
   const templateBytes = fs.readFileSync(templatePath)
   const mergedDoc = await PDFDocument.create()
-  const font = await mergedDoc.embedFont(StandardFonts.Helvetica)
 
   const parentName = `${parent.firstName ?? ''} ${parent.lastName ?? ''}`.trim()
   console.log('children', children)
   for (const child of children) {
     const childDoc = await PDFDocument.load(templateBytes)
     const page = childDoc.getPage(0)
+    const font = await childDoc.embedFont(StandardFonts.Helvetica)
 
     const drawText = (field, value) => {
       if (!value) return
