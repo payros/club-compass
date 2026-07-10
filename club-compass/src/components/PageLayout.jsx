@@ -10,11 +10,7 @@ import AppFooter from "./AppFooter";
  * @param {Array} breadcrumbs - [{label, href}] for the header breadcrumbs
  * @param {Array} actions - [{label, href}] rendered as right-aligned buttons
  */
-export default function PageLayout({
-  children,
-  breadcrumbs = [],
-  actions = [],
-}) {
+export default function PageLayout({ children, breadcrumbs = [], actions = [] }) {
   return (
     <Box minH="100vh" display="flex" flexDirection="column">
       <AppHeader breadcrumbs={breadcrumbs} />
@@ -32,5 +28,5 @@ export default function PageLayout({
       </Box>
       <AppFooter />
     </Box>
-  );
+  )
 }

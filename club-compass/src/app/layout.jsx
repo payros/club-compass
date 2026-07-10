@@ -10,7 +10,7 @@ const fredoka = Fredoka({
 export const viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#38c6f4',
+  themeColor: '#216cb4',
 }
 
 export const metadata = {
