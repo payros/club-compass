@@ -1,7 +1,8 @@
-"use client";
-import { Box, Button, Flex } from "@chakra-ui/react";
-import Link from "next/link";
-import AppHeader from "./AppHeader";
+'use client'
+import { Box, Button, Flex } from '@chakra-ui/react'
+import Link from 'next/link'
+import AppHeader from './AppHeader'
+import AppFooter from './AppFooter'
 
 /**
  * Root page layout — wraps every page with the header and content area.
@@ -9,11 +10,7 @@ import AppHeader from "./AppHeader";
  * @param {Array} breadcrumbs - [{label, href}] for the header breadcrumbs
  * @param {Array} actions - [{label, href}] rendered as right-aligned buttons
  */
-export default function PageLayout({
-  children,
-  breadcrumbs = [],
-  actions = [],
-}) {
+export default function PageLayout({ children, breadcrumbs = [], actions = [] }) {
   return (
     <Box minH="100vh">
       <AppHeader breadcrumbs={breadcrumbs} />
@@ -30,5 +27,5 @@ export default function PageLayout({
         {children}
       </Box>
     </Box>
-  );
+  )
 }

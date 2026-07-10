@@ -7,6 +7,12 @@ const fredoka = Fredoka({
   display: 'swap',
 })
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#216cb4',
+}
+
 export const metadata = {
   title: 'Club Compass',
   description: 'An Adventurers Club Management App',
