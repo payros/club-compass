@@ -19,6 +19,7 @@ import { authClient } from '@/lib/auth-client'
 import useClubYear from '@/hooks/useClubYear'
 
 const FALLBACK_CLUB_NAME = process.env.NEXT_PUBLIC_CLUB_NAME ?? 'Adventurers Club'
+
 /**
  * Global app header
  * @param {Array} breadcrumbs - [{label, href}]
@@ -49,7 +50,16 @@ export default function AppHeader({ breadcrumbs = [] }) {
     <Box px={{ base: 4, md: 8 }} py={3} mb={3}>
       <Flex align="center" justify="space-between" gap={4}>
         {/* Left: Logo + Club name */}
-        <Box flex={1} display="flex" alignItems="center" gap={4} cursor="pointer" onClick={() => router.push(homeHref)}>
+        <Box
+          flex={1}
+          minWidth={0}
+          overflow="hidden"
+          display="flex"
+          alignItems="center"
+          gap={4}
+          cursor="pointer"
+          onClick={() => router.push(homeHref)}
+        >
           <Image
             src="/img/logo.png"
             alt="Club logo"
@@ -58,7 +68,7 @@ export default function AppHeader({ breadcrumbs = [] }) {
             sizes="100vw"
             style={{ height: '118px', width: 'auto', paddingTop: '20px' }}
           />
-          <Box display="flex" flexDirection="column">
+          <Box display="flex" flexDirection="column" minWidth={0} overflow="hidden">
             <Text
               fontWeight={800}
               fontSize={{ base: '3xl', md: '5xl', lg: '6xl' }}
@@ -77,22 +87,41 @@ export default function AppHeader({ breadcrumbs = [] }) {
         {/* Right: User info */}
         <MenuRoot positioning={{ placement: 'bottom-end' }}>
           <MenuTrigger asChild>
-            <HStack gap={2} flexShrink={0} cursor="pointer">
-              <Text color="rgba(255,255,255,1)" fontSize="lg" fontWeight={500} display={{ base: 'none', md: 'block' }}>
+            <HStack gap={2} flexShrink={0} cursor="pointer" align="center">
+              <Text
+                color="rgba(255,255,255,1)"
+                fontSize="lg"
+                fontWeight={500}
+                display={{ base: 'none', md: 'none', lg: 'block' }}
+                whiteSpace="nowrap"
+              >
                 {userName}
               </Text>
-              <Avatar.Root
-                size="xl"
-                style={{
-                  background: userImage ? 'none' : 'rgba(255,174,23,0.8)',
-                  border: '2px solid rgba(255,255,255,0.4)',
-                }}
-              >
-                {userImage && <Avatar.Image src={userImage} alt={userName} />}
-                <Avatar.Fallback color="white" fontWeight={700}>
-                  {userInitials}
-                </Avatar.Fallback>
-              </Avatar.Root>
+              <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
+                <Avatar.Root
+                  size="xl"
+                  style={{
+                    background: userImage ? 'none' : 'rgba(255,174,23,0.8)',
+                    border: '2px solid rgba(255,255,255,0.4)',
+                  }}
+                >
+                  {userImage && <Avatar.Image src={userImage} alt={userName} />}
+                  <Avatar.Fallback color="white" fontWeight={700}>
+                    {userInitials}
+                  </Avatar.Fallback>
+                </Avatar.Root>
+                <Text
+                  color="rgba(255,255,255,1)"
+                  fontSize="md"
+                  fontWeight={500}
+                  display={{ base: 'none', md: 'block', lg: 'none' }}
+                  textAlign="center"
+                  maxW="80px"
+                  lineHeight="1.2"
+                >
+                  {userName}
+                </Text>
+              </Box>
             </HStack>
           </MenuTrigger>
           <MenuPositioner>

@@ -48,7 +48,10 @@ const View = () => {
       description={`The family has been enrolled in the ${clubYearLabel} club year. Don't forget to print their registration forms if you haven't already.`}
       breadcrumbs={breadcrumbs}
       submitLabel="Done"
-      handleSubmit={() => router.push(`/${clubYearLabel}/dashboard`)}
+      handleSubmit={(e) => {
+        e.preventDefault()
+        router.push(`/${clubYearLabel}/dashboard`)
+      }}
     >
       <Box w="full" my={2}>
         {parents.length > 1 && (

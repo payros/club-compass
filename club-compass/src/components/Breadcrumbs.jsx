@@ -42,8 +42,8 @@ export default function Breadcrumbs({ items = [] }) {
   }
 
   return (
-    <Breadcrumb.Root className="breadcrumb-nav" size="lg" mt={1}>
-      <Breadcrumb.List>
+    <Breadcrumb.Root className="breadcrumb-nav" size="lg" mt={1} style={{ overflow: 'hidden' }}>
+      <Breadcrumb.List style={{ flexWrap: 'nowrap', overflow: 'hidden' }}>
         {currentClubYearLabel ? (
           <>
             <Breadcrumb.Item>
@@ -92,12 +92,7 @@ export default function Breadcrumbs({ items = [] }) {
             )}
             <Breadcrumb.Item hideBelow={items.length > 0 ? 'lg' : undefined}>
               <Breadcrumb.Link asChild>
-                <Link
-                  href={`/${currentClubYearLabel}/dashboard`}
-                  style={{
-                    color: 'rgba(255,255,255,0.75)',
-                  }}
-                >
+                <Link href={`/${currentClubYearLabel}/dashboard`} style={{ color: 'rgba(255,255,255,0.75)' }}>
                   Dashboard
                 </Link>
               </Breadcrumb.Link>
@@ -106,12 +101,7 @@ export default function Breadcrumbs({ items = [] }) {
         ) : (
           <Breadcrumb.Item>
             <Breadcrumb.Link asChild>
-              <Link
-                href="/directories"
-                style={{
-                  color: 'rgba(255,255,255,0.75)',
-                }}
-              >
+              <Link href="/directories" style={{ color: 'rgba(255,255,255,0.75)' }}>
                 Directories
               </Link>
             </Breadcrumb.Link>
@@ -139,12 +129,7 @@ export default function Breadcrumbs({ items = [] }) {
                   </Breadcrumb.CurrentLink>
                 ) : (
                   <Breadcrumb.Link asChild>
-                    <Link
-                      href={item.href ?? '#'}
-                      style={{
-                        color: 'rgba(255,255,255,0.75)',
-                      }}
-                    >
+                    <Link href={item.href ?? '#'} style={{ color: 'rgba(255,255,255,0.75)' }}>
                       {item.label}
                     </Link>
                   </Breadcrumb.Link>
