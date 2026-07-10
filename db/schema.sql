@@ -87,7 +87,8 @@ CREATE TABLE "parents_children" (
   "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   "parent_id" integer NOT NULL,
   "child_id" integer NOT NULL,
-  "created_at" timestamp DEFAULT (now())
+  "created_at" timestamp DEFAULT (now()),
+  UNIQUE ("parent_id", "child_id")
 );
 
 CREATE TABLE "awards" (
@@ -124,7 +125,8 @@ CREATE TABLE "classes" (
   "class" adventurer_class,
   "club_year_id" integer NOT NULL,
   "instructor_id" integer NOT NULL,
-  "created_at" timestamp DEFAULT (now())
+  "created_at" timestamp DEFAULT (now()),
+  UNIQUE ("class", "club_year_id")
 );
 
 CREATE TABLE "events" (
@@ -149,14 +151,16 @@ CREATE TABLE "classes_children" (
   "club_year_id" integer NOT NULL,
   "class_id" integer NOT NULL,
   "child_id" integer NOT NULL,
-  "created_at" timestamp DEFAULT (now())
+  "created_at" timestamp DEFAULT (now()),
+  UNIQUE ("club_year_id", "child_id")
 );
 
 CREATE TABLE "events_children" (
   "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   "event_id" integer NOT NULL,
   "child_id" integer NOT NULL,
-  "created_at" timestamp DEFAULT (now())
+  "created_at" timestamp DEFAULT (now()),
+  UNIQUE ("event_id", "child_id")
 );
 
 CREATE TABLE "awards_children" (
@@ -166,7 +170,8 @@ CREATE TABLE "awards_children" (
   "event_id" integer,
   "award_ceremony_id" integer,
   "awarded_on" timestamp,
-  "created_at" timestamp DEFAULT (now())
+  "created_at" timestamp DEFAULT (now()),
+  UNIQUE ("award_id", "child_id")
 );
 
 -- Better Auth tables
@@ -226,11 +231,7 @@ ALTER TABLE "club_years_staff" ADD FOREIGN KEY ("club_year_id") REFERENCES "club
 
 ALTER TABLE "club_years_staff" ADD FOREIGN KEY ("staff_id") REFERENCES "staff" ("id");
 
-ALTER TABLE "classes" ADD CONSTRAINT "classes_class_club_year_id_key" UNIQUE ("class", "club_year_id");
-
 ALTER TABLE "classes" ADD FOREIGN KEY ("club_year_id") REFERENCES "club_years" ("id");
-
-ALTER TABLE "classes_children" ADD CONSTRAINT "classes_children_club_year_id_child_id_key" UNIQUE ("club_year_id", "child_id");
 
 ALTER TABLE "classes" ADD FOREIGN KEY ("instructor_id") REFERENCES "staff" ("id");
 
@@ -252,8 +253,6 @@ ALTER TABLE "events_children" ADD FOREIGN KEY ("event_id") REFERENCES "events" (
 
 ALTER TABLE "events_children" ADD FOREIGN KEY ("child_id") REFERENCES "children" ("id");
 
-ALTER TABLE "events_children" ADD UNIQUE ("event_id", "child_id");
-
 ALTER TABLE "awards_children" ADD FOREIGN KEY ("award_id") REFERENCES "awards" ("id");
 
 ALTER TABLE "awards_children" ADD FOREIGN KEY ("child_id") REFERENCES "children" ("id");
@@ -261,5 +260,3 @@ ALTER TABLE "awards_children" ADD FOREIGN KEY ("child_id") REFERENCES "children"
 ALTER TABLE "awards_children" ADD FOREIGN KEY ("event_id") REFERENCES "events" ("id");
 
 ALTER TABLE "awards_children" ADD FOREIGN KEY ("award_ceremony_id") REFERENCES "events" ("id");
-
-ALTER TABLE "awards_children" ADD UNIQUE ("award_id", "child_id");

@@ -33,7 +33,12 @@ export default function ResourcePage({
     <PageLayout breadcrumbs={breadcrumbs} actions={actions} clubName={clubName}>
       <PageTransition>
         {/* Main info card (+ optional image card) */}
-        <Grid templateColumns={imageUrl ? '1fr 3fr' : '1fr'} gap={imageUrl ? 5 : 0} mb={5} alignItems="stretch">
+        <Grid
+          templateColumns={{ base: '1fr', md: imageUrl ? '1fr 3fr' : '1fr' }}
+          gap={imageUrl ? 5 : 0}
+          mb={5}
+          alignItems="stretch"
+        >
           {imageUrl && (
             <GridItem>
               <Card.Root className="glass-card" overflow="hidden" h="100%">
