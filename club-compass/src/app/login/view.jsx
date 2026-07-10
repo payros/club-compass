@@ -28,7 +28,7 @@ export default function View() {
   }
 
   return (
-    <Box minH="100vh" display="flex" alignItems="center" justifyContent="center" className="login-bg">
+    <Box minH="100vh" px={4} display="flex" alignItems="center" justifyContent="center" className="login-bg">
       <Box className="glass-card" p={10} borderRadius="2xl" maxW="400px" w="full" textAlign="center">
         <VStack gap={6}>
           <Box>
