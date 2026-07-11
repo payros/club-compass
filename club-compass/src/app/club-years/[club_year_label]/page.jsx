@@ -1,6 +1,7 @@
 import View from './view.jsx'
+import { generateTitle } from '@/utils/stringUtils'
 
-export const metadata = { title: 'Club Year' }
+export const metadata = { title: generateTitle('Club Year') }
 
 const Page = () => <View />
 export default Page

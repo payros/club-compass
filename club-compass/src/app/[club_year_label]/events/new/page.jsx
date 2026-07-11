@@ -1,13 +1,13 @@
-import View from "./view.jsx";
-  
-export const metadata = {
-  title: 'New Event',
-  description: 'Welcome to Next.js',
-}
+import View from './view.jsx'
+import { generateTitle } from '@/utils/stringUtils'
 
+export async function generateMetadata({ params }) {
+  const { club_year_label } = await params
+  return { title: generateTitle('New Event', club_year_label) }
+}
 
 const Page = () => {
   return <View />
 }
 
-export default Page;
+export default Page
