@@ -23,8 +23,6 @@ export default function View() {
 
   const fields = child
     ? [
-        { label: 'First Name', value: child.firstName },
-        { label: 'Last Name', value: child.lastName },
         { label: 'Age', value: child.dateOfBirth ? fromDateOfBirthToAge(child.dateOfBirth) : '—' },
         { label: 'Date of Birth', value: child.dateOfBirth ? fromDateToString(child.dateOfBirth) : '—' },
         { label: 'Sex', value: child.sex ? fromSnakeCaseToTitleCase(child.sex) : '—' },

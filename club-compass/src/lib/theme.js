@@ -38,6 +38,16 @@ const config = defineConfig({
           focusRing: { value: '#f4c542' },
           placeholder: { value: 'rgba(244, 197, 66, 0.5)' },
         },
+        'accent-2': {
+          solid: { value: '#1e5aa8' },
+          contrast: { value: '#fff' },
+          fg: { value: '#f4c542' },
+          muted: { value: 'rgba(232, 154, 45, 0.15)' },
+          subtle: { value: 'rgba(244, 197, 66, 0.15)' },
+          emphasized: { value: '#f4c542' },
+          focusRing: { value: '#f4c542' },
+          placeholder: { value: 'rgba(244, 197, 66, 0.5)' },
+        },
         accentInverted: {
           solid: { value: '#f4c542' },
           contrast: { value: '#1e564a' },
