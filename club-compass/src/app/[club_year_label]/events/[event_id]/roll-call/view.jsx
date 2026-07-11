@@ -1,5 +1,5 @@
 'use client'
-import { Stack, Checkbox, Box, CheckboxGroup, Heading } from '@chakra-ui/react'
+import { Stack, Checkbox, Box, Heading } from '@chakra-ui/react'
 import { useParams, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
@@ -15,7 +15,7 @@ const View = () => {
     direction: 'asc',
   })
   const [eventData, setEventData] = useState(null)
-  const [loadingEvent, setLoadingEvent] = useState(false)
+  const [loadingEvent, setLoadingEvent] = useState(true)
   const [selectedChildren, setSelectedChildren] = useState([])
   const [submitting, setSubmitting] = useState(false)
   const [globalError, setGlobalError] = useState(null)
@@ -95,30 +95,28 @@ const View = () => {
       contentLoading={loadingEvent || loadingChildren}
     >
       <Stack direction="column" gap="2">
-        <CheckboxGroup>
-          {classes.map((className) => (
-            <Box key={className} p="2">
-              <Heading fontWeight="bold" size="md">
-                {fromSnakeCaseToTitleCase(className)}
-              </Heading>
-              <Stack direction="column" gap="1" mt="2">
-                {children
-                  .filter((child) => child.class === className)
-                  .map((child) => (
-                    <Checkbox.Root
-                      key={child.id}
-                      checked={selectedChildren.includes(child.id)}
-                      onCheckedChange={(e) => handleCheckboxChange(child.id, !!e.checked)}
-                    >
-                      <Checkbox.HiddenInput />
-                      <Checkbox.Control />
-                      <Checkbox.Label>{child.name}</Checkbox.Label>
-                    </Checkbox.Root>
-                  ))}
-              </Stack>
-            </Box>
-          ))}
-        </CheckboxGroup>
+        {classes.map((className) => (
+          <Box key={className} p="2">
+            <Heading fontWeight="bold" size="md">
+              {fromSnakeCaseToTitleCase(className)}
+            </Heading>
+            <Stack direction="column" gap="1" mt="2">
+              {children
+                .filter((child) => child.class === className)
+                .map((child) => (
+                  <Checkbox.Root
+                    key={child.id}
+                    checked={selectedChildren.includes(child.id)}
+                    onCheckedChange={(e) => handleCheckboxChange(child.id, !!e.checked)}
+                  >
+                    <Checkbox.HiddenInput />
+                    <Checkbox.Control />
+                    <Checkbox.Label>{child.name}</Checkbox.Label>
+                  </Checkbox.Root>
+                ))}
+            </Stack>
+          </Box>
+        ))}
       </Stack>
     </FormPage>
   )

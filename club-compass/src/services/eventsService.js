@@ -255,7 +255,8 @@ async function update(clubYearLabel, eventId, updatedEventData) {
               if (awardsToLink.length > 0) {
                 await sql`
                   INSERT INTO adv_db.awards_children (child_id, award_id, event_id)
-                  VALUES ${sql(awardsToLink)}`
+                  VALUES ${sql(awardsToLink)}
+                  ON CONFLICT DO NOTHING`
               }
             }
           }
@@ -391,7 +392,8 @@ async function update(clubYearLabel, eventId, updatedEventData) {
             } else {
               await sql`
                 INSERT INTO adv_db.awards_children (child_id, award_id, event_id)
-                VALUES ${sql(uniqueAwardsToAdd)}`
+                VALUES ${sql(uniqueAwardsToAdd)}
+                ON CONFLICT DO NOTHING`
             }
           }
         }
