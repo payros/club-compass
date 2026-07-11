@@ -1,7 +1,11 @@
 import { Suspense } from 'react'
 import View from './view.jsx'
+import { generateTitle } from '@/utils/stringUtils'
 
-export const metadata = { title: 'Enrollment Complete' }
+export async function generateMetadata({ params }) {
+  const { club_year_label } = await params
+  return { title: generateTitle('Enrollment Complete', club_year_label) }
+}
 
 const Page = () => {
   return (
