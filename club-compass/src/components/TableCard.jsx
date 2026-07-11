@@ -25,8 +25,8 @@ function TableCard({
     width === 'full' || width === 'large'
       ? { width: '100%', flexShrink: 0 }
       : width === 'medium'
-        ? { flex: '2 1 0', minWidth: 'max(450px, calc(66.67% - 0.42rem))' }
-        : { flex: '1 1 0', minWidth: 'max(340px, calc(33.33% - 0.84rem))' }
+        ? { flex: '2 1 0', minWidth: 'min(max(450px, calc(66.67% - 0.42rem)), 100%)' }
+        : { flex: '1 1 0', minWidth: 'min(max(340px, calc(33.33% - 0.84rem)), 100%)' }
   const [titleHovered, setTitleHovered] = useState(false)
   return (
     <Card.Root className="glass-card" style={widthStyle}>
