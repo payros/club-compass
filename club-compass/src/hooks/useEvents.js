@@ -1,59 +1,63 @@
-import { useEffect, useState } from "react"
-import { fromDateToString } from "@/utils/dateUtils";
+import { useEffect, useState } from 'react'
+import { fromDateToString } from '@/utils/dateUtils'
 
-function useEvents(clubYearLabel,{by, direction}) {
-  const [rawEvents, setRawEvents] = useState([]);
-  const [events, setEvents] = useState([]);
-  const [loadingEvents, setLoadingEvents] = useState(true);
+function useEvents(clubYearLabel, { by, direction }) {
+  const [rawEvents, setRawEvents] = useState([])
+  const [events, setEvents] = useState([])
+  const [loadingEvents, setLoadingEvents] = useState(false)
 
   function transformEventsData(rawEvents) {
-    return rawEvents.map((event) => ({ ...event, eventDate: fromDateToString(event.eventDate) }));
+    return rawEvents.map((event) => ({ ...event, eventDate: fromDateToString(event.eventDate) }))
   }
 
   function sortEvents(eventsList) {
     if (by) {
-      let order = 0;
-      const orderDirection = direction === 'asc' ? 1 : -1;
+      let order = 0
+      const orderDirection = direction === 'asc' ? 1 : -1
       const sortedEvents = [...eventsList].sort((a, b) => {
-        switch(by) {
+        switch (by) {
           case 'title':
-            const nameA = a.title.toLowerCase();
-            const nameB = b.title.toLowerCase();
-            order = nameA.localeCompare(nameB);
-            break;
+            const nameA = a.title.toLowerCase()
+            const nameB = b.title.toLowerCase()
+            order = nameA.localeCompare(nameB)
+            break
           case 'eventDate':
-            order = new Date(a.eventDate) - new Date(b.eventDate);
-            break;
+            order = new Date(a.eventDate) - new Date(b.eventDate)
+            break
           default:
-            order = 0;
+            order = 0
         }
-        return order * orderDirection;
-      });
+        return order * orderDirection
+      })
       return sortedEvents
     }
 
-    return eventsList;
+    return eventsList
   }
 
   // Fetch events data from the API
   useEffect(() => {
-    setLoadingEvents(true);
+    setLoadingEvents(true)
     fetch(`/api/club-years/${clubYearLabel}/events`)
-      .then(res => res.json())
-      .then(data => {
-        setRawEvents(data);
-        setLoadingEvents(false);
+      .then((res) => res.json())
+      .then((data) => {
+        setRawEvents(data)
+        let eventsList = transformEventsData(data)
+        eventsList = sortEvents(eventsList)
+        setEvents(eventsList)
+        setLoadingEvents(false)
       })
   }, [clubYearLabel])
 
-  // Transform and sort events whenever rawEvents, sortBy, or sortDirection change
+  // Re-sort events whenever sortBy or sortDirection change
   useEffect(() => {
-    let eventsList = transformEventsData(rawEvents);
-    eventsList = sortEvents(eventsList);
-    setEvents(eventsList);
-  }, [by, direction, rawEvents]);
+    if (rawEvents.length === 0) return
+    let eventsList = transformEventsData(rawEvents)
+    eventsList = sortEvents(eventsList)
+    setEvents(eventsList)
+  }, [by, direction])
 
-  return { events, loadingEvents };
+  return { events, loadingEvents }
 }
 
-export default useEvents;
+export default useEvents

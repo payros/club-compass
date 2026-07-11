@@ -64,7 +64,11 @@ function TableCard({
             ) : (
               <Card.Title className="card-title">{title}</Card.Title>
             )}
-            {description && <Card.Description className="card-description">{description}</Card.Description>}
+            {description ? (
+              <Card.Description className="card-description">{description}</Card.Description>
+            ) : (
+              <div style={{ height: '1.25em' }} />
+            )}
           </div>
           {action && (
             <Button asChild size="md" variant="outline" colorPalette="brand">
@@ -73,8 +77,8 @@ function TableCard({
           )}
         </div>
       </Card.Header>
-      <Card.Body pt={0}>
-        <Table.ScrollArea lob rounded="xl" className="glass-scrollarea" height={maxH}>
+      <Card.Body pt={0} mt={3}>
+        <Table.ScrollArea lob className="glass-scrollarea" height={maxH}>
           <Table.Root size="sm" stickyHeader className="glass-table">
             <Table.Header className="glass-table-header">
               <Table.Row bg="transparent">
@@ -103,18 +107,30 @@ function TableCard({
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {loading ? (
-                [0, 1, 2].map((i) => (
-                  <Table.Row key={i} bg="transparent">
-                    <Table.Cell colSpan={headers.length}>
-                      <Skeleton height="5" style={{ background: 'rgba(255,255,255,0.1)' }} />
-                    </Table.Cell>
-                  </Table.Row>
-                ))
-              ) : !data || data.length === 0 ? (
+              {loading || !data ? (
                 <Table.Row bg="transparent" style={{ borderColor: 'transparent' }}>
-                  <Table.Cell colSpan={headers.length}>
-                    <Text textAlign="center" py={4} fontSize="sm">
+                  <Table.Cell
+                    colSpan={headers.length}
+                    style={{
+                      textAlign: 'center',
+                      height: `calc(${maxH} - 2.5rem)`,
+                      verticalAlign: 'middle',
+                    }}
+                  >
+                    <div className="loader"></div>
+                  </Table.Cell>
+                </Table.Row>
+              ) : data.length === 0 ? (
+                <Table.Row bg="transparent" style={{ borderColor: 'transparent' }}>
+                  <Table.Cell
+                    colSpan={headers.length}
+                    style={{
+                      textAlign: 'center',
+                      height: `calc(${maxH} - 2.5rem)`,
+                      verticalAlign: 'middle',
+                    }}
+                  >
+                    <Text textAlign="center" py={4} fontSize="md">
                       No records found
                     </Text>
                   </Table.Cell>

@@ -70,15 +70,13 @@ export default function ResourcePage({
                   </Card.Description>
                 )}
               </Card.Header>
-              <Card.Body pt={0}>
+              <Card.Body pt={0} mt={5}>
                 {loading ? (
-                  <div className="info-grid">
-                    {[0, 1, 2, 3].map((i) => (
-                      <div key={i} className="info-item">
-                        <Skeleton height="3" width="80px" mb={1} style={{ background: 'rgba(255,255,255,0.1)' }} />
-                        <Skeleton height="5" width="140px" style={{ background: 'rgba(255,255,255,0.12)' }} />
-                      </div>
-                    ))}
+                  <div
+                    className="info-grid"
+                    style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                  >
+                    <div className="loader"></div>
                   </div>
                 ) : (
                   <div className="info-grid">

@@ -1,5 +1,5 @@
 'use client'
-import { Button, Card, Alert, Fieldset, Spinner, Center, HStack, Text, Box } from '@chakra-ui/react'
+import { Button, Card, Alert, Fieldset, HStack, Text, Box } from '@chakra-ui/react'
 import PageLayout from '@/components/PageLayout'
 import PageTransition from '@/components/PageTransition'
 
@@ -47,9 +47,9 @@ const FormPage = ({
             )}
             <Card.Body>
               {contentLoading ? (
-                <Center py={10}>
-                  <Spinner size="lg" colorPalette="accent" />
-                </Center>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '2.5rem 0' }}>
+                  <div className="loader"></div>
+                </div>
               ) : (
                 <form onSubmit={handleSubmit}>
                   <Fieldset.Root size="lg">

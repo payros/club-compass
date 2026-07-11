@@ -3,6 +3,7 @@
   --color-primary-light: #36c6f4;
   --color-accent: #e89a2d;
   --color-accent-light: #f4c542;
+  --bg-color-light: #ededed;
   --glass-bg: rgba(255, 255, 255, 0.95);
   --glass-bg-strong: rgba(255, 255, 255, 0.22);
   --glass-border: rgba(255, 255, 255, 0.5);
@@ -61,13 +62,12 @@ body {
   }
 }
 .glass-scrollarea {
-  border: 1px solid var(--color-primary-light);
+  border: 1px solid var(--bg-color-light);
 }
 
 /* Table header glass style */
 .glass-table-header th {
-  background: rgba(255, 255, 255, 0.95);
-  background: var(--color-primary-light);
+  background: var(--bg-color-light);
   color: var(--text-dark);
 
   font-size: 0.7rem;
@@ -250,4 +250,62 @@ body {
 
 .chakra-field__label {
   font-weight: 400;
+}
+
+/* Loading spinner */
+.loader {
+  --color-1: var(--bg-color-light);
+  --color-2: #fff;
+  --size: 0.75px;
+
+  display: inline-block;
+  width: calc(64 * var(--size));
+  height: calc(64 * var(--size));
+  position: relative;
+  background: var(--color-1);
+  border-radius: 50%;
+  transform: rotate(45deg);
+  animation: rotate 2s linear infinite;
+}
+
+.loader:before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(15 * var(--size));
+  height: calc(30 * var(--size));
+  background: var(--color-2);
+  transform: skew(5deg, 60deg) translate(-50%, -5%);
+}
+
+.loader:after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(6 * var(--size));
+  height: calc(6 * var(--size));
+  border-radius: 50%;
+  background: var(--color-1);
+  transform: translate(-50%, -50%);
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(45deg);
+  }
+  30%,
+  50%,
+  70% {
+    transform: rotate(230deg);
+  }
+  40%,
+  60%,
+  80% {
+    transform: rotate(240deg);
+  }
+  100% {
+    transform: rotate(245deg);
+  }
 }
