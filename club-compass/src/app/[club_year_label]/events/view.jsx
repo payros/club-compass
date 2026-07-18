@@ -31,24 +31,12 @@ export default function View() {
 
   const breadcrumbs = [{ label: 'Events' }]
 
-  const actions = (
-    <Link href={`/${clubYearLabel}/events/new`}>
-      <button
-        className="accent-btn"
-        style={{
-          padding: '0.5rem 1.1rem',
-          borderRadius: 10,
-          fontWeight: 700,
-          fontSize: '0.9rem',
-          cursor: 'pointer',
-          border: 'none',
-        }}
-      >
-        + Add Event
-      </button>
-    </Link>
-  )
-
+  const actions = [
+    {
+      label: 'Add Event',
+      href: `/${clubYearLabel}/events/new`,
+    },
+  ]
   return (
     <CollectionPage
       breadcrumbs={breadcrumbs}

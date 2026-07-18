@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import FormPage from '@/components/pages/FormPage'
 import EventsForm from '@/components/forms/EventsForm'
+import { localDateToISO } from '@/utils/dateUtils'
 
 const View = () => {
   const router = useRouter()
@@ -18,6 +19,7 @@ const View = () => {
     const data = Object.fromEntries(formData.entries())
     data.awards = JSON.parse(data.event_awards || '[]')
     delete data.event_awards
+    if (data.event_date) data.event_date = localDateToISO(data.event_date)
 
     setLoading(true)
     try {

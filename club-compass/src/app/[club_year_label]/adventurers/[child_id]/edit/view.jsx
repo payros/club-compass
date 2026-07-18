@@ -4,6 +4,7 @@ import { useParams, useRouter } from 'next/navigation'
 import FormPage from '@/components/pages/FormPage'
 import AdventurerForm from '@/components/forms/AdventurerForm'
 import useClasses from '@/hooks/useClasses'
+import { localDateToISO } from '@/utils/dateUtils'
 
 export default function View() {
   const { club_year_label: clubYearLabel, child_id: childId } = useParams()
@@ -39,7 +40,7 @@ export default function View() {
     const data = {
       firstName: formData.get('firstName'),
       lastName: formData.get('lastName'),
-      dateOfBirth: formData.get('dateOfBirth') || null,
+      dateOfBirth: localDateToISO(formData.get('dateOfBirth')),
       sex: formData.get('sex') || null,
       allergies: formData.get('allergies') || null,
       medicalConditions: formData.get('medicalConditions') || null,
