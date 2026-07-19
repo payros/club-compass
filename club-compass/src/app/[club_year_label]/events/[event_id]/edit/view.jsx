@@ -51,7 +51,7 @@ export default function View() {
     const data = Object.fromEntries(formData.entries())
     data.awards = JSON.parse(data.event_awards || '[]')
     delete data.event_awards
-    if (data.event_date) data.event_date = localDateToISO(data.event_date)
+data.event_date = localDateToISO(data.event_date)
 
     try {
       const response = await fetch(`/api/club-years/${clubYearLabel}/events/${eventId}`, {
