@@ -16,4 +16,10 @@ function fromDateToString(date) {
   return new Date(date).toLocaleDateString()
 }
 
-export { fromDateOfBirthToAge, fromDateToString }
+function localDateToISO(dateStr) {
+  if (!dateStr) return null
+  const [year, month, day] = dateStr.split('-').map(Number)
+  return new Date(year, month - 1, day).toISOString()
+}
+
+export { fromDateOfBirthToAge, fromDateToString, localDateToISO }

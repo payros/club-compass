@@ -55,8 +55,8 @@ CREATE TABLE "staff" (
   "last_name" varchar NOT NULL,
   "email" varchar,
   "phone" varchar,
-  "background_check_expiration" timestamp,
-  "created_at" timestamp DEFAULT (now())
+  "background_check_expiration" timestamptz,
+  "created_at" timestamptz DEFAULT (now())
 );
 
 CREATE TABLE "parents" (
@@ -67,7 +67,7 @@ CREATE TABLE "parents" (
   "phone" varchar,
   "address" varchar,
   "is_emergency_contact" boolean NOT NULL DEFAULT false,
-  "created_at" timestamp DEFAULT (now())
+  "created_at" timestamptz DEFAULT (now())
 );
 
 CREATE TABLE "children" (
@@ -78,16 +78,16 @@ CREATE TABLE "children" (
   "medical_conditions" varchar,
   "physical_restrictions" varchar,
   "sex" sex,
-  "date_of_birth" timestamp,
+  "date_of_birth" timestamptz,
   "grade" grade_level,
-  "created_at" timestamp DEFAULT (now())
+  "created_at" timestamptz DEFAULT (now())
 );
 
 CREATE TABLE "parents_children" (
   "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   "parent_id" integer NOT NULL,
   "child_id" integer NOT NULL,
-  "created_at" timestamp DEFAULT (now()),
+  "created_at" timestamptz DEFAULT (now()),
   UNIQUE ("parent_id", "child_id")
 );
 
@@ -98,17 +98,17 @@ CREATE TABLE "awards" (
   "patch_image_url" varchar,
   "link" varchar,
   "type" award_type,
-  "created_at" timestamp DEFAULT (now())
+  "created_at" timestamptz DEFAULT (now())
 );
 
 CREATE TABLE "club_years" (
   "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  "start_date" timestamp,
+  "start_date" timestamptz,
   "club_name" varchar,
   "church_name" varchar,
-  "end_date" timestamp,
+  "end_date" timestamptz,
   "label" varchar UNIQUE,
-  "created_at" timestamp DEFAULT (now())
+  "created_at" timestamptz DEFAULT (now())
 );
 
 CREATE TABLE "club_years_staff" (
@@ -116,7 +116,7 @@ CREATE TABLE "club_years_staff" (
   "club_year_id" integer NOT NULL,
   "staff_id" integer NOT NULL,
   "staff_role" staff_role,
-  "created_at" timestamp DEFAULT (now()),
+  "created_at" timestamptz DEFAULT (now()),
   UNIQUE ("club_year_id", "staff_id")
 );
 
@@ -125,7 +125,7 @@ CREATE TABLE "classes" (
   "class" adventurer_class,
   "club_year_id" integer NOT NULL,
   "instructor_id" integer NOT NULL,
-  "created_at" timestamp DEFAULT (now()),
+  "created_at" timestamptz DEFAULT (now()),
   UNIQUE ("class", "club_year_id")
 );
 
@@ -134,8 +134,8 @@ CREATE TABLE "events" (
   "club_year_id" integer NOT NULL,
   "title" varchar,
   "award_ceremony" boolean NOT NULL DEFAULT false,
-  "event_date" timestamp,
-  "created_at" timestamp DEFAULT (now())
+  "event_date" timestamptz,
+  "created_at" timestamptz DEFAULT (now())
 );
 
 CREATE TABLE "events_awards" (
@@ -143,7 +143,7 @@ CREATE TABLE "events_awards" (
   "award_id" integer NOT NULL,
   "event_id" integer NOT NULL,
   "class_id" integer NOT NULL,
-  "created_at" timestamp DEFAULT (now())
+  "created_at" timestamptz DEFAULT (now())
 );
 
 CREATE TABLE "classes_children" (
@@ -151,7 +151,7 @@ CREATE TABLE "classes_children" (
   "club_year_id" integer NOT NULL,
   "class_id" integer NOT NULL,
   "child_id" integer NOT NULL,
-  "created_at" timestamp DEFAULT (now()),
+  "created_at" timestamptz DEFAULT (now()),
   UNIQUE ("club_year_id", "child_id")
 );
 
@@ -159,7 +159,7 @@ CREATE TABLE "events_children" (
   "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   "event_id" integer NOT NULL,
   "child_id" integer NOT NULL,
-  "created_at" timestamp DEFAULT (now()),
+  "created_at" timestamptz DEFAULT (now()),
   UNIQUE ("event_id", "child_id")
 );
 
@@ -169,8 +169,8 @@ CREATE TABLE "awards_children" (
   "child_id" integer NOT NULL,
   "event_id" integer,
   "award_ceremony_id" integer,
-  "awarded_on" timestamp,
-  "created_at" timestamp DEFAULT (now()),
+  "awarded_on" timestamptz,
+  "created_at" timestamptz DEFAULT (now()),
   UNIQUE ("award_id", "child_id")
 );
 
@@ -182,19 +182,19 @@ CREATE TABLE "user" (
   "email"         text NOT NULL UNIQUE,
   "emailVerified" boolean NOT NULL DEFAULT false,
   "image"         text,
-  "createdAt"     timestamp NOT NULL DEFAULT now(),
-  "updatedAt"     timestamp NOT NULL DEFAULT now()
+  "createdAt"     timestamptz NOT NULL DEFAULT now(),
+  "updatedAt"     timestamptz NOT NULL DEFAULT now()
 );
 
 CREATE TABLE "session" (
   "id"        text PRIMARY KEY,
   "token"     text NOT NULL UNIQUE,
-  "expiresAt" timestamp NOT NULL,
+  "expiresAt" timestamptz NOT NULL,
   "ipAddress" text,
   "userAgent" text,
   "userId"    text NOT NULL REFERENCES "user" ("id") ON DELETE CASCADE,
-  "createdAt" timestamp NOT NULL DEFAULT now(),
-  "updatedAt" timestamp NOT NULL DEFAULT now()
+  "createdAt" timestamptz NOT NULL DEFAULT now(),
+  "updatedAt" timestamptz NOT NULL DEFAULT now()
 );
 
 CREATE TABLE "account" (
@@ -205,22 +205,22 @@ CREATE TABLE "account" (
   "accessToken"            text,
   "refreshToken"           text,
   "idToken"                text,
-  "expiresAt"              timestamp,
-  "accessTokenExpiresAt"   timestamp,
-  "refreshTokenExpiresAt"  timestamp,
+  "expiresAt"              timestamptz,
+  "accessTokenExpiresAt"   timestamptz,
+  "refreshTokenExpiresAt"  timestamptz,
   "scope"                  text,
   "password"               text,
-  "createdAt"    timestamp NOT NULL DEFAULT now(),
-  "updatedAt"    timestamp NOT NULL DEFAULT now()
+  "createdAt"    timestamptz NOT NULL DEFAULT now(),
+  "updatedAt"    timestamptz NOT NULL DEFAULT now()
 );
 
 CREATE TABLE "verification" (
   "id"         text PRIMARY KEY,
   "identifier" text NOT NULL,
   "value"      text NOT NULL,
-  "expiresAt"  timestamp NOT NULL,
-  "createdAt"  timestamp NOT NULL DEFAULT now(),
-  "updatedAt"  timestamp NOT NULL DEFAULT now()
+  "expiresAt"  timestamptz NOT NULL,
+  "createdAt"  timestamptz NOT NULL DEFAULT now(),
+  "updatedAt"  timestamptz NOT NULL DEFAULT now()
 );
 
 ALTER TABLE "parents_children" ADD FOREIGN KEY ("parent_id") REFERENCES "parents" ("id");

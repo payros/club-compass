@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import FormPage from '@/components/pages/FormPage'
 import ClubYearForm from '@/components/forms/ClubYearForm'
 import { useFlow } from '@/hooks/useFlow'
+import { localDateToISO } from '@/utils/dateUtils'
 
 const View = () => {
   const router = useRouter()
@@ -19,6 +20,8 @@ const View = () => {
     setLoading(true)
     const formData = new FormData(event.target)
     const data = Object.fromEntries(formData.entries())
+data.startDate = localDateToISO(data.startDate)
+data.endDate = localDateToISO(data.endDate)
 
     try {
       const response = await fetch('/api/club-years', {

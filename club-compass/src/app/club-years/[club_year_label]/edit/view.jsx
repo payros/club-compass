@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import FormPage from '@/components/pages/FormPage'
 import ClubYearForm from '@/components/forms/ClubYearForm'
+import { localDateToISO } from '@/utils/dateUtils'
 
 export default function View() {
   const { club_year_label: currentLabel } = useParams()
@@ -38,6 +39,8 @@ export default function View() {
 
     const formData = new FormData(event.target)
     const data = Object.fromEntries(formData.entries())
+data.startDate = localDateToISO(data.startDate)
+data.endDate = localDateToISO(data.endDate)
 
     try {
       const response = await fetch(`/api/club-years/${currentLabel}`, {

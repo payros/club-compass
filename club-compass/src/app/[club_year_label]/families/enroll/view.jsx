@@ -7,6 +7,7 @@ import FormPage from '@/components/pages/FormPage'
 import AdventurerForm from '@/components/forms/AdventurerForm'
 import SearchBox from '@/components/SearchBox'
 import useClasses from '@/hooks/useClasses'
+import { localDateToISO } from '@/utils/dateUtils'
 
 const emptyParentEntry = () => ({
   firstName: '',
@@ -138,7 +139,10 @@ const View = () => {
       const response = await fetch(`/api/club-years/${clubYearLabel}/families`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ parents: parentEntries, children: childEntries }),
+        body: JSON.stringify({
+          parents: parentEntries,
+          children: childEntries.map((c) => ({ ...c, dateOfBirth: localDateToISO(c.dateOfBirth) })),
+        }),
       })
 
       if (!response.ok) {

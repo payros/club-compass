@@ -5,6 +5,7 @@ import { Button, Field, Input, IconButton } from '@chakra-ui/react'
 import { FaRegTrashAlt } from 'react-icons/fa'
 import FormPage from '@/components/pages/FormPage'
 import SearchBox from '@/components/SearchBox'
+import { localDateToISO } from '@/utils/dateUtils'
 
 function toDateInputValue(ts) {
   if (!ts) return ''
@@ -99,7 +100,7 @@ export default function View() {
             awardId: a.awardId,
             eventId: a.eventId ?? null,
             awardCeremonyId: a.awardCeremonyId ?? null,
-            awardedOn: a.awardedOn || null,
+            awardedOn: localDateToISO(a.awardedOn),
           })),
         }),
       })

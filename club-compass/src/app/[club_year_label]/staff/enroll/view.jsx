@@ -8,6 +8,7 @@ import FormPage from '@/components/pages/FormPage'
 import { useFlow } from '@/hooks/useFlow'
 import SearchBox from '@/components/SearchBox'
 import { STAFF_ROLES } from '@/utils/consts'
+import { localDateToISO } from '@/utils/dateUtils'
 
 const emptyStaffEntry = () => ({
   first_name: '',
@@ -100,7 +101,12 @@ const View = () => {
       const response = await fetch(`/api/club-years/${clubYearLabel}/staff`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(staffEntries),
+        body: JSON.stringify(
+          staffEntries.map((e) => ({
+            ...e,
+            background_check_expiration: localDateToISO(e.background_check_expiration),
+          }))
+        ),
       })
 
       if (!response.ok) {
