@@ -1,16 +1,15 @@
 'use client'
 import { useParams, useRouter } from 'next/navigation'
-import useChild from '@/hooks/useChild'
 import ResourcePage from '@/components/pages/ResourcePage'
 import { fromDateOfBirthToAge, fromDateToString } from '@/utils/dateUtils'
 import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
 
-export default function View() {
+export default function View({ child }) {
   const { id } = useParams()
   const router = useRouter()
-  const { child, loading } = useChild(id)
+  const loading = false
 
-  const name = child ? `${child.firstName ?? child.first_name} ${child.lastName ?? child.last_name}` : 'Child'
+  const name = child ? `${child.firstName} ${child.lastName}` : 'Child'
 
   const breadcrumbs = [{ label: 'Children', href: '/children' }, { label: name }]
 
@@ -27,25 +26,19 @@ export default function View() {
 
   const fields = child
     ? [
-        { label: 'First Name', value: child.firstName ?? child.first_name },
-        { label: 'Last Name', value: child.lastName ?? child.last_name },
+        { label: 'First Name', value: child.firstName },
+        { label: 'Last Name', value: child.lastName },
         {
           label: 'Age',
-          value:
-            (child.dateOfBirth ?? child.date_of_birth)
-              ? fromDateOfBirthToAge(child.dateOfBirth ?? child.date_of_birth)
-              : '—',
+          value: child.dateOfBirth ? fromDateOfBirthToAge(child.dateOfBirth) : '—',
         },
         {
           label: 'Date of Birth',
-          value:
-            (child.dateOfBirth ?? child.date_of_birth)
-              ? fromDateToString(child.dateOfBirth ?? child.date_of_birth)
-              : '—',
+          value: child.dateOfBirth ? fromDateToString(child.dateOfBirth) : '—',
         },
         { label: 'Sex', value: child.sex ? fromSnakeCaseToTitleCase(child.sex) : '—' },
         { label: 'Allergies', value: child.allergies ?? 'None' },
-        { label: 'Medical Conditions', value: child.medicalConditions ?? child.medical_conditions ?? 'None' },
+        { label: 'Medical Conditions', value: child.medicalConditions ?? 'None' },
       ]
     : []
 
@@ -59,7 +52,7 @@ export default function View() {
       ],
       data: (child?.parents ?? []).map((p) => ({
         id: p.id,
-        name: `${p.firstName ?? p.first_name} ${p.lastName ?? p.last_name}`,
+        name: `${p.firstName} ${p.lastName}`,
         phone: p.phone ?? '—',
         email: p.email ?? '—',
       })),
@@ -77,7 +70,7 @@ export default function View() {
         id: a.id,
         name: a.name ?? '—',
         type: a.type ? fromSnakeCaseToTitleCase(a.type) : '—',
-        awardedOn: (a.awardedOn ?? a.awarded_on) ? fromDateToString(a.awardedOn ?? a.awarded_on) : '—',
+        awardedOn: a.awardedOn ? fromDateToString(a.awardedOn) : '—',
       })),
       loading,
     },

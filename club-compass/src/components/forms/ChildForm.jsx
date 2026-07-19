@@ -107,21 +107,18 @@ const ChildForm = ({ data = {}, entry = null, onChange = null }) => {
   }
 
   // Uncontrolled mode
-  const dobValue =
-    (data.dateOfBirth ?? data.date_of_birth)
-      ? new Date(data.dateOfBirth ?? data.date_of_birth).toISOString().split('T')[0]
-      : ''
+  const dobValue = data.dateOfBirth ? new Date(data.dateOfBirth).toISOString().split('T')[0] : ''
 
   return (
     <>
       <HStack gap={3}>
         <Field.Root flex={1} required>
           <Field.Label>First Name</Field.Label>
-          <Input name="firstName" placeholder="First name" defaultValue={data.firstName ?? data.first_name ?? ''} />
+          <Input name="firstName" placeholder="First name" defaultValue={data.firstName ?? ''} />
         </Field.Root>
         <Field.Root flex={1} required>
           <Field.Label>Last Name</Field.Label>
-          <Input name="lastName" placeholder="Last name" defaultValue={data.lastName ?? data.last_name ?? ''} />
+          <Input name="lastName" placeholder="Last name" defaultValue={data.lastName ?? ''} />
         </Field.Root>
       </HStack>
       <HStack gap={3}>
@@ -154,7 +151,7 @@ const ChildForm = ({ data = {}, entry = null, onChange = null }) => {
           <Input
             name="medicalConditions"
             placeholder="Medical conditions"
-            defaultValue={data.medicalConditions ?? data.medical_conditions ?? ''}
+            defaultValue={data.medicalConditions ?? ''}
           />
         </Field.Root>
       </HStack>
@@ -178,7 +175,7 @@ const ChildForm = ({ data = {}, entry = null, onChange = null }) => {
           <Input
             name="physicalRestrictions"
             placeholder="Physical restrictions"
-            defaultValue={data.physicalRestrictions ?? data.physical_restrictions ?? ''}
+            defaultValue={data.physicalRestrictions ?? ''}
           />
         </Field.Root>
       </HStack>

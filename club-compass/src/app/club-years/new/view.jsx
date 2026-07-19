@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import FormPage from '@/components/pages/FormPage'
 import ClubYearForm from '@/components/forms/ClubYearForm'
 import { useFlow } from '@/hooks/useFlow'
+import useClubYears from '@/hooks/useClubYears'
 import { localDateToISO } from '@/utils/dateUtils'
 
 const View = () => {
@@ -12,14 +13,22 @@ const View = () => {
   const [loading, setLoading] = useState(false)
   const [labelError, setLabelError] = useState(null)
   const [globalError, setGlobalError] = useState(null)
+  const { clubYears, loading: prefillLoading } = useClubYears()
+  const { startDate, endDate, label, ...prefillData } = clubYears[0] ?? {}
 
   async function handleSubmit(event) {
     event.preventDefault()
     setLabelError(null)
     setGlobalError(null)
-    setLoading(true)
     const formData = new FormData(event.target)
     const data = Object.fromEntries(formData.entries())
+
+    if (!data.clubName?.trim() || !data.label?.trim()) {
+      setGlobalError('Please fill out all required fields.')
+      return
+    }
+
+    setLoading(true)
     if (data.startDate) data.startDate = localDateToISO(data.startDate)
     if (data.endDate) data.endDate = localDateToISO(data.endDate)
 
@@ -63,10 +72,11 @@ const View = () => {
       submitLabel="Create Club Year"
       submitLoadingLabel="Creating Club Year…"
       loading={loading}
+      contentLoading={prefillLoading}
       current={current}
       total={total}
     >
-      <ClubYearForm labelError={labelError} />
+      <ClubYearForm labelError={labelError} data={prefillData} />
     </FormPage>
   )
 }

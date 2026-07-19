@@ -2,29 +2,25 @@
 import { Field, Input } from '@chakra-ui/react'
 
 const ClubYearForm = ({ data = {}, labelError = null }) => {
-  const startDate = data.startDate ?? data.start_date
-  const endDate = data.endDate ?? data.end_date
+  const startDate = data.startDate
+  const endDate = data.endDate
 
   return (
     <>
-      <Field.Root>
-        <Field.Label>Club Name</Field.Label>
-        <Input
-          name="clubName"
-          placeholder="Enter the official name of your club"
-          defaultValue={data.clubName ?? data.club_name ?? ''}
-        />
+      <Field.Root required>
+        <Field.Label>
+          Club Name <Field.RequiredIndicator />
+        </Field.Label>
+        <Input name="clubName" placeholder="Enter the official name of your club" defaultValue={data.clubName ?? ''} />
       </Field.Root>
       <Field.Root>
         <Field.Label>Church Name</Field.Label>
-        <Input
-          name="churchName"
-          placeholder="Enter the name of your church"
-          defaultValue={data.churchName ?? data.church_name ?? ''}
-        />
+        <Input name="churchName" placeholder="Enter the name of your church" defaultValue={data.churchName ?? ''} />
       </Field.Root>
-      <Field.Root invalid={!!labelError}>
-        <Field.Label>Year Label</Field.Label>
+      <Field.Root invalid={!!labelError} required>
+        <Field.Label>
+          Year Label <Field.RequiredIndicator />
+        </Field.Label>
         <Input name="label" placeholder="e.g. 2025-2026" defaultValue={data.label ?? ''} />
         {labelError && <Field.ErrorText>{labelError}</Field.ErrorText>}
       </Field.Root>

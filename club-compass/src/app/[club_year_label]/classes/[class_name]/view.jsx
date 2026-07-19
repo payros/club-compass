@@ -2,12 +2,13 @@
 import { useParams, useRouter } from 'next/navigation'
 import ResourcePage from '@/components/pages/ResourcePage'
 import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
-import useClass from '@/hooks/useClass'
+import { transformClass } from '@/utils/transformUtils'
 
-export default function View() {
+export default function View({ classData }) {
   const { club_year_label: clubYearLabel, class_name: className } = useParams()
   const router = useRouter()
-  const { cls, loading } = useClass(clubYearLabel, className)
+  const cls = classData ? transformClass(classData) : null
+  const loading = false
 
   const title = className ? fromSnakeCaseToTitleCase(className) : 'Class'
   const instructorName = cls ? `${cls.instructorFirstName ?? ''} ${cls.instructorLastName ?? ''}`.trim() || '—' : '—'

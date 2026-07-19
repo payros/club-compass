@@ -7,14 +7,15 @@ import useEvents from '@/hooks/useEvents'
 import ResourcePage from '@/components/pages/ResourcePage'
 import { fromDateToString } from '@/utils/dateUtils'
 
-export default function View() {
+export default function View({ clubYear: serverClubYear }) {
   const { club_year_label: label } = useParams()
   const router = useRouter()
 
-  const [clubYear, setClubYear] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [clubYear, setClubYear] = useState(serverClubYear ?? null)
+  const [loading, setLoading] = useState(!serverClubYear)
 
   useEffect(() => {
+    if (serverClubYear) return
     if (!label) return
     setLoading(true)
     fetch(`/api/club-years/${label}`)

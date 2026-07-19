@@ -6,16 +6,17 @@ import AdventurerForm from '@/components/forms/AdventurerForm'
 import useClasses from '@/hooks/useClasses'
 import { localDateToISO } from '@/utils/dateUtils'
 
-export default function View() {
+export default function View({ child: serverChild }) {
   const { club_year_label: clubYearLabel, child_id: childId } = useParams()
   const router = useRouter()
-  const [child, setChild] = useState(null)
+  const [child, setChild] = useState(serverChild ?? null)
   const [loading, setLoading] = useState(false)
-  const [contentLoading, setContentLoading] = useState(true)
+  const [contentLoading, setContentLoading] = useState(!serverChild)
   const [globalError, setGlobalError] = useState(null)
   const { classes, loading: classesLoading } = useClasses(clubYearLabel)
 
   useEffect(() => {
+    if (serverChild) return
     fetch(`/api/club-years/${clubYearLabel}/children/${childId}`)
       .then((res) => {
         if (!res.ok) throw new Error('Not found')
@@ -69,7 +70,7 @@ export default function View() {
     router.push(`/${clubYearLabel}/adventurers/${childId}`)
   }
 
-  const name = child ? `${child.firstName ?? child.first_name} ${child.lastName ?? child.last_name}` : 'Adventurer'
+  const name = child ? `${child.firstName} ${child.lastName}` : 'Adventurer'
 
   const breadcrumbs = [
     { label: 'Adventurers', href: `/${clubYearLabel}/adventurers` },

@@ -6,7 +6,7 @@ import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
 import useChildren from '@/hooks/useChildren'
 import FormPage from '@/components/pages/FormPage'
 
-const View = () => {
+const View = ({ event: serverEvent }) => {
   const router = useRouter()
   const clubYearLabel = useParams()['club_year_label']
   const eventId = useParams()['event_id']
@@ -14,13 +14,16 @@ const View = () => {
     by: null,
     direction: 'asc',
   })
-  const [eventData, setEventData] = useState(null)
-  const [loadingEvent, setLoadingEvent] = useState(true)
-  const [selectedChildren, setSelectedChildren] = useState([])
+  const [eventData, setEventData] = useState(serverEvent ?? null)
+  const [loadingEvent, setLoadingEvent] = useState(!serverEvent)
+  const [selectedChildren, setSelectedChildren] = useState(
+    serverEvent ? (serverEvent.children ?? []).map((child) => child.id) : []
+  )
   const [submitting, setSubmitting] = useState(false)
   const [globalError, setGlobalError] = useState(null)
 
   useEffect(() => {
+    if (serverEvent) return
     setLoadingEvent(true)
     fetch(`/api/club-years/${clubYearLabel}/events/${eventId}`)
       .then((res) => res.json())

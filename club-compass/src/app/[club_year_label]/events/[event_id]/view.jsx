@@ -3,14 +3,12 @@ import { useParams, useRouter } from 'next/navigation'
 
 import ResourcePage from '@/components/pages/ResourcePage'
 import { fromDateToString } from '@/utils/dateUtils'
-import useEvent from '@/hooks/useEvent'
 import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
 
-export default function View() {
+export default function View({ event }) {
   const { club_year_label: clubYearLabel, event_id: eventId } = useParams()
   const router = useRouter()
-
-  const { event, loadingEvent } = useEvent(clubYearLabel, eventId)
+  const loadingEvent = false
 
   const breadcrumbs = [{ label: 'Events', href: `/${clubYearLabel}/events` }, { label: event?.title ?? 'Event' }]
 
@@ -41,7 +39,7 @@ export default function View() {
       data:
         event?.children?.map((a) => ({
           id: a.id,
-          name: `${a.firstName ?? a.first_name} ${a.lastName ?? a.last_name}`,
+          name: `${a.firstName} ${a.lastName}`,
         })) ?? [],
       loading: loadingEvent,
       onRowClick: (item) => router.push(`/${clubYearLabel}/adventurers/${item.id}`),

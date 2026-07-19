@@ -64,7 +64,7 @@ const View = () => {
                 <option value="">Choose a parent…</option>
                 {parents.map((p) => (
                   <option key={p.id} value={String(p.id)}>
-                    {p.firstName ?? p.first_name} {p.lastName ?? p.last_name}
+                    {p.firstName} {p.lastName}
                   </option>
                 ))}
               </NativeSelect.Field>

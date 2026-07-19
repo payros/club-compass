@@ -24,10 +24,12 @@ function emptyEntry() {
   }
 }
 
-export default function View() {
+export default function View({ child: serverChild }) {
   const { id: childId } = useParams()
   const router = useRouter()
-  const [childName, setChildName] = useState('Adventurer')
+  const [childName, setChildName] = useState(
+    serverChild ? `${serverChild.firstName} ${serverChild.lastName}` : 'Adventurer'
+  )
   const [awards, setAwards] = useState([])
   const [contentLoading, setContentLoading] = useState(true)
   const [loading, setLoading] = useState(false)
@@ -36,10 +38,10 @@ export default function View() {
   useEffect(() => {
     async function load() {
       const [childRes, awardsRes] = await Promise.all([
-        fetch(`/api/children/${childId}`),
+        serverChild ? Promise.resolve(null) : fetch(`/api/children/${childId}`),
         fetch(`/api/children/${childId}/awards`),
       ])
-      if (childRes.ok) {
+      if (childRes && childRes.ok) {
         const child = await childRes.json()
         setChildName(`${child.firstName} ${child.lastName}`)
       }

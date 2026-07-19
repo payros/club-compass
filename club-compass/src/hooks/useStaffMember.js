@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { fromDateToString } from '@/utils/dateUtils'
+import { transformStaffMember } from '@/utils/transformUtils'
 
 function useStaffMember(staffId, clubYearLabel = null) {
   const [staffMember, setStaffMember] = useState(null)
@@ -21,13 +21,7 @@ function useStaffMember(staffId, clubYearLabel = null) {
           return
         }
         res.json().then((data) => {
-          setStaffMember({
-            ...data,
-            backgroundCheckExpiration: data.backgroundCheckExpiration
-              ? fromDateToString(data.backgroundCheckExpiration)
-              : null,
-            createdAt: data.createdAt ? fromDateToString(data.createdAt) : null,
-          })
+          setStaffMember(transformStaffMember(data))
           setLoading(false)
         })
       })

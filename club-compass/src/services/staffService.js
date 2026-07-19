@@ -4,10 +4,11 @@ async function list(search, clubYearLabel) {
   try {
     if (clubYearLabel) {
       const result = await sql`
-          SELECT sf.*, cys.staff_role
+          SELECT sf.*, cys.staff_role, cl.class AS instructor_class
           FROM adv_db.staff sf
           JOIN adv_db.club_years_staff cys ON cys.staff_id = sf.id
           JOIN adv_db.club_years cy ON cys.club_year_id = cy.id
+          LEFT JOIN adv_db.classes cl ON cl.instructor_id = sf.id AND cl.club_year_id = cy.id
           WHERE cy.label = ${clubYearLabel}
           ${search ? sql`AND (sf.first_name ILIKE ${'%' + search + '%'} OR sf.last_name ILIKE ${'%' + search + '%'})` : sql``}
           ORDER BY sf.last_name ASC
