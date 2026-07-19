@@ -1,12 +1,13 @@
 'use client'
 import { useParams } from 'next/navigation'
-import useStaffMember from '@/hooks/useStaffMember'
 import ResourcePage from '@/components/pages/ResourcePage'
 import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
+import { transformStaffMember } from '@/utils/transformUtils'
 
-export default function View() {
+export default function View({ staffMember: staffMemberData }) {
   const { club_year_label: clubYearLabel, id } = useParams()
-  const { staffMember, loading } = useStaffMember(id, clubYearLabel)
+  const staffMember = staffMemberData ? transformStaffMember(staffMemberData) : null
+  const loading = false
 
   const name = staffMember ? `${staffMember.firstName} ${staffMember.lastName}` : 'Staff Member'
 

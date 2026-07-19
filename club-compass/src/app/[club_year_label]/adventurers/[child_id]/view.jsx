@@ -3,12 +3,11 @@ import { useParams, useRouter } from 'next/navigation'
 import ResourcePage from '@/components/pages/ResourcePage'
 import { fromDateOfBirthToAge, fromDateToString } from '@/utils/dateUtils'
 import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
-import useChild from '@/hooks/useChild'
 
-export default function View() {
+export default function View({ child }) {
   const { club_year_label: clubYearLabel, child_id: childId } = useParams()
   const router = useRouter()
-  const { child, loading } = useChild(childId, clubYearLabel)
+  const loading = false
 
   const name = child ? `${child.firstName} ${child.lastName}` : 'Adventurer'
 

@@ -13,6 +13,7 @@ function useStaff(clubYearLabel = null) {
       email: s.email ?? '—',
       phone: s.phone ?? '—',
       role: s.staffRole ? fromSnakeCaseToTitleCase(s.staffRole) : '—',
+      class: s.instructorClass ? fromSnakeCaseToTitleCase(s.instructorClass) : '—',
       backgroundCheckExpiration: s.backgroundCheckExpiration
         ? new Date(s.backgroundCheckExpiration).toLocaleDateString()
         : s.background_check_expiration

@@ -5,34 +5,35 @@ import FormPage from '@/components/pages/FormPage'
 import EventsForm from '@/components/forms/EventsForm'
 import { localDateToISO } from '@/utils/dateUtils'
 
-export default function View() {
+function buildEventAwardsForForm(eventData) {
+  const awardsMap = new Map()
+  for (const award of eventData.awards ?? []) {
+    if (!awardsMap.has(award.id)) {
+      awardsMap.set(award.id, { award_id: award.id, name: award.name, class_ids: [] })
+    }
+    if (award.classId !== null && award.classId !== undefined) {
+      awardsMap.get(award.id).class_ids.push(String(award.classId))
+    }
+  }
+  return { ...eventData, eventAwardsForForm: Array.from(awardsMap.values()) }
+}
+
+export default function View({ event: serverEvent }) {
   const { club_year_label: clubYearLabel, event_id: eventId } = useParams()
   const router = useRouter()
-  const [event, setEvent] = useState(null)
+  const [event, setEvent] = useState(() => (serverEvent ? buildEventAwardsForForm(serverEvent) : null))
   const [loading, setLoading] = useState(false)
-  const [contentLoading, setContentLoading] = useState(true)
+  const [contentLoading, setContentLoading] = useState(!serverEvent)
   const [globalError, setGlobalError] = useState(null)
 
   useEffect(() => {
+    if (serverEvent) return
     const fetchEventData = async () => {
       try {
         const res = await fetch(`/api/club-years/${clubYearLabel}/events/${eventId}`)
         if (!res.ok) throw new Error('Event not found')
         const eventData = await res.json()
-
-        // Group awards by award_id to build { award_id, name, class_ids[] } — used by formData below
-        const awardsMap = new Map()
-        for (const award of eventData.awards ?? []) {
-          if (!awardsMap.has(award.id)) {
-            awardsMap.set(award.id, { award_id: award.id, name: award.name, class_ids: [] })
-          }
-          if (award.classId !== null && award.classId !== undefined) {
-            awardsMap.get(award.id).class_ids.push(String(award.classId))
-          }
-        }
-        eventData.eventAwardsForForm = Array.from(awardsMap.values())
-
-        setEvent(eventData)
+        setEvent(buildEventAwardsForForm(eventData))
       } catch {
         setGlobalError('Could not load event data. Please try again.')
       } finally {

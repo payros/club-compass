@@ -1,12 +1,13 @@
 'use client'
 import { useParams, useRouter } from 'next/navigation'
-import useAward from '@/hooks/useAward'
 import ResourcePage from '@/components/pages/ResourcePage'
+import { transformAward } from '@/utils/transformUtils'
 
-export default function View() {
+export default function View({ award: awardData }) {
   const { id } = useParams()
   const router = useRouter()
-  const { award, loading } = useAward(id)
+  const award = awardData ? transformAward(awardData) : null
+  const loading = false
 
   const breadcrumbs = [{ label: 'Awards', href: '/awards' }, { label: award?.name ?? 'Award' }]
 

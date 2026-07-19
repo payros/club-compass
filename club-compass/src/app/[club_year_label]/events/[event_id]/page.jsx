@@ -1,10 +1,19 @@
+import { cache } from 'react'
 import View from './view.jsx'
 import { generateTitle } from '@/utils/stringUtils'
+import eventsService from '@/services/eventsService'
+
+const getEvent = cache(async (eventId) => eventsService.getById(eventId))
 
 export async function generateMetadata({ params }) {
-  const { club_year_label } = await params
-  return { title: generateTitle('Event Details', club_year_label) }
+  const { club_year_label: clubYearLabel, event_id: eventId } = await params
+  const event = await getEvent(eventId)
+  const name = event?.title ?? 'Event Details'
+  return { title: generateTitle(name, clubYearLabel) }
 }
 
-const Page = () => <View />
-export default Page
+export default async function Page({ params }) {
+  const { club_year_label: clubYearLabel, event_id: eventId } = await params
+  const event = await getEvent(eventId)
+  return <View event={event} />
+}

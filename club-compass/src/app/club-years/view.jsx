@@ -22,11 +22,11 @@ export default function View() {
   const data = clubYears.map((cy) => ({
     id: cy.id,
     label: cy.label,
-    clubName: cy.clubName ?? cy.club_name ?? '—',
-    churchName: cy.churchName ?? cy.church_name ?? '—',
-    startDate: (cy.startDate ?? cy.start_date) ? fromDateToString(cy.startDate ?? cy.start_date) : '—',
-    endDate: (cy.endDate ?? cy.end_date) ? fromDateToString(cy.endDate ?? cy.end_date) : '—',
-    enrolledAdventurers: cy.enrolledAdventurers ?? cy.enrolled_adventurers ?? 0,
+    clubName: cy.clubName ?? '—',
+    churchName: cy.churchName ?? '—',
+    startDate: cy.startDate ? fromDateToString(cy.startDate) : '—',
+    endDate: cy.endDate ? fromDateToString(cy.endDate) : '—',
+    enrolledAdventurers: cy.enrolledAdventurers ?? 0,
     viewYear: 'View Year',
     dashboardHref: `/${cy.label}/dashboard`,
   }))

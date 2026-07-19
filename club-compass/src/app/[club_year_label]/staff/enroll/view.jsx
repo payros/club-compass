@@ -149,16 +149,14 @@ const View = () => {
       total={total}
     >
       {/* Typeahead: enroll existing staff */}
-      {!getNextPath && (
-        <Box mb={4}>
-          <SearchBox
-            type="staff"
-            label="Enroll Existing Staff"
-            placeholder="Search by first or last name"
-            handleSelect={handleSelectStaff}
-          />
-        </Box>
-      )}
+      <Box mb={4}>
+        <SearchBox
+          type="staff"
+          label="Enroll Existing Staff"
+          placeholder="Search by first or last name"
+          handleSelect={handleSelectStaff}
+        />
+      </Box>
 
       {staffEntries.map((entry, index) => (
         <Card.Root

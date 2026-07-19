@@ -4,15 +4,16 @@ import { useParams, useRouter } from 'next/navigation'
 import FormPage from '@/components/pages/FormPage'
 import AwardsForm from '@/components/forms/AwardsForm'
 
-export default function View() {
+export default function View({ award: serverAward }) {
   const { id } = useParams()
   const router = useRouter()
-  const [award, setAward] = useState(null)
+  const [award, setAward] = useState(serverAward ?? null)
   const [loading, setLoading] = useState(false)
-  const [contentLoading, setContentLoading] = useState(true)
+  const [contentLoading, setContentLoading] = useState(!serverAward)
   const [globalError, setGlobalError] = useState(null)
 
   useEffect(() => {
+    if (serverAward) return
     fetch(`/api/awards/${id}`)
       .then((res) => {
         if (!res.ok) throw new Error('Not found')

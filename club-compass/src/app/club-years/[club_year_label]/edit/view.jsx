@@ -5,17 +5,18 @@ import FormPage from '@/components/pages/FormPage'
 import ClubYearForm from '@/components/forms/ClubYearForm'
 import { localDateToISO } from '@/utils/dateUtils'
 
-export default function View() {
+export default function View({ clubYear: serverClubYear }) {
   const { club_year_label: currentLabel } = useParams()
   const router = useRouter()
 
-  const [clubYear, setClubYear] = useState(null)
+  const [clubYear, setClubYear] = useState(serverClubYear ?? null)
   const [loading, setLoading] = useState(false)
-  const [contentLoading, setContentLoading] = useState(true)
+  const [contentLoading, setContentLoading] = useState(!serverClubYear)
   const [labelError, setLabelError] = useState(null)
   const [globalError, setGlobalError] = useState(null)
 
   useEffect(() => {
+    if (serverClubYear) return
     fetch(`/api/club-years/${currentLabel}`)
       .then((res) => {
         if (!res.ok) throw new Error('Not found')

@@ -5,15 +5,16 @@ import FormPage from '@/components/pages/FormPage'
 import ChildForm from '@/components/forms/ChildForm'
 import { localDateToISO } from '@/utils/dateUtils'
 
-export default function View() {
+export default function View({ child: serverChild }) {
   const { id } = useParams()
   const router = useRouter()
-  const [child, setChild] = useState(null)
+  const [child, setChild] = useState(serverChild ?? null)
   const [loading, setLoading] = useState(false)
-  const [contentLoading, setContentLoading] = useState(true)
+  const [contentLoading, setContentLoading] = useState(!serverChild)
   const [globalError, setGlobalError] = useState(null)
 
   useEffect(() => {
+    if (serverChild) return
     fetch(`/api/children/${id}`)
       .then((res) => {
         if (!res.ok) throw new Error('Not found')
@@ -66,7 +67,7 @@ export default function View() {
     router.push(`/children/${id}`)
   }
 
-  const name = child ? `${child.firstName ?? child.first_name} ${child.lastName ?? child.last_name}` : 'Child'
+  const name = child ? `${child.firstName} ${child.lastName}` : 'Child'
 
   const breadcrumbs = [
     { label: 'Children', href: '/children' },

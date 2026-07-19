@@ -1,10 +1,14 @@
 import View from './view.jsx'
-import { generateTitle } from '@/utils/stringUtils'
+import { generateTitle, fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
+import classesService from '@/services/classesService'
 
 export async function generateMetadata({ params }) {
-  const { club_year_label } = await params
-  return { title: generateTitle('Class Details', club_year_label) }
+  const { club_year_label: clubYearLabel, class_name: className } = await params
+  return { title: generateTitle(fromSnakeCaseToTitleCase(className), clubYearLabel) }
 }
 
-const Page = () => <View />
-export default Page
+export default async function Page({ params }) {
+  const { club_year_label: clubYearLabel, class_name: className } = await params
+  const cls = await classesService.getByName(clubYearLabel, className)
+  return <View classData={cls} />
+}
