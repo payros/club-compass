@@ -92,6 +92,9 @@ export default function View({ child: serverChild }) {
         }
       } catch (err) {
         console.error(err)
+        setGlobalError('Child updated, but profile image upload failed.')
+        setLoading(false)
+        return
       }
     }
 
