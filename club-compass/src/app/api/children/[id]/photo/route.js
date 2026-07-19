@@ -32,6 +32,10 @@ export async function POST(request, { params }) {
     return NextResponse.json({ error: 'Unsupported file type. Upload a JPEG, PNG, WebP, or GIF.' }, { status: 400 })
   }
 
+  if (typeof file.size === 'number' && file.size > MAX_BYTES) {
+    return NextResponse.json({ error: `File too large. Maximum size is ${MAX_BYTES / 1024} KB.` }, { status: 400 })
+  }
+
   const arrayBuffer = await file.arrayBuffer()
   const inputBuffer = Buffer.from(arrayBuffer)
 
