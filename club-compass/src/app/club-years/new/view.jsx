@@ -20,8 +20,8 @@ const View = () => {
     setLoading(true)
     const formData = new FormData(event.target)
     const data = Object.fromEntries(formData.entries())
-    if (data.startDate) data.startDate = localDateToISO(data.startDate)
-    if (data.endDate) data.endDate = localDateToISO(data.endDate)
+data.startDate = localDateToISO(data.startDate)
+data.endDate = localDateToISO(data.endDate)
 
     try {
       const response = await fetch('/api/club-years', {
