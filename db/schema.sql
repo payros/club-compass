@@ -74,6 +74,7 @@ CREATE TABLE "children" (
   "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   "first_name" varchar NOT NULL,
   "last_name" varchar NOT NULL,
+  "profile_image_url" varchar,
   "allergies" varchar,
   "medical_conditions" varchar,
   "physical_restrictions" varchar,

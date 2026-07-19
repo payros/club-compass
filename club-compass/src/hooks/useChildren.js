@@ -8,6 +8,7 @@ function transform(raw, clubYearLabel) {
       id: c.id,
       name: `${c.firstName} ${c.lastName}`,
       age: c.dateOfBirth ? fromDateOfBirthToAge(c.dateOfBirth) : '—',
+      profileImageUrl: c.profileImageUrl || '/img/profile_placeholder.png',
     }
     if (clubYearLabel) {
       base.class = fromSnakeCaseToTitleCase(c.class)

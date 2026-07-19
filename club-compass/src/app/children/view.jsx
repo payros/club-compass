@@ -4,6 +4,7 @@ import useChildren from '@/hooks/useChildren'
 import CollectionPage from '@/components/pages/CollectionPage'
 
 const headers = [
+  { key: 'profileImageUrl', label: '', sortable: false, type: 'avatar' },
   { key: 'name', label: 'Name', sortable: false },
   { key: 'age', label: 'Age', sortable: false },
   { key: 'sex', label: 'Sex', sortable: false },

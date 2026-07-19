@@ -33,6 +33,7 @@ export default function View() {
         href: `/children/new`,
       },
       headers: [
+        { key: 'profileImageUrl', label: '', sortable: false, type: 'avatar' },
         { key: 'name', label: 'Name', sortable: true },
         { key: 'age', label: 'Age', sortable: true },
       ],

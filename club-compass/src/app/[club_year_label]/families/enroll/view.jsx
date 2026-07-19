@@ -28,6 +28,7 @@ const emptyChildEntry = () => ({
   dateOfBirth: '',
   classId: '',
   grade: '',
+  profileImageFile: null,
 })
 
 const normalizeDateOfBirth = (value) => {
@@ -77,7 +78,7 @@ const View = () => {
       }, 3000)
     } catch (error) {
       setGlobalError('Could not load adventurer data. Please try again.')
-      setContentLoading(false)
+      setLoading(false)
     }
 
     return false
@@ -141,7 +142,10 @@ const View = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           parents: parentEntries,
-          children: childEntries.map((c) => ({ ...c, dateOfBirth: localDateToISO(c.dateOfBirth) })),
+          children: childEntries.map(({ profileImageFile, profileImageUrl, ...c }) => ({
+            ...c,
+            dateOfBirth: localDateToISO(c.dateOfBirth),
+          })),
         }),
       })
 
@@ -155,6 +159,31 @@ const View = () => {
       }
 
       const result = await response.json()
+      const uploads = childEntries.map(async (entry, index) => {
+        if (!entry.profileImageFile) return
+        const createdChild = result.children?.[index]
+        if (!createdChild?.id) return
+
+        const formData = new FormData()
+        formData.append('file', entry.profileImageFile)
+        const uploadResponse = await fetch(`/api/children/${createdChild.id}/photo`, {
+          method: 'POST',
+          body: formData,
+        })
+
+        if (!uploadResponse.ok) {
+          const uploadResult = await uploadResponse.json().catch(() => null)
+          const message = uploadResult?.error ?? 'Photo upload failed'
+          throw new Error(`Child ${createdChild.id}: ${message}`)
+        }
+      })
+
+      const uploadResults = await Promise.allSettled(uploads)
+      const failedUploads = uploadResults.filter((r) => r.status === 'rejected')
+      if (failedUploads.length > 0) {
+        console.error('Some child photo uploads failed:', failedUploads)
+      }
+
       const parentIds = result.parents.map((p) => p.id).join(',')
       router.push(`/${clubYearLabel}/families/enroll/success?parentIds=${parentIds}`)
     } catch (error) {

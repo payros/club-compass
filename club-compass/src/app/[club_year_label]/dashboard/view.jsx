@@ -47,6 +47,7 @@ const View = () => {
         href: `/${clubYearLabel}/families/enroll`,
       },
       headers: [
+        { key: 'profileImageUrl', label: '', sortable: false, type: 'avatar' },
         { key: 'name', label: 'Name', sortable: true },
         { key: 'age', label: 'Age', sortable: true },
         { key: 'class', label: 'Class', sortable: true },

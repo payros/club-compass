@@ -1,5 +1,6 @@
 'use client'
-import { Field, HStack, Input, NativeSelect } from '@chakra-ui/react'
+import { useEffect, useRef, useState } from 'react'
+import { Box, Field, HStack, Image, Input, NativeSelect, Text } from '@chakra-ui/react'
 import { SEX_OPTIONS, GRADE_OPTIONS } from '@/utils/consts'
 import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
 
@@ -14,119 +15,85 @@ import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
  */
 const ChildForm = ({ data = {}, entry = null, onChange = null }) => {
   const controlled = entry !== null && onChange !== null
+  const defaultProfileImageUrl =
+    (controlled ? entry.profileImageUrl : data.profileImageUrl) ?? '/img/profile_placeholder.png'
+  const [previewUrl, setPreviewUrl] = useState(defaultProfileImageUrl)
+  const objectUrlRef = useRef(null)
 
-  if (controlled) {
-    return (
-      <>
-        <HStack gap={3}>
-          <Field.Root flex={1} required>
-            <Field.Label>
-              First Name <Field.RequiredIndicator />
-            </Field.Label>
-            <Input
-              placeholder="First name"
-              value={entry.firstName}
-              onChange={(e) => onChange('firstName', e.target.value)}
-            />
-          </Field.Root>
-          <Field.Root flex={1} required>
-            <Field.Label>
-              Last Name <Field.RequiredIndicator />
-            </Field.Label>
-            <Input
-              placeholder="Last name"
-              value={entry.lastName}
-              onChange={(e) => onChange('lastName', e.target.value)}
-            />
-          </Field.Root>
-        </HStack>
-        <HStack gap={3}>
-          <Field.Root flex={1}>
-            <Field.Label>Sex</Field.Label>
-            <NativeSelect.Root>
-              <NativeSelect.Field value={entry.sex} onChange={(e) => onChange('sex', e.target.value)}>
-                <option value="">Select a sex</option>
-                {SEX_OPTIONS.map((sex) => (
-                  <option key={sex} value={sex}>
-                    {fromSnakeCaseToTitleCase(sex)}
-                  </option>
-                ))}
-              </NativeSelect.Field>
-              <NativeSelect.Indicator />
-            </NativeSelect.Root>
-          </Field.Root>
-          <Field.Root flex={1}>
-            <Field.Label>Date of Birth</Field.Label>
-            <Input type="date" value={entry.dateOfBirth} onChange={(e) => onChange('dateOfBirth', e.target.value)} />
-          </Field.Root>
-        </HStack>
-        <HStack gap={3}>
-          <Field.Root flex={1}>
-            <Field.Label>Allergies</Field.Label>
-            <Input
-              placeholder="Allergies"
-              value={entry.allergies}
-              onChange={(e) => onChange('allergies', e.target.value)}
-            />
-          </Field.Root>
-          <Field.Root flex={1}>
-            <Field.Label>Medical Conditions</Field.Label>
-            <Input
-              placeholder="Medical conditions"
-              value={entry.medicalConditions}
-              onChange={(e) => onChange('medicalConditions', e.target.value)}
-            />
-          </Field.Root>
-        </HStack>
-        <HStack gap={3}>
-          <Field.Root flex={1}>
-            <Field.Label>Grade</Field.Label>
-            <NativeSelect.Root>
-              <NativeSelect.Field value={entry.grade} onChange={(e) => onChange('grade', e.target.value)}>
-                <option value="">Select a grade</option>
-                {GRADE_OPTIONS.map(({ value, label }) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ))}
-              </NativeSelect.Field>
-              <NativeSelect.Indicator />
-            </NativeSelect.Root>
-          </Field.Root>
-          <Field.Root flex={1}>
-            <Field.Label>Physical Restrictions</Field.Label>
-            <Input
-              placeholder="Physical restrictions"
-              value={entry.physicalRestrictions}
-              onChange={(e) => onChange('physicalRestrictions', e.target.value)}
-            />
-          </Field.Root>
-        </HStack>
-      </>
-    )
+  useEffect(() => {
+    setPreviewUrl(defaultProfileImageUrl)
+  }, [defaultProfileImageUrl])
+
+  useEffect(() => {
+    return () => {
+      if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current)
+    }
+  }, [])
+
+  function handleFileChange(e) {
+    const file = e.target.files?.[0]
+    if (!file) {
+      if (objectUrlRef.current) {
+        URL.revokeObjectURL(objectUrlRef.current)
+        objectUrlRef.current = null
+      }
+      setPreviewUrl(defaultProfileImageUrl)
+      if (controlled) onChange('profileImageFile', null)
+      return
+    }
+    if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current)
+    objectUrlRef.current = URL.createObjectURL(file)
+    setPreviewUrl(objectUrlRef.current)
+    if (controlled) onChange('profileImageFile', file)
   }
 
-  // Uncontrolled mode
   const dobValue = data.dateOfBirth ? new Date(data.dateOfBirth).toISOString().split('T')[0] : ''
+  const valueSource = controlled ? entry : data
+
+  const bindField = (field, name = field) => {
+    if (controlled) {
+      return {
+        value: valueSource[field] ?? '',
+        onChange: (e) => onChange(field, e.target.value),
+      }
+    }
+    return {
+      name,
+      defaultValue: valueSource[field] ?? '',
+    }
+  }
+
+  const bindDateField = (field, name = field) => {
+    if (controlled) {
+      return {
+        value: valueSource[field] ?? '',
+        onChange: (e) => onChange(field, e.target.value),
+      }
+    }
+    return {
+      name,
+      defaultValue: dobValue,
+    }
+  }
 
   return (
     <>
       <HStack gap={3}>
         <Field.Root flex={1} required>
-          <Field.Label>First Name</Field.Label>
-          <Input name="firstName" placeholder="First name" defaultValue={data.firstName ?? ''} />
+          <Field.Label>First Name {controlled && <Field.RequiredIndicator />}</Field.Label>
+          <Input placeholder="First name" {...bindField('firstName')} />
         </Field.Root>
         <Field.Root flex={1} required>
-          <Field.Label>Last Name</Field.Label>
-          <Input name="lastName" placeholder="Last name" defaultValue={data.lastName ?? ''} />
+          <Field.Label>Last Name {controlled && <Field.RequiredIndicator />}</Field.Label>
+          <Input placeholder="Last name" {...bindField('lastName')} />
         </Field.Root>
       </HStack>
       <HStack gap={3}>
         <Field.Root flex={1}>
           <Field.Label>Sex</Field.Label>
           <NativeSelect.Root>
-            <NativeSelect.Field name="sex" defaultValue={data.sex ?? ''}>
-              <option value="">Not specified</option>
+            <NativeSelect.Field {...bindField('sex')}>
+              <option value="">{controlled ? 'Select a sex' : 'Not specified'}</option>
               {SEX_OPTIONS.map((option) => (
                 <option key={option} value={option}>
                   {fromSnakeCaseToTitleCase(option)}
@@ -138,28 +105,24 @@ const ChildForm = ({ data = {}, entry = null, onChange = null }) => {
         </Field.Root>
         <Field.Root flex={1}>
           <Field.Label>Date of Birth</Field.Label>
-          <Input name="dateOfBirth" type="date" defaultValue={dobValue} />
+          <Input type="date" {...bindDateField('dateOfBirth')} />
         </Field.Root>
       </HStack>
       <HStack gap={3}>
         <Field.Root flex={1}>
           <Field.Label>Allergies</Field.Label>
-          <Input name="allergies" placeholder="Allergies" defaultValue={data.allergies ?? ''} />
+          <Input placeholder="Allergies" {...bindField('allergies')} />
         </Field.Root>
         <Field.Root flex={1}>
           <Field.Label>Medical Conditions</Field.Label>
-          <Input
-            name="medicalConditions"
-            placeholder="Medical conditions"
-            defaultValue={data.medicalConditions ?? ''}
-          />
+          <Input placeholder="Medical conditions" {...bindField('medicalConditions')} />
         </Field.Root>
       </HStack>
       <HStack gap={3}>
         <Field.Root flex={1}>
           <Field.Label>Grade</Field.Label>
           <NativeSelect.Root>
-            <NativeSelect.Field name="grade" defaultValue={data.grade ?? ''}>
+            <NativeSelect.Field {...bindField('grade')}>
               <option value="">Select a grade</option>
               {GRADE_OPTIONS.map(({ value, label }) => (
                 <option key={value} value={value}>
@@ -172,13 +135,29 @@ const ChildForm = ({ data = {}, entry = null, onChange = null }) => {
         </Field.Root>
         <Field.Root flex={1}>
           <Field.Label>Physical Restrictions</Field.Label>
-          <Input
-            name="physicalRestrictions"
-            placeholder="Physical restrictions"
-            defaultValue={data.physicalRestrictions ?? ''}
-          />
+          <Input placeholder="Physical restrictions" {...bindField('physicalRestrictions')} />
         </Field.Root>
       </HStack>
+      <Field.Root>
+        <Field.Label>
+          Profile Picture{' '}
+          <Text as="span" color="fg.muted" fontSize="sm">
+            (optional)
+          </Text>
+        </Field.Label>
+        <HStack w="full" align="center" gap={3}>
+          <Box flexShrink={0} boxSize="48px" borderRadius="full" overflow="hidden" bg="bg.subtle">
+            <Image src={previewUrl} alt="Profile preview" objectFit="cover" boxSize="48px" />
+          </Box>
+          <Input
+            name={controlled ? undefined : 'profile_image'}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            onChange={handleFileChange}
+          />
+        </HStack>
+        <Field.HelperText>JPEG, PNG, WebP, or GIF - max 1 MB. Will be converted to WebP.</Field.HelperText>
+      </Field.Root>
     </>
   )
 }
