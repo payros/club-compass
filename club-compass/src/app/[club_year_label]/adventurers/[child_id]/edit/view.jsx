@@ -91,7 +91,6 @@ export default function View({ child: serverChild }) {
           const uploadResult = await uploadRes.json()
           setGlobalError(uploadResult?.error ?? 'Adventurer updated, but profile image upload failed.')
           setLoading(false)
-          router.push(`/${clubYearLabel}/adventurers/${childId}`)
           return
         }
       } catch (err) {
