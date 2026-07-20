@@ -1,4 +1,4 @@
-h1:lH6wWL09HUrzuGDVHhHIUNoDxLoai8V9dUygpYAiZTY=
+h1:ohJbg+cqq25GZGrDLRmxUMilIEhCLvkDNTdyGk+hC2A=
 20260525000000_initial.sql h1:KUrJSmoYeIVju4Z5dcBFxwaw9UjRbytsGOi/eX6s1L0=
 20260601000000_classes_unique_class_club_year.sql h1:IZUNrumCBQEpJ8ij9REYlNazn/Qn6CrcT/lb1KzkcUU=
 20260602000000_classes_children_unique_constraint.sql h1:AxfOqnGcnSPklYMch7qI55G2XE+Ikvw0iCoP6aC+occ=
@@ -7,3 +7,4 @@ h1:lH6wWL09HUrzuGDVHhHIUNoDxLoai8V9dUygpYAiZTY=
 20260704000000_insert_class_pins.sql h1:/WDwJmp1rpa+H90LwMSGRjMJV+Csr6gGVMNE0I0nwP4=
 20260710000000_parents_children_unique_constraint.sql h1:Ktg2juYzL7Pb3X9pzp9PYFqjq/kQW77NwXRc7vUd7po=
 20260718000000_timestamps_to_timestamptz.sql h1:ypBu7j68EebbOoPLChjhpY4uqmPdGqUfjoywmv4xiRk=
+20260719190435_add_children_profile_image.sql h1:aUwwA3fh7fSyVpb3gt9ELxi6oBmydO/g8G7NIC91fjk=

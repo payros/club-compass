@@ -1,4 +1,5 @@
 import sql from 'src/lib/postgres'
+import { resolveImageUrl } from '@/lib/storage/index.js'
 
 async function list(search) {
   try {
@@ -37,7 +38,7 @@ async function getByMember(id, type, clubYearLabel) {
     if (normalizedType === 'parent') {
       const [childrenResult, parentsResult] = await Promise.all([
         sql`
-          SELECT ch.id, ch.first_name, ch.last_name, ch.allergies, ch.medical_conditions, ch.physical_restrictions, ch.sex, ch.date_of_birth, ch.grade
+          SELECT ch.id, ch.first_name, ch.last_name, ch.allergies, ch.medical_conditions, ch.physical_restrictions, ch.sex, ch.date_of_birth, ch.grade, ch.profile_image_url
           ${classFields}
           FROM adv_db.parents_children AS pc
           JOIN adv_db.children AS ch ON ch.id = pc.child_id
@@ -55,7 +56,13 @@ async function getByMember(id, type, clubYearLabel) {
         `,
       ])
 
-      return { parents: parentsResult, children: childrenResult }
+      const resolvedChildren = await Promise.all(
+        childrenResult.map(async (child) => ({
+          ...child,
+          profileImageUrl: await resolveImageUrl(child.profileImageUrl),
+        }))
+      )
+      return { parents: parentsResult, children: resolvedChildren }
     }
 
     if (normalizedType === 'child') {
@@ -68,7 +75,7 @@ async function getByMember(id, type, clubYearLabel) {
           ORDER BY p.last_name ASC, p.first_name ASC
         `,
         sql`
-          SELECT DISTINCT ch.id, ch.first_name, ch.last_name, ch.allergies, ch.medical_conditions, ch.physical_restrictions, ch.sex, ch.date_of_birth, ch.grade
+          SELECT DISTINCT ch.id, ch.first_name, ch.last_name, ch.allergies, ch.medical_conditions, ch.physical_restrictions, ch.sex, ch.date_of_birth, ch.grade, ch.profile_image_url
           ${classFields}
           FROM adv_db.parents_children AS pc
           JOIN adv_db.parents_children AS pc2 ON pc2.parent_id = pc.parent_id
@@ -79,7 +86,13 @@ async function getByMember(id, type, clubYearLabel) {
         `,
       ])
 
-      return { parents: parentsResult, children: childrenResult }
+      const resolvedChildren = await Promise.all(
+        childrenResult.map(async (child) => ({
+          ...child,
+          profileImageUrl: await resolveImageUrl(child.profileImageUrl),
+        }))
+      )
+      return { parents: parentsResult, children: resolvedChildren }
     }
   } catch (err) {
     console.error(err)

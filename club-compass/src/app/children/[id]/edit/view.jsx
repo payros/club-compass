@@ -36,6 +36,18 @@ export default function View({ child: serverChild }) {
     setLoading(true)
 
     const formData = new FormData(event.target)
+    const profileFile = formData.get('profile_image') || null
+
+    const MAX_FILE_SIZE = parseInt(process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE ?? '1048576', 10)
+    if (profileFile?.size > MAX_FILE_SIZE) {
+      const limitMB = (MAX_FILE_SIZE / (1024 * 1024)).toFixed(0)
+      setGlobalError(
+        `The profile image is too large (${(profileFile.size / (1024 * 1024)).toFixed(2)} MB). Please select an image under ${limitMB} MB.`
+      )
+      setLoading(false)
+      return
+    }
+
     const data = {
       firstName: formData.get('firstName'),
       lastName: formData.get('lastName'),
@@ -62,6 +74,28 @@ export default function View({ child: serverChild }) {
       setGlobalError('The child could not be updated. Please try again.')
       setLoading(false)
       return
+    }
+
+    if (profileFile?.size > 0) {
+      try {
+        const uploadData = new FormData()
+        uploadData.append('file', profileFile)
+        const uploadRes = await fetch(`/api/children/${id}/photo`, {
+          method: 'POST',
+          body: uploadData,
+        })
+        if (!uploadRes.ok) {
+          const uploadResult = await uploadRes.json()
+          setGlobalError(uploadResult?.error ?? 'Child updated, but profile image upload failed.')
+          setLoading(false)
+          return
+        }
+      } catch (err) {
+        console.error(err)
+        setGlobalError('Child updated, but profile image upload failed.')
+        setLoading(false)
+        return
+      }
     }
 
     router.push(`/children/${id}`)

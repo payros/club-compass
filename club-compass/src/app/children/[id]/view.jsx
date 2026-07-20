@@ -85,6 +85,8 @@ export default function View({ child }) {
       fields={fields}
       relatedCards={relatedCards}
       actions={actions}
+      imageUrl={child?.profileImageUrl ?? '/img/profile_placeholder.png'}
+      imagePadding={15}
     />
   )
 }

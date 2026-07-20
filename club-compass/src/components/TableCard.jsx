@@ -88,7 +88,7 @@ function TableCard({
                     onClick={() => (header.sortable && handleSort ? handleSort(header.key) : null)}
                     style={{
                       cursor: header.sortable ? 'pointer' : 'default',
-                      minWidth: header.type === 'image' ? '3rem' : undefined,
+                      minWidth: header.type === 'image' || header.type === 'avatar' ? '3rem' : undefined,
                     }}
                   >
                     {header.sortable ? (
@@ -156,6 +156,20 @@ function TableCard({
                               height: '2rem',
                               width: 'auto',
                               objectFit: 'contain',
+                              display: 'block',
+                              margin: '0 auto',
+                            }}
+                          />
+                        )}
+                        {header.type === 'avatar' && item[header.key] && (
+                          <img
+                            src={item[header.key]}
+                            alt=""
+                            style={{
+                              height: '1.8rem',
+                              width: '1.8rem',
+                              objectFit: 'cover',
+                              borderRadius: '9999px',
                               display: 'block',
                               margin: '0 auto',
                             }}

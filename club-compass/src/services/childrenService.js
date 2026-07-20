@@ -1,4 +1,5 @@
 import sql from 'src/lib/postgres'
+import { resolveImageUrl } from '@/lib/storage/index.js'
 
 async function list(search) {
   try {
@@ -9,7 +10,12 @@ async function list(search) {
           ORDER BY last_name ASC
           LIMIT 10`
       : await sql`SELECT * FROM adv_db.children ORDER BY last_name ASC`
-    return result
+    return Promise.all(
+      result.map(async (child) => ({
+        ...child,
+        profileImageUrl: await resolveImageUrl(child.profileImageUrl),
+      }))
+    )
   } catch (err) {
     console.error(err)
   }
@@ -21,7 +27,7 @@ async function listByClubYear(clubYearLabel, search) {
     const result = search
       ? await sql`
           SELECT
-            ch.id, ch.date_of_birth, cy.label, ch.first_name, ch.last_name, cl.class,
+            ch.id, ch.date_of_birth, cy.label, ch.first_name, ch.last_name, ch.profile_image_url, cl.class,
             ch.sex, ch.allergies, ch.medical_conditions,
             (
               SELECT string_agg(CONCAT(p.first_name, ' ', p.last_name), ', ')
@@ -54,7 +60,7 @@ async function listByClubYear(clubYearLabel, search) {
           LIMIT 10`
       : await sql`
           SELECT
-            ch.id, ch.date_of_birth, cy.label, ch.first_name, ch.last_name, cl.class,
+            ch.id, ch.date_of_birth, cy.label, ch.first_name, ch.last_name, ch.profile_image_url, cl.class,
             ch.sex, ch.allergies, ch.medical_conditions,
             (
               SELECT string_agg(CONCAT(p.first_name, ' ', p.last_name), ', ')
@@ -83,7 +89,12 @@ async function listByClubYear(clubYearLabel, search) {
           JOIN adv_db.children as ch ON cc.child_id = ch.id
           JOIN adv_db.classes as cl ON cc.class_id = cl.id
           WHERE cy.label = ${clubYearLabel}`
-    return result
+    return Promise.all(
+      result.map(async (child) => ({
+        ...child,
+        profileImageUrl: await resolveImageUrl(child.profileImageUrl),
+      }))
+    )
   } catch (err) {
     console.error(err)
   }
@@ -164,7 +175,23 @@ async function getById(id, clubYearLabel = null) {
         WHERE ch.id = ${id}
         GROUP BY ch.id`
     }
-    return result[0] ?? null
+    const child = result[0] ?? null
+    if (!child) return null
+
+    const awards = Array.isArray(child.awards)
+      ? await Promise.all(
+          child.awards.map(async (award) => ({
+            ...award,
+            patchImageUrl: await resolveImageUrl(award.patchImageUrl),
+          }))
+        )
+      : child.awards
+
+    return {
+      ...child,
+      profileImageUrl: await resolveImageUrl(child.profileImageUrl),
+      awards,
+    }
   } catch (err) {
     console.error(err)
   }
@@ -309,6 +336,15 @@ async function create(data) {
   }
 }
 
+async function updateProfileImageUrl(id, url) {
+  const result = await sql`
+    UPDATE adv_db.children
+    SET profile_image_url = ${url}
+    WHERE id = ${id}
+    RETURNING id, profile_image_url`
+  return result[0]
+}
+
 async function getByParentId(parentId, clubYearLabel) {
   try {
     const result = await sql`
@@ -363,6 +399,7 @@ const childrenService = {
   getAwardsByChildId,
   create,
   update,
+  updateProfileImageUrl,
 }
 
 export default childrenService

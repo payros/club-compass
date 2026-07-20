@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react'
 import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
 import { ADVENTURER_CLASSES } from '@/utils/consts'
 
-function useClasses(clubYearLabel) {
-  const [classes, setClasses] = useState([])
-  const [loading, setLoading] = useState(true)
+function useClasses(clubYearLabel, initialData = null) {
+  const [classes, setClasses] = useState(() => (initialData ? transform(initialData) : []))
+  const [loading, setLoading] = useState(initialData === null)
 
   function transform(raw) {
     return raw.map((c) => ({
@@ -19,7 +19,7 @@ function useClasses(clubYearLabel) {
   }
 
   useEffect(() => {
-    if (!clubYearLabel) return
+    if (!clubYearLabel || initialData !== null) return
     setLoading(true)
     fetch(`/api/club-years/${clubYearLabel}/classes`)
       .then((res) => res.json())
