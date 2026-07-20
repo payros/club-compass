@@ -15,6 +15,7 @@ export function transformChild(c, clubYear = null) {
   }
   if (clubYear?.label) {
     base.class = fromSnakeCaseToTitleCase(c.class)
+    base.grade = c.grade ? fromSnakeCaseToTitleCase(c.grade) : '—'
     base.attendance = c.attendance != null ? `${c.attendance}%` : '—'
     base.awardsEarned = c.awardsEarned ?? 0
   }
@@ -36,6 +37,8 @@ function sortChildren(childrenList, by, direction) {
         return (a.age - b.age) * orderDirection
       case 'class':
         return a.class.toLowerCase().localeCompare(b.class.toLowerCase()) * orderDirection
+      case 'grade':
+        return a.grade.toLowerCase().localeCompare(b.grade.toLowerCase()) * orderDirection
       default:
         return 0
     }

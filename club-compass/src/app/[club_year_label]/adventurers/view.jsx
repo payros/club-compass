@@ -9,6 +9,7 @@ const headers = [
   { key: 'name', label: 'Name', sortable: true },
   { key: 'parents', label: 'Parents', sortable: true },
   { key: 'age', label: 'Age', sortable: true },
+  { key: 'grade', label: 'Grade', sortable: true },
   { key: 'class', label: 'Class', sortable: true },
   { key: 'sex', label: 'Sex', sortable: true },
   { key: 'allergies', label: 'Allergies', sortable: false },

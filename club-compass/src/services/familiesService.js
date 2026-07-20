@@ -33,12 +33,12 @@ async function getByMember(id, type, clubYearLabel) {
             AND cc.club_year_id = (SELECT id FROM adv_db.club_years WHERE label = ${clubYearLabel})
           LEFT JOIN adv_db.classes AS cl ON cl.id = cc.class_id`
       : sql``
-    const classFields = clubYearLabel ? sql`, cl.id AS class_id, cl.class AS class_name` : sql``
+    const classFields = clubYearLabel ? sql`, cl.id AS class_id, cl.class AS class_name, cc.grade` : sql``
 
     if (normalizedType === 'parent') {
       const [childrenResult, parentsResult] = await Promise.all([
         sql`
-          SELECT ch.id, ch.first_name, ch.last_name, ch.allergies, ch.medical_conditions, ch.physical_restrictions, ch.sex, ch.date_of_birth, ch.grade, ch.profile_image_url
+          SELECT ch.id, ch.first_name, ch.last_name, ch.allergies, ch.medical_conditions, ch.physical_restrictions, ch.sex, ch.date_of_birth, ch.profile_image_url
           ${classFields}
           FROM adv_db.parents_children AS pc
           JOIN adv_db.children AS ch ON ch.id = pc.child_id
@@ -75,7 +75,7 @@ async function getByMember(id, type, clubYearLabel) {
           ORDER BY p.last_name ASC, p.first_name ASC
         `,
         sql`
-          SELECT DISTINCT ch.id, ch.first_name, ch.last_name, ch.allergies, ch.medical_conditions, ch.physical_restrictions, ch.sex, ch.date_of_birth, ch.grade, ch.profile_image_url
+          SELECT DISTINCT ch.id, ch.first_name, ch.last_name, ch.allergies, ch.medical_conditions, ch.physical_restrictions, ch.sex, ch.date_of_birth, ch.profile_image_url
           ${classFields}
           FROM adv_db.parents_children AS pc
           JOIN adv_db.parents_children AS pc2 ON pc2.parent_id = pc.parent_id
@@ -156,7 +156,7 @@ async function enroll(clubYearLabel, familyMembers) {
       let childRecord
       if (childId) {
         ;[childRecord] = await sql`
-          INSERT INTO adv_db.children (id, first_name, last_name, allergies, medical_conditions, physical_restrictions, sex, date_of_birth, grade)
+          INSERT INTO adv_db.children (id, first_name, last_name, allergies, medical_conditions, physical_restrictions, sex, date_of_birth)
           OVERRIDING SYSTEM VALUE
           VALUES (
             ${childId},
@@ -166,8 +166,7 @@ async function enroll(clubYearLabel, familyMembers) {
             ${child.medicalConditions || null},
             ${child.physicalRestrictions || null},
             ${child.sex || null},
-            ${child.dateOfBirth || null},
-            ${child.grade || null}
+            ${child.dateOfBirth || null}
           )
           ON CONFLICT (id) DO UPDATE SET
             first_name = EXCLUDED.first_name,
@@ -176,12 +175,11 @@ async function enroll(clubYearLabel, familyMembers) {
             medical_conditions = EXCLUDED.medical_conditions,
             physical_restrictions = EXCLUDED.physical_restrictions,
             sex = EXCLUDED.sex,
-            date_of_birth = EXCLUDED.date_of_birth,
-            grade = EXCLUDED.grade
+            date_of_birth = EXCLUDED.date_of_birth
           RETURNING *`
       } else {
         ;[childRecord] = await sql`
-          INSERT INTO adv_db.children (first_name, last_name, allergies, medical_conditions, physical_restrictions, sex, date_of_birth, grade)
+          INSERT INTO adv_db.children (first_name, last_name, allergies, medical_conditions, physical_restrictions, sex, date_of_birth)
           VALUES (
             ${child.firstName},
             ${child.lastName},
@@ -189,17 +187,17 @@ async function enroll(clubYearLabel, familyMembers) {
             ${child.medicalConditions || null},
             ${child.physicalRestrictions || null},
             ${child.sex || null},
-            ${child.dateOfBirth || null},
-            ${child.grade || null}
+            ${child.dateOfBirth || null}
           )
           RETURNING *`
       }
 
       await sql`
-        INSERT INTO adv_db.classes_children (club_year_id, class_id, child_id)
-        VALUES (${clubYear.id}, ${child.classId}, ${childRecord.id})
+        INSERT INTO adv_db.classes_children (club_year_id, class_id, child_id, grade)
+        VALUES (${clubYear.id}, ${child.classId}, ${childRecord.id}, ${child.grade || null})
         ON CONFLICT (club_year_id, child_id) DO UPDATE SET
-          class_id = EXCLUDED.class_id`
+          class_id = EXCLUDED.class_id,
+          grade = EXCLUDED.grade`
 
       createdChildren.push(childRecord)
     }

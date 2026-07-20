@@ -80,7 +80,6 @@ CREATE TABLE "children" (
   "physical_restrictions" varchar,
   "sex" sex,
   "date_of_birth" timestamptz,
-  "grade" grade_level,
   "created_at" timestamptz DEFAULT (now())
 );
 
@@ -152,6 +151,7 @@ CREATE TABLE "classes_children" (
   "club_year_id" integer NOT NULL,
   "class_id" integer NOT NULL,
   "child_id" integer NOT NULL,
+  "grade" grade_level,
   "created_at" timestamptz DEFAULT (now()),
   UNIQUE ("club_year_id", "child_id")
 );

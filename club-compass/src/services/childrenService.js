@@ -28,7 +28,7 @@ async function listByClubYear(clubYearLabel, search) {
       ? await sql`
           SELECT
             ch.id, ch.date_of_birth, cy.label, ch.first_name, ch.last_name, ch.profile_image_url, cl.class,
-            ch.sex, ch.allergies, ch.medical_conditions,
+            ch.sex, ch.allergies, ch.medical_conditions, cc.grade,
             (
               SELECT string_agg(CONCAT(p.first_name, ' ', p.last_name), ', ')
               FROM adv_db.parents_children AS pc
@@ -61,7 +61,7 @@ async function listByClubYear(clubYearLabel, search) {
       : await sql`
           SELECT
             ch.id, ch.date_of_birth, cy.label, ch.first_name, ch.last_name, ch.profile_image_url, cl.class,
-            ch.sex, ch.allergies, ch.medical_conditions,
+            ch.sex, ch.allergies, ch.medical_conditions, cc.grade,
             (
               SELECT string_agg(CONCAT(p.first_name, ' ', p.last_name), ', ')
               FROM adv_db.parents_children AS pc
@@ -131,7 +131,11 @@ async function getById(id, clubYearLabel = null) {
            FROM adv_db.classes_children AS cc2
            JOIN adv_db.classes AS cl2 ON cc2.class_id = cl2.id
            WHERE cc2.child_id = ch.id AND cc2.club_year_id = cy.id
-           LIMIT 1) AS class
+           LIMIT 1) AS class,
+          (SELECT cc3.grade::text
+           FROM adv_db.classes_children AS cc3
+           WHERE cc3.child_id = ch.id AND cc3.club_year_id = cy.id
+           LIMIT 1) AS grade
         FROM adv_db.children AS ch
         JOIN adv_db.club_years AS cy ON cy.label = ${clubYearLabel}
         LEFT JOIN adv_db.parents_children AS pc ON pc.child_id = ch.id
@@ -241,7 +245,7 @@ async function update(childId, updatedData) {
   try {
     const result = await sql.begin(async (sql) => {
       const childIdInt = parseInt(childId, 10)
-      const { awards, classId, clubYearLabel, ...childData } = updatedData
+      const { awards, classId, clubYearLabel, grade, ...childData } = updatedData
 
       const fieldMap = {
         firstName: 'first_name',
@@ -297,13 +301,20 @@ async function update(childId, updatedData) {
       if (classId && clubYearLabel) {
         const classIdInt = parseInt(classId, 10)
         await sql`
-          INSERT INTO adv_db.classes_children (club_year_id, class_id, child_id)
+          INSERT INTO adv_db.classes_children (club_year_id, class_id, child_id, grade)
           VALUES (
             (SELECT id FROM adv_db.club_years WHERE label = ${clubYearLabel}),
             ${classIdInt},
-            ${childIdInt}
+            ${childIdInt},
+            ${grade || null}
           )
-          ON CONFLICT (club_year_id, child_id) DO UPDATE SET class_id = ${classIdInt}`
+          ON CONFLICT (club_year_id, child_id) DO UPDATE SET class_id = ${classIdInt}, grade = EXCLUDED.grade`
+      } else if (grade !== undefined && clubYearLabel) {
+        await sql`
+          UPDATE adv_db.classes_children
+          SET grade = ${grade || null}
+          WHERE child_id = ${childIdInt}
+            AND club_year_id = (SELECT id FROM adv_db.club_years WHERE label = ${clubYearLabel})`
       }
 
       return updatedChild
@@ -350,6 +361,7 @@ async function getByParentId(parentId, clubYearLabel) {
     const result = await sql`
       SELECT * FROM (
         SELECT DISTINCT ON (ch.id) ch.*,
+          ${clubYearLabel ? sql`cc.grade,` : sql``}
           (
             SELECT jsonb_build_object('firstName', p2.first_name, 'lastName', p2.last_name, 'phone', p2.phone)
             FROM adv_db.parents_children AS pc2

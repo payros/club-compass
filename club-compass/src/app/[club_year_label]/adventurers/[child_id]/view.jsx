@@ -25,6 +25,7 @@ export default function View({ child, clubYear }) {
         { label: 'Age', value: child.dateOfBirth ? fromDateOfBirthToAge(child.dateOfBirth, clubYear?.endDate) : '—' },
         { label: 'Date of Birth', value: child.dateOfBirth ? fromDateToString(child.dateOfBirth) : '—' },
         { label: 'Sex', value: child.sex ? fromSnakeCaseToTitleCase(child.sex) : '—' },
+        { label: 'Grade', value: child.grade ? fromSnakeCaseToTitleCase(child.grade) : '—' },
         { label: 'Allergies', value: child.allergies ?? 'None' },
         { label: 'Medical Conditions', value: child.medicalConditions ?? 'None' },
         ...(child.class ? [{ label: 'Class', value: fromSnakeCaseToTitleCase(child.class.class) }] : []),
