@@ -27,7 +27,7 @@ export default function View({ clubYear: serverClubYear }) {
       .catch(() => setLoading(false))
   }, [label])
 
-  const { children, loading: loadingChildren } = useChildren(label)
+  const { children, loading: loadingChildren } = useChildren(clubYear)
   const { staff, loading: loadingStaff } = useStaff(label)
   const { events, loadingEvents } = useEvents(label, {})
 

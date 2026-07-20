@@ -101,7 +101,7 @@ export async function generateRegistrationPdf(parent, children, clubYear, clubDi
     const clubName = clubYear?.clubName ?? process.env.NEXT_PUBLIC_CLUB_NAME ?? 'Adventurers Club'
     const directorName = `${clubDirector?.firstName ?? ''} ${clubDirector?.lastName ?? ''}`.trim()
     const childName = `${child.firstName ?? ''} ${child.lastName ?? ''}`.trim()
-    const age = fromDateOfBirthToAge(child.dateOfBirth)
+    const age = fromDateOfBirthToAge(child.dateOfBirth, clubYear?.endDate)
     const emergencyContact =
       `${child.emergencyContact?.firstName ?? ''} ${child.emergencyContact?.lastName ?? ''} - ${child.emergencyContact?.phone ?? ''}`.trim()
 

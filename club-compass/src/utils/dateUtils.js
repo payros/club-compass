@@ -1,11 +1,13 @@
-// Calculates age from date of birth
-function fromDateOfBirthToAge(dateOfBirth) {
+// Calculates age from date of birth.
+// If cutoffDate is provided and today is after it, uses cutoffDate as the reference date.
+function fromDateOfBirthToAge(dateOfBirth, cutoffDate = null) {
   const today = new Date()
+  const refDate = cutoffDate && today > new Date(cutoffDate) ? new Date(cutoffDate) : today
   const birthDate = new Date(dateOfBirth)
-  let age = today.getFullYear() - birthDate.getFullYear()
-  const monthDiff = today.getMonth() - birthDate.getMonth()
+  let age = refDate.getFullYear() - birthDate.getFullYear()
+  const monthDiff = refDate.getMonth() - birthDate.getMonth()
 
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+  if (monthDiff < 0 || (monthDiff === 0 && refDate.getDate() < birthDate.getDate())) {
     age--
   }
 

@@ -5,6 +5,7 @@ import eventsService from '@/services/eventsService'
 import staffService from '@/services/staffService'
 import classesService from '@/services/classesService'
 import awardsService from '@/services/awardsService'
+import clubYearsService from '@/services/clubYearsService'
 
 export async function generateMetadata({ params }) {
   const { club_year_label } = await params
@@ -13,20 +14,15 @@ export async function generateMetadata({ params }) {
 
 export default async function Page({ params }) {
   const { club_year_label: clubYearLabel } = await params
-  const [children, events, staff, classes, awards] = await Promise.all([
+  const [children, events, staff, classes, awards, clubYear] = await Promise.all([
     childrenService.listByClubYear(clubYearLabel),
     eventsService.listByClubYear(clubYearLabel),
     staffService.list(undefined, clubYearLabel),
     classesService.listByClubYear(clubYearLabel),
     awardsService.list(clubYearLabel),
+    clubYearsService.getByLabel(clubYearLabel),
   ])
   return (
-    <View
-      initialChildren={children}
-      initialEvents={events}
-      initialStaff={staff}
-      initialClasses={classes}
-      initialAwards={awards}
-    />
+    <View children={children} events={events} staff={staff} classes={classes} awards={awards} clubYear={clubYear} />
   )
 }
