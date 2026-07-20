@@ -4,7 +4,7 @@ import ResourcePage from '@/components/pages/ResourcePage'
 import { fromDateOfBirthToAge, fromDateToString } from '@/utils/dateUtils'
 import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
 
-export default function View({ child }) {
+export default function View({ child, clubYear }) {
   const { club_year_label: clubYearLabel, child_id: childId } = useParams()
   const router = useRouter()
   const loading = false
@@ -22,9 +22,10 @@ export default function View({ child }) {
 
   const fields = child
     ? [
-        { label: 'Age', value: child.dateOfBirth ? fromDateOfBirthToAge(child.dateOfBirth) : '—' },
+        { label: 'Age', value: child.dateOfBirth ? fromDateOfBirthToAge(child.dateOfBirth, clubYear?.endDate) : '—' },
         { label: 'Date of Birth', value: child.dateOfBirth ? fromDateToString(child.dateOfBirth) : '—' },
         { label: 'Sex', value: child.sex ? fromSnakeCaseToTitleCase(child.sex) : '—' },
+        { label: 'Grade', value: child.grade ? fromSnakeCaseToTitleCase(child.grade) : '—' },
         { label: 'Allergies', value: child.allergies ?? 'None' },
         { label: 'Medical Conditions', value: child.medicalConditions ?? 'None' },
         ...(child.class ? [{ label: 'Class', value: fromSnakeCaseToTitleCase(child.class.class) }] : []),

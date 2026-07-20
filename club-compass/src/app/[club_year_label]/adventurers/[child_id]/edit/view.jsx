@@ -57,6 +57,7 @@ export default function View({ child: serverChild }) {
       sex: formData.get('sex') || null,
       allergies: formData.get('allergies') || null,
       medicalConditions: formData.get('medicalConditions') || null,
+      grade: formData.get('grade') || null,
       classId: formData.get('classId') || null,
     }
 

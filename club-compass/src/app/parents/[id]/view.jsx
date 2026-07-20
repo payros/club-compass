@@ -2,27 +2,15 @@
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import ResourcePage from '@/components/pages/ResourcePage'
-import { fromDateOfBirthToAge, fromDateToString } from '@/utils/dateUtils'
+import { fromDateOfBirthToAge } from '@/utils/dateUtils'
 
-export default function View({ parent: serverParent }) {
+export default function View({ parent }) {
   const { id } = useParams()
   const router = useRouter()
-  const [parent, setParent] = useState(serverParent ?? null)
   const [children, setChildren] = useState([])
-  const [loading, setLoading] = useState(!serverParent)
   const [loadingChildren, setLoadingChildren] = useState(true)
 
   useEffect(() => {
-    if (!serverParent) {
-      fetch(`/api/parents/${id}`)
-        .then((r) => r.json())
-        .then((data) => {
-          setParent(data)
-          setLoading(false)
-        })
-        .catch(() => setLoading(false))
-    }
-
     fetch(`/api/parents/${id}/children`)
       .then((r) => r.json())
       .then((data) => {

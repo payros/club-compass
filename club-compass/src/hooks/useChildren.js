@@ -2,28 +2,28 @@ import { useEffect, useState } from 'react'
 import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
 import { fromDateOfBirthToAge } from '@/utils/dateUtils'
 
-function transform(raw, clubYearLabel) {
-  return raw.map((c) => {
-    const base = {
-      id: c.id,
-      name: `${c.firstName} ${c.lastName}`,
-      age: c.dateOfBirth ? fromDateOfBirthToAge(c.dateOfBirth) : '—',
-      profileImageUrl: c.profileImageUrl || '/img/profile_placeholder.png',
-    }
-    if (clubYearLabel) {
-      base.class = fromSnakeCaseToTitleCase(c.class)
-      base.sex = c.sex === 'male' ? 'M' : c.sex === 'female' ? 'F' : '—'
-      base.allergies = c.allergies ?? '—'
-      base.medicalConditions = c.medicalConditions ?? '—'
-      base.parents = c.parents ?? '—'
-      base.attendance = c.attendance != null ? `${c.attendance}%` : '—'
-      base.awardsEarned = c.awardsEarned ?? 0
-    } else {
-      base.sex = c.sex ?? '—'
-      base.allergies = c.allergies ?? '—'
-    }
-    return base
-  })
+export function transformChild(c, clubYear = null) {
+  const base = {
+    id: c.id,
+    name: `${c.firstName} ${c.lastName}`,
+    age: c.dateOfBirth ? fromDateOfBirthToAge(c.dateOfBirth, clubYear?.endDate) : '—',
+    profileImageUrl: c.profileImageUrl || '/img/profile_placeholder.png',
+    sex: c.sex === 'male' ? 'M' : c.sex === 'female' ? 'F' : '—',
+    allergies: c.allergies ?? '—',
+    medicalConditions: c.medicalConditions ?? '—',
+    parents: c.parents ?? '—',
+  }
+  if (clubYear?.label) {
+    base.class = fromSnakeCaseToTitleCase(c.class)
+    base.grade = c.grade ? fromSnakeCaseToTitleCase(c.grade) : '—'
+    base.attendance = c.attendance != null ? `${c.attendance}%` : '—'
+    base.awardsEarned = c.awardsEarned ?? 0
+  }
+  return base
+}
+
+function transform(raw, clubYear) {
+  return raw.map((c) => transformChild(c, clubYear))
 }
 
 function sortChildren(childrenList, by, direction) {
@@ -37,17 +37,20 @@ function sortChildren(childrenList, by, direction) {
         return (a.age - b.age) * orderDirection
       case 'class':
         return a.class.toLowerCase().localeCompare(b.class.toLowerCase()) * orderDirection
+      case 'grade':
+        return a.grade.toLowerCase().localeCompare(b.grade.toLowerCase()) * orderDirection
       default:
         return 0
     }
   })
 }
 
-function useChildren(clubYearLabel = null, { by, direction } = {}, initialData = null) {
+function useChildren(clubYear = null, { by, direction } = {}, initialData = null) {
+  const clubYearLabel = clubYear?.label ?? null
   const [rawChildren, setRawChildren] = useState(initialData ?? [])
   const [children, setChildren] = useState(() => {
     if (!initialData) return []
-    let list = transform(initialData, clubYearLabel)
+    let list = transform(initialData, clubYear)
     return sortChildren(list, by, direction)
   })
   const [loading, setLoading] = useState(initialData === null)
@@ -60,7 +63,7 @@ function useChildren(clubYearLabel = null, { by, direction } = {}, initialData =
       .then((res) => res.json())
       .then((data) => {
         setRawChildren(data)
-        let childrenList = transform(data, clubYearLabel)
+        let childrenList = transform(data, clubYear)
         childrenList = sortChildren(childrenList, by, direction)
         setChildren(childrenList)
         setLoading(false)
@@ -68,13 +71,13 @@ function useChildren(clubYearLabel = null, { by, direction } = {}, initialData =
       .catch(() => setLoading(false))
   }, [clubYearLabel])
 
-  // Re-sort children whenever sortBy or sortDirection change
+  // Re-sort/re-transform whenever sort or endDate changes
   useEffect(() => {
     if (rawChildren.length === 0) return
-    let childrenList = transform(rawChildren, clubYearLabel)
+    let childrenList = transform(rawChildren, clubYear)
     childrenList = sortChildren(childrenList, by, direction)
     setChildren(childrenList)
-  }, [by, direction])
+  }, [by, direction, clubYear?.endDate])
 
   return { children, loading }
 }

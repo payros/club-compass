@@ -5,17 +5,17 @@ SET search_path TO adv_db;
 INSERT INTO club_years (label, club_name, church_name, start_date, end_date) 
 VALUES ('25-26', 'Little Eagles', 'Grace Community Church', '2025-08-15', '2026-05-28');
 
-INSERT INTO children (first_name, last_name, allergies, medical_conditions, physical_restrictions, sex, date_of_birth, grade) 
-VALUES ('John', 'Doe', 'Peanuts', 'Asthma', 'Limited running due to asthma', 'male', '2015-03-10', '5th'),
-       ('Jane', 'Smith', 'Dairy', 'Eczema', NULL, 'female', '2016-07-22', '4th'),
-       ('Alex', 'Johnson', 'Wheat', 'Allergies', NULL, 'male', '2014-11-05', '5th'),
-       ('Emily', 'Brown', 'Shellfish', 'Hypertension', NULL, 'female', '2017-02-18', '3rd'),
-       ('Michael', 'Davis', 'Eggs', 'Diabetes', 'Requires snack breaks for blood sugar', 'male', '2013-09-30', '5th'),
-       ('Sarah', 'Miller', 'Peanuts', 'Asthma', NULL, 'female', '2018-05-12', '2nd'),
-       ('David', 'Wilson', 'Dairy', 'Eczema', NULL, 'male', '2019-08-25', '1st'),
-       ('Laura', 'Moore', 'Wheat', 'Allergies', NULL, 'female', '2016-04-08', '4th'),
-       ('James', 'Taylor', 'Shellfish', 'Hypertension', NULL, 'male', '2017-01-15', '3rd'),
-       ('Mia', 'Anderson', 'Eggs', 'Diabetes', 'Requires snack breaks for blood sugar', 'female', '2018-06-20', '2nd');
+INSERT INTO children (first_name, last_name, allergies, medical_conditions, physical_restrictions, sex, date_of_birth) 
+VALUES ('John', 'Doe', 'Peanuts', 'Asthma', 'Limited running due to asthma', 'male', '2015-03-10'),
+       ('Jane', 'Smith', 'Dairy', 'Eczema', NULL, 'female', '2016-07-22'),
+       ('Alex', 'Johnson', 'Wheat', 'Allergies', NULL, 'male', '2014-11-05'),
+       ('Emily', 'Brown', 'Shellfish', 'Hypertension', NULL, 'female', '2017-02-18'),
+       ('Michael', 'Davis', 'Eggs', 'Diabetes', 'Requires snack breaks for blood sugar', 'male', '2013-09-30'),
+       ('Sarah', 'Miller', 'Peanuts', 'Asthma', NULL, 'female', '2018-05-12'),
+       ('David', 'Wilson', 'Dairy', 'Eczema', NULL, 'male', '2019-08-25'),
+       ('Laura', 'Moore', 'Wheat', 'Allergies', NULL, 'female', '2016-04-08'),
+       ('James', 'Taylor', 'Shellfish', 'Hypertension', NULL, 'male', '2017-01-15'),
+       ('Mia', 'Anderson', 'Eggs', 'Diabetes', 'Requires snack breaks for blood sugar', 'female', '2018-06-20');
 
 INSERT INTO staff (first_name, last_name, email, phone, background_check_expiration)
 VALUES ('Alice', 'Johnson', 'alice.johnson@example.com', '555-1234', '2024-08-15'),
@@ -43,17 +43,17 @@ VALUES ('little_lambs', 1, 1),
        ('builders', 1, 5),
        ('helping_hands', 1, 6);
 
-INSERT INTO classes_children (club_year_id, class_id, child_id)
-VALUES (1, 1, 1),
-       (1, 2, 2),
-       (1, 3, 3),
-       (1, 4, 4),
-       (1, 5, 5),
-       (1, 6, 6),
-       (1, 1, 7),
-       (1, 2, 8),
-       (1, 3, 9),
-       (1, 4, 10);
+INSERT INTO classes_children (club_year_id, class_id, child_id, grade)
+VALUES (1, 1, 1,  '5th'),
+       (1, 2, 2,  '4th'),
+       (1, 3, 3,  '5th'),
+       (1, 4, 4,  '3rd'),
+       (1, 5, 5,  '5th'),
+       (1, 6, 6,  '2nd'),
+       (1, 1, 7,  '1st'),
+       (1, 2, 8,  '4th'),
+       (1, 3, 9,  '3rd'),
+       (1, 4, 10, '2nd');
 
 INSERT INTO parents (first_name, last_name, email, phone, address, is_emergency_contact)
 VALUES ('Robert', 'Doe', 'robert.doe@example.com', '555-1001', '123 Maple St, Springfield', true),
@@ -120,15 +120,15 @@ VALUES ('little_lambs',   2, 2),
        ('helping_hands',  2, 1);
 
 -- Class enrollments for 24-25 (club_year_id = 2, class_ids = 7–12)
-INSERT INTO classes_children (club_year_id, class_id, child_id)
-VALUES (2, 7,  1),
-       (2, 8,  2),
-       (2, 9,  3),
-       (2, 10, 4),
-       (2, 11, 5),
-       (2, 12, 6),
-       (2, 7,  7),
-       (2, 8,  8);
+INSERT INTO classes_children (club_year_id, class_id, child_id, grade)
+VALUES (2, 7,  1, '4th'),
+       (2, 8,  2, '3rd'),
+       (2, 9,  3, '4th'),
+       (2, 10, 4, '2nd'),
+       (2, 11, 5, '4th'),
+       (2, 12, 6, '1st'),
+       (2, 7,  7, 'k'),
+       (2, 8,  8, '3rd');
 
 -- Events for 24-25
 INSERT INTO events (club_year_id, title, event_date)
@@ -164,15 +164,15 @@ VALUES ('little_lambs',  3, 1),
        ('helping_hands', 3, 5);
 
 -- Class enrollments for 23-24 (club_year_id = 3, class_ids = 13–18)
-INSERT INTO classes_children (club_year_id, class_id, child_id)
-VALUES (3, 13, 3),
-       (3, 14, 4),
-       (3, 15, 5),
-       (3, 16, 6),
-       (3, 17, 7),
-       (3, 18, 8),
-       (3, 13, 9),
-       (3, 14, 10);
+INSERT INTO classes_children (club_year_id, class_id, child_id, grade)
+VALUES (3, 13, 3,  '3rd'),
+       (3, 14, 4,  '1st'),
+       (3, 15, 5,  '3rd'),
+       (3, 16, 6,  'k'),
+       (3, 17, 7,  'pre-k'),
+       (3, 18, 8,  '2nd'),
+       (3, 13, 9,  '2nd'),
+       (3, 14, 10, '1st');
 
 -- Events for 23-24
 INSERT INTO events (club_year_id, title, event_date)
@@ -208,13 +208,13 @@ VALUES ('little_lambs',  4, 1),
        ('helping_hands', 4, 6);
 
 -- Class enrollments for 22-23 (club_year_id = 4, class_ids = 19–24)
-INSERT INTO classes_children (club_year_id, class_id, child_id)
-VALUES (4, 19, 1),
-       (4, 20, 2),
-       (4, 21, 3),
-       (4, 22, 4),
-       (4, 23, 5),
-       (4, 24, 6);
+INSERT INTO classes_children (club_year_id, class_id, child_id, grade)
+VALUES (4, 19, 1, '2nd'),
+       (4, 20, 2, '1st'),
+       (4, 21, 3, '2nd'),
+       (4, 22, 4, 'k'),
+       (4, 23, 5, '2nd'),
+       (4, 24, 6, 'pre-k');
 
 -- Events for 22-23
 INSERT INTO events (club_year_id, title, event_date)
@@ -250,15 +250,15 @@ VALUES ('little_lambs',  5, 1),
        ('helping_hands', 5, 6);
 
 -- Class enrollments for 21-22 (club_year_id = 5, class_ids = 25–30)
-INSERT INTO classes_children (club_year_id, class_id, child_id)
-VALUES (5, 25, 1),
-       (5, 26, 2),
-       (5, 27, 3),
-       (5, 28, 4),
-       (5, 29, 5),
-       (5, 30, 6),
-       (5, 25, 7),
-       (5, 26, 8);
+INSERT INTO classes_children (club_year_id, class_id, child_id, grade)
+VALUES (5, 25, 1, '1st'),
+       (5, 26, 2, 'k'),
+       (5, 27, 3, '1st'),
+       (5, 28, 4, 'pre-k'),
+       (5, 29, 5, '1st'),
+       (5, 30, 6, 'pre-k'),
+       (5, 25, 7, 'pre-k'),
+       (5, 26, 8, '1st');
 
 -- Events for 21-22
 INSERT INTO events (club_year_id, title, event_date)

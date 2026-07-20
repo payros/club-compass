@@ -42,7 +42,7 @@ export default function Breadcrumbs({ items = [] }) {
   }
 
   return (
-    <Breadcrumb.Root className="breadcrumb-nav" size="lg" mt={1} style={{ overflow: 'hidden' }}>
+    <Breadcrumb.Root className="breadcrumb-nav" size="lg" mt={0} style={{ overflow: 'hidden' }}>
       <Breadcrumb.List style={{ flexWrap: 'nowrap', overflow: 'hidden' }}>
         {currentClubYearLabel ? (
           <>

@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
 import { Box, Field, HStack, Image, Input, NativeSelect, Text } from '@chakra-ui/react'
-import { SEX_OPTIONS, GRADE_OPTIONS } from '@/utils/consts'
+import { SEX_OPTIONS } from '@/utils/consts'
 import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
 
 /**
@@ -138,26 +138,10 @@ const ChildForm = ({ data = {}, entry = null, onChange = null }) => {
           <Input placeholder="Medical conditions" {...bindField('medicalConditions')} />
         </Field.Root>
       </HStack>
-      <HStack gap={3}>
-        <Field.Root flex={1}>
-          <Field.Label>Grade</Field.Label>
-          <NativeSelect.Root>
-            <NativeSelect.Field {...bindField('grade')}>
-              <option value="">Select a grade</option>
-              {GRADE_OPTIONS.map(({ value, label }) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </NativeSelect.Field>
-            <NativeSelect.Indicator />
-          </NativeSelect.Root>
-        </Field.Root>
-        <Field.Root flex={1}>
-          <Field.Label>Physical Restrictions</Field.Label>
-          <Input placeholder="Physical restrictions" {...bindField('physicalRestrictions')} />
-        </Field.Root>
-      </HStack>
+      <Field.Root flex={1}>
+        <Field.Label>Physical Restrictions</Field.Label>
+        <Input placeholder="Physical restrictions" {...bindField('physicalRestrictions')} />
+      </Field.Root>
     </>
   )
 }

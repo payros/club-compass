@@ -6,11 +6,11 @@ import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
 import useChildren from '@/hooks/useChildren'
 import FormPage from '@/components/pages/FormPage'
 
-const View = ({ event: serverEvent }) => {
+const View = ({ event: serverEvent, clubYear }) => {
   const router = useRouter()
   const clubYearLabel = useParams()['club_year_label']
   const eventId = useParams()['event_id']
-  const { children, loadingChildren } = useChildren(clubYearLabel, {
+  const { children, loadingChildren } = useChildren(clubYear, {
     by: null,
     direction: 'asc',
   })
