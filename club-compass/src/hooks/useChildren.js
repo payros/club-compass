@@ -43,12 +43,17 @@ function sortChildren(childrenList, by, direction) {
   })
 }
 
-function useChildren(clubYearLabel = null, { by, direction } = {}) {
-  const [rawChildren, setRawChildren] = useState([])
-  const [children, setChildren] = useState([])
-  const [loading, setLoading] = useState(true)
+function useChildren(clubYearLabel = null, { by, direction } = {}, initialData = null) {
+  const [rawChildren, setRawChildren] = useState(initialData ?? [])
+  const [children, setChildren] = useState(() => {
+    if (!initialData) return []
+    let list = transform(initialData, clubYearLabel)
+    return sortChildren(list, by, direction)
+  })
+  const [loading, setLoading] = useState(initialData === null)
 
   useEffect(() => {
+    if (initialData !== null) return
     setLoading(true)
     const url = clubYearLabel ? `/api/club-years/${clubYearLabel}/children` : '/api/children'
     fetch(url)

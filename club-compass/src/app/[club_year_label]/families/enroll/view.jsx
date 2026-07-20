@@ -28,7 +28,6 @@ const emptyChildEntry = () => ({
   dateOfBirth: '',
   classId: '',
   grade: '',
-  profileImageFile: null,
 })
 
 const normalizeDateOfBirth = (value) => {
@@ -47,6 +46,7 @@ const View = () => {
   const [highlightedParentIndices, setHighlightedParentIndices] = useState(new Set())
   const [highlightedChildIndices, setHighlightedChildIndices] = useState(new Set())
   const cardRefs = useRef([])
+  const childFilesRef = useRef({})
   const { classes, loading: classesLoading } = useClasses(clubYearLabel)
 
   async function handleSelectFamilyMember(familyMember) {
@@ -58,6 +58,7 @@ const View = () => {
       const { children, parents } = await familyData.json()
       // Then populate the parentEntries and childEntries with the results.
       // This will allow the user to see all family members and edit their information if needed before submitting.
+      childFilesRef.current = {}
       setChildEntries(() => {
         return children.map((child) => ({
           ...emptyChildEntry(),
@@ -85,6 +86,11 @@ const View = () => {
   }
 
   function handleChange(index, field, value, type) {
+    if (type === 'child' && field === 'profileImageFile') {
+      if (value) childFilesRef.current[index] = value
+      else delete childFilesRef.current[index]
+      return
+    }
     if (type == 'child') {
       setChildEntries((prev) => {
         const updated = [...prev]
@@ -113,6 +119,13 @@ const View = () => {
 
   function removeEntry(index, type = 'parent') {
     if (type === 'child') {
+      const newFiles = {}
+      Object.entries(childFilesRef.current).forEach(([k, v]) => {
+        const ki = parseInt(k)
+        if (ki < index) newFiles[ki] = v
+        else if (ki > index) newFiles[ki - 1] = v
+      })
+      childFilesRef.current = newFiles
       setChildEntries((prev) => prev.filter((_, i) => i !== index))
     } else {
       setParentEntries((prev) => prev.filter((_, i) => i !== index))
@@ -134,6 +147,19 @@ const View = () => {
       return
     }
 
+    const MAX_FILE_SIZE = parseInt(process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE || '1048576', 10) || 1048576
+    const oversizedIndex = childEntries.findIndex((_, i) => childFilesRef.current[i]?.size > MAX_FILE_SIZE)
+    if (oversizedIndex >= 0) {
+      const oversizedChild = childEntries[oversizedIndex]
+      const file = childFilesRef.current[oversizedIndex]
+      const limitMB = (MAX_FILE_SIZE / (1024 * 1024)).toFixed(0)
+      const sizeMB = (file.size / (1024 * 1024)).toFixed(2)
+      setGlobalError(
+        `The profile image for ${oversizedChild.firstName || 'a child'} is too large (${sizeMB} MB). Please select an image under ${limitMB} MB.`
+      )
+      return
+    }
+
     setLoading(true)
 
     try {
@@ -142,7 +168,7 @@ const View = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           parents: parentEntries,
-          children: childEntries.map(({ profileImageFile, profileImageUrl, ...c }) => ({
+          children: childEntries.map(({ profileImageUrl, ...c }) => ({
             ...c,
             dateOfBirth: localDateToISO(c.dateOfBirth),
           })),
@@ -160,12 +186,13 @@ const View = () => {
 
       const result = await response.json()
       const uploads = childEntries.map(async (entry, index) => {
-        if (!entry.profileImageFile) return
+        const file = childFilesRef.current[index]
+        if (!file) return
         const createdChild = result.children?.[index]
         if (!createdChild?.id) return
 
         const formData = new FormData()
-        formData.append('file', entry.profileImageFile)
+        formData.append('file', file)
         const uploadResponse = await fetch(`/api/children/${createdChild.id}/photo`, {
           method: 'POST',
           body: formData,

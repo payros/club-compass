@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react'
 import { fromDateToString } from '@/utils/dateUtils'
 
-function useEvents(clubYearLabel, { by, direction }) {
-  const [rawEvents, setRawEvents] = useState([])
-  const [events, setEvents] = useState([])
-  const [loadingEvents, setLoadingEvents] = useState(false)
+function useEvents(clubYearLabel, { by, direction }, initialData = null) {
+  const [rawEvents, setRawEvents] = useState(initialData ?? [])
+  const [events, setEvents] = useState(() => {
+    if (!initialData) return []
+    let list = initialData.map((event) => ({ ...event, eventDate: fromDateToString(event.eventDate) }))
+    return list
+  })
+  const [loadingEvents, setLoadingEvents] = useState(initialData === null)
 
   function transformEventsData(rawEvents) {
     return rawEvents.map((event) => ({ ...event, eventDate: fromDateToString(event.eventDate) }))
@@ -37,6 +41,7 @@ function useEvents(clubYearLabel, { by, direction }) {
 
   // Fetch events data from the API
   useEffect(() => {
+    if (initialData !== null) return
     setLoadingEvents(true)
     fetch(`/api/club-years/${clubYearLabel}/events`)
       .then((res) => res.json())

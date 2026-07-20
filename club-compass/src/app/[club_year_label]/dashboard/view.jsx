@@ -8,7 +8,13 @@ import useClasses from '@/hooks/useClasses'
 import useAwards from '@/hooks/useAwards'
 import DashboardPage from '@/components/pages/DashboardPage'
 
-const View = () => {
+const View = ({
+  initialChildren = null,
+  initialEvents = null,
+  initialStaff = null,
+  initialClasses = null,
+  initialAwards = null,
+}) => {
   const clubYearLabel = useParams()['club_year_label']
   const router = useRouter()
 
@@ -17,11 +23,11 @@ const View = () => {
     events: { by: null, direction: 'asc' },
   })
 
-  const { children, loading: loadingChildren } = useChildren(clubYearLabel, sortBy.children)
-  const { events, loadingEvents } = useEvents(clubYearLabel, sortBy.events)
-  const { staff, loading: loadingStaff } = useStaff(clubYearLabel)
-  const { classes, loading: loadingClasses } = useClasses(clubYearLabel)
-  const { awards, loading: loadingAwards } = useAwards(clubYearLabel)
+  const { children, loading: loadingChildren } = useChildren(clubYearLabel, sortBy.children, initialChildren)
+  const { events, loadingEvents } = useEvents(clubYearLabel, sortBy.events, initialEvents)
+  const { staff, loading: loadingStaff } = useStaff(clubYearLabel, initialStaff)
+  const { classes, loading: loadingClasses } = useClasses(clubYearLabel, initialClasses)
+  const { awards, loading: loadingAwards } = useAwards(clubYearLabel, initialAwards)
 
   function handleSorting(by, tableKey) {
     setSortBy((prev) => {

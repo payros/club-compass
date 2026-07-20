@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
 
-function useStaff(clubYearLabel = null) {
-  const [rawStaff, setRawStaff] = useState([])
-  const [staff, setStaff] = useState([])
-  const [loading, setLoading] = useState(true)
+function useStaff(clubYearLabel = null, initialData = null) {
+  const [rawStaff, setRawStaff] = useState(initialData ?? [])
+  const [staff, setStaff] = useState(() => (initialData ? transform(initialData) : []))
+  const [loading, setLoading] = useState(initialData === null)
 
   function transform(raw) {
     return raw.map((s) => ({
@@ -23,6 +23,7 @@ function useStaff(clubYearLabel = null) {
   }
 
   useEffect(() => {
+    if (initialData !== null) return
     setLoading(true)
     const url = clubYearLabel ? `/api/club-years/${clubYearLabel}/staff` : '/api/staff'
     fetch(url)

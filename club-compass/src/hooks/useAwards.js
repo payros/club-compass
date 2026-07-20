@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
 
-function useAwards(clubYearLabel = null) {
-  const [awards, setAwards] = useState([])
-  const [loading, setLoading] = useState(true)
+function useAwards(clubYearLabel = null, initialData = null) {
+  const [awards, setAwards] = useState(() => (initialData ? transform(initialData) : []))
+  const [loading, setLoading] = useState(initialData === null)
 
   function transform(raw) {
     return raw.map((a) => {
@@ -22,6 +22,7 @@ function useAwards(clubYearLabel = null) {
   }
 
   useEffect(() => {
+    if (initialData !== null) return
     setLoading(true)
     const url = clubYearLabel ? `/api/club-years/${clubYearLabel}/awards` : '/api/awards'
     fetch(url)

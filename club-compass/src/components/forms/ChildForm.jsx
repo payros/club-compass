@@ -78,6 +78,26 @@ const ChildForm = ({ data = {}, entry = null, onChange = null }) => {
 
   return (
     <>
+      <Field.Root>
+        <Field.Label>
+          Profile Picture{' '}
+          <Text as="span" color="fg.muted" fontSize="sm">
+            (optional)
+          </Text>
+        </Field.Label>
+        <HStack w="full" align="center" gap={3}>
+          <Box flexShrink={0} boxSize="48px" borderRadius="full" overflow="hidden" bg="bg.subtle">
+            <Image src={previewUrl} alt="Profile preview" objectFit="cover" boxSize="48px" />
+          </Box>
+          <Input
+            name={controlled ? undefined : 'profile_image'}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            onChange={handleFileChange}
+          />
+        </HStack>
+        <Field.HelperText>JPEG, PNG, WebP, or GIF - max 1 MB. Will be converted to WebP.</Field.HelperText>
+      </Field.Root>
       <HStack gap={3}>
         <Field.Root flex={1} required>
           <Field.Label>First Name {controlled && <Field.RequiredIndicator />}</Field.Label>
@@ -138,26 +158,6 @@ const ChildForm = ({ data = {}, entry = null, onChange = null }) => {
           <Input placeholder="Physical restrictions" {...bindField('physicalRestrictions')} />
         </Field.Root>
       </HStack>
-      <Field.Root>
-        <Field.Label>
-          Profile Picture{' '}
-          <Text as="span" color="fg.muted" fontSize="sm">
-            (optional)
-          </Text>
-        </Field.Label>
-        <HStack w="full" align="center" gap={3}>
-          <Box flexShrink={0} boxSize="48px" borderRadius="full" overflow="hidden" bg="bg.subtle">
-            <Image src={previewUrl} alt="Profile preview" objectFit="cover" boxSize="48px" />
-          </Box>
-          <Input
-            name={controlled ? undefined : 'profile_image'}
-            type="file"
-            accept="image/jpeg,image/png,image/webp,image/gif"
-            onChange={handleFileChange}
-          />
-        </HStack>
-        <Field.HelperText>JPEG, PNG, WebP, or GIF - max 1 MB. Will be converted to WebP.</Field.HelperText>
-      </Field.Root>
     </>
   )
 }

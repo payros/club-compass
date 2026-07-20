@@ -1,9 +1,11 @@
 import sql from 'src/lib/postgres'
+import { resolveImageUrl } from '@/lib/storage/index.js'
 
 async function list(clubYearLabel = null, search = null) {
   try {
+    let result
     if (clubYearLabel) {
-      const result = search
+      result = search
         ? await sql`
             SELECT DISTINCT a.id, a.name, a.level::text AS level, a.type::text AS type, a.link, a.patch_image_url
             FROM adv_db.awards AS a
@@ -22,20 +24,25 @@ async function list(clubYearLabel = null, search = null) {
             JOIN adv_db.club_years AS cy ON ev.club_year_id = cy.id
             WHERE cy.label = ${clubYearLabel}
             ORDER BY level ASC, a.name ASC`
-      return result
+    } else {
+      result = search
+        ? await sql`
+            SELECT id, name, level::text AS level, type::text AS type, link, patch_image_url
+            FROM adv_db.awards
+            WHERE name ILIKE ${'%' + search + '%'}
+            ORDER BY level ASC, name ASC
+            LIMIT 10`
+        : await sql`
+            SELECT id, name, level::text AS level, type::text AS type, link, patch_image_url
+            FROM adv_db.awards
+            ORDER BY level ASC, name ASC`
     }
-    const result = search
-      ? await sql`
-          SELECT id, name, level::text AS level, type::text AS type, link, patch_image_url
-          FROM adv_db.awards
-          WHERE name ILIKE ${'%' + search + '%'}
-          ORDER BY level ASC, name ASC
-          LIMIT 10`
-      : await sql`
-          SELECT id, name, level::text AS level, type::text AS type, link, patch_image_url
-          FROM adv_db.awards
-          ORDER BY level ASC, name ASC`
-    return result
+    return Promise.all(
+      result.map(async (a) => ({
+        ...a,
+        patchImageUrl: await resolveImageUrl(a.patchImageUrl),
+      }))
+    )
   } catch (err) {
     console.error(err)
   }
