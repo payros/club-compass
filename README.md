@@ -9,7 +9,7 @@ A CMS app for managing your club — keeping track of children, parents, staff, 
 ### Prerequisites
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
-- Google OAuth setup (instructions below)
+- Google OAuth client ID and secret (instructions below)
 - A `.env` file at the repo root (see `.env` example below)
 
 ### 1. Set up your `.env` file
