@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import FormPage from '@/components/pages/FormPage'
-import EventsForm from '@/components/forms/EventsForm'
+import EventForm from '@/components/forms/EventForm'
 import { localDateToISO } from '@/utils/dateUtils'
 
 function buildEventAwardsForForm(eventData) {
@@ -52,7 +52,7 @@ export default function View({ event: serverEvent }) {
     const data = Object.fromEntries(formData.entries())
     data.awards = JSON.parse(data.event_awards || '[]')
     delete data.event_awards
-data.event_date = localDateToISO(data.event_date)
+    data.event_date = localDateToISO(data.event_date)
 
     try {
       const response = await fetch(`/api/club-years/${clubYearLabel}/events/${eventId}`, {
@@ -105,7 +105,7 @@ data.event_date = localDateToISO(data.event_date)
       loading={loading}
       contentLoading={contentLoading}
     >
-      {formData && <EventsForm data={formData} />}
+      {formData && <EventForm data={formData} />}
     </FormPage>
   )
 }

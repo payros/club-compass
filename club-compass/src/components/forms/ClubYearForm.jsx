@@ -26,11 +26,11 @@ const ClubYearForm = ({ data = {}, labelError = null }) => {
       </Field.Root>
       <Field.Root>
         <Field.Label>Start Date</Field.Label>
-        <Input name="startDate" type="date" defaultValue={startDate ? String(startDate).slice(0, 10) : ''} />
+        <Input name="startDate" type="date" defaultValue={startDate ? startDate.toISOString().slice(0, 10) : ''} />
       </Field.Root>
       <Field.Root>
         <Field.Label>End Date</Field.Label>
-        <Input name="endDate" type="date" defaultValue={endDate ? String(endDate).slice(0, 10) : ''} />
+        <Input name="endDate" type="date" defaultValue={endDate ? endDate.toISOString().slice(0, 10) : ''} />
       </Field.Root>
     </>
   )

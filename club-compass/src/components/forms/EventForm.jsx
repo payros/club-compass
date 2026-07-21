@@ -6,7 +6,7 @@ import { FaRegTrashAlt } from 'react-icons/fa'
 import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
 import SearchBox from '@/components/SearchBox'
 
-const EventsForm = ({ data = {} }) => {
+const EventForm = ({ data = {} }) => {
   const { club_year_label: clubYearLabel } = useParams()
   const isEdit = Boolean(data.title || data.eventDate)
   const [eventAwards, setEventAwards] = useState(data.eventAwards ?? [])
@@ -61,7 +61,11 @@ const EventsForm = ({ data = {} }) => {
 
       <Field.Root>
         <Field.Label>Event Date</Field.Label>
-        <Input name="event_date" type="date" defaultValue={data.eventDate ? data.eventDate.slice(0, 10) : ''} />
+        <Input
+          name="event_date"
+          type="date"
+          defaultValue={data.eventDate ? data.eventDate.toISOString().slice(0, 10) : ''}
+        />
       </Field.Root>
 
       <Field.Root>
@@ -156,4 +160,4 @@ const EventsForm = ({ data = {} }) => {
   )
 }
 
-export default EventsForm
+export default EventForm
