@@ -80,5 +80,13 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 # Uncomment to disable telemetry at run time
 # ENV NEXT_TELEMETRY_DISABLED 1
 
+# Force the standalone server to bind on all interfaces. Next.js reads
+# process.env.HOSTNAME to decide what address to listen on, but Koyeb (like
+# many PaaS providers) injects its own HOSTNAME env var at container start —
+# often the instance's public IP — which is not bindable inside the
+# container and causes `EADDRNOTAVAIL`. Overriding it here always wins over
+# whatever the platform injects.
+ENV HOSTNAME="0.0.0.0"
+
 # Note: Don't expose ports here, Compose/Koyeb will handle that
-CMD node server.js
+CMD ["node", "server.js"]
