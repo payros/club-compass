@@ -104,7 +104,7 @@ async function getById(eventId) {
                 JOIN adv_db.club_years as cy ON ev.club_year_id = cy.id
                 LEFT JOIN adv_db.events_children as ec ON ev.id = ec.event_id
                 LEFT JOIN adv_db.children as c ON ec.child_id = c.id
-                LEFT JOIN adv_db.classes_children as cc ON c.id = cc.child_id
+                LEFT JOIN adv_db.classes_children as cc ON c.id = cc.child_id AND cc.club_year_id = ev.club_year_id
                 LEFT JOIN adv_db.classes as cl ON cc.class_id = cl.id
                 LEFT JOIN adv_db.events_awards as ea ON ev.id = ea.event_id
                 LEFT JOIN adv_db.awards as a ON ea.award_id = a.id
