@@ -2,12 +2,14 @@
 import { Stack, Checkbox, Box, Heading } from '@chakra-ui/react'
 import { useParams, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
+import { useFlow } from '@/hooks/useFlow'
 import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
 import useChildren from '@/hooks/useChildren'
 import FormPage from '@/components/pages/FormPage'
 
 const View = ({ event: serverEvent, clubYear }) => {
   const router = useRouter()
+  const { getNextPath, current, total } = useFlow()
   const clubYearLabel = useParams()['club_year_label']
   const eventId = useParams()['event_id']
   const { children, loadingChildren } = useChildren(clubYear, {
@@ -59,7 +61,8 @@ const View = ({ event: serverEvent, clubYear }) => {
         return
       }
 
-      router.push(`/${clubYearLabel}/events/${eventId}`)
+      const nextPath = getNextPath?.({ club_year_label: clubYearLabel, event_id: eventId })
+      router.push(nextPath ?? `/${clubYearLabel}/events/${eventId}`)
     } catch (error) {
       console.error('Roll call submission error:', error)
       setGlobalError('Roll call could not be submitted. Please try again.')
@@ -96,7 +99,12 @@ const View = ({ event: serverEvent, clubYear }) => {
       submitLoadingLabel="Submitting…"
       loading={submitting}
       contentLoading={loadingEvent || loadingChildren}
+      current={current}
+      total={total}
     >
+      <input type="hidden" name="event_id" value={eventId} readOnly />
+      <input type="hidden" name="club_year_label" value={clubYearLabel} readOnly />
+
       <Stack direction="column" gap="2">
         {classes.map((className) => (
           <Box key={className} p="2">

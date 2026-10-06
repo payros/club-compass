@@ -11,7 +11,7 @@ export default function View({ event }) {
   const loadingEvent = false
 
   const breadcrumbs = [{ label: 'Events', href: `/${clubYearLabel}/events` }, { label: event?.title ?? 'Event' }]
-
+  console.log('eventDate', event)
   const fields = event
     ? [
         { label: 'Date', value: event.eventDate ? fromDateToString(event.eventDate) : '—' },
@@ -28,7 +28,7 @@ export default function View({ event }) {
     },
     {
       label: 'Roll Call',
-      href: `/${clubYearLabel}/events/${eventId}/roll-call`,
+      href: `/${clubYearLabel}/events/${eventId}/edit-awards?flow=rollCall`,
     },
   ]
 

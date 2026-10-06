@@ -9,6 +9,11 @@ const flowMapping = {
     '/[club_year_label]/classes/new',
     '/[club_year_label]/dashboard',
   ],
+  rollCall: [
+    '/[club_year_label]/events/[event_id]/edit-awards',
+    '/[club_year_label]/events/[event_id]/roll-call',
+    '/[club_year_label]/events/[event_id]',
+  ],
 }
 
 function toExpressPattern(nextPattern) {
