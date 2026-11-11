@@ -4,6 +4,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { useFlow } from '@/hooks/useFlow'
 import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
+import { ADVENTURER_CLASSES } from '@/utils/consts'
 import useChildren from '@/hooks/useChildren'
 import FormPage from '@/components/pages/FormPage'
 
@@ -12,7 +13,7 @@ const View = ({ event: serverEvent, clubYear }) => {
   const { getNextPath, current, total } = useFlow()
   const clubYearLabel = useParams()['club_year_label']
   const eventId = useParams()['event_id']
-  const { children, loadingChildren } = useChildren(clubYear, {
+  const { children, loading: loadingChildren } = useChildren(clubYear, {
     by: null,
     direction: 'asc',
   })
@@ -74,12 +75,14 @@ const View = ({ event: serverEvent, clubYear }) => {
     setSelectedChildren((prev) => (isChecked ? [...prev, childId] : prev.filter((id) => id !== childId)))
   }
 
-  const classes = children.reduce((acc, child) => {
-    if (!acc.includes(child.class)) {
-      acc.push(child.class)
-    }
-    return acc
-  }, [])
+  const classes = children
+    .reduce((acc, child) => {
+      if (!acc.includes(child.classSlug)) {
+        acc.push(child.classSlug)
+      }
+      return acc
+    }, [])
+    .sort((a, b) => (ADVENTURER_CLASSES[a]?.order ?? 99) - (ADVENTURER_CLASSES[b]?.order ?? 99))
 
   const breadcrumbs = [
     { label: 'Events', href: `/${clubYearLabel}/events` },
@@ -106,14 +109,14 @@ const View = ({ event: serverEvent, clubYear }) => {
       <input type="hidden" name="club_year_label" value={clubYearLabel} readOnly />
 
       <Stack direction="column" gap="2">
-        {classes.map((className) => (
-          <Box key={className} p="2">
+        {classes.map((classSlug) => (
+          <Box key={classSlug} p="2">
             <Heading fontWeight="bold" size="md">
-              {fromSnakeCaseToTitleCase(className)}
+              {fromSnakeCaseToTitleCase(classSlug)}
             </Heading>
             <Stack direction="column" gap="1" mt="2">
               {children
-                .filter((child) => child.class === className)
+                .filter((child) => child.classSlug === classSlug)
                 .map((child) => (
                   <Checkbox.Root
                     key={child.id}
