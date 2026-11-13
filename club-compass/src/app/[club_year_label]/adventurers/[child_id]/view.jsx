@@ -57,7 +57,8 @@ export default function View({ child, clubYear }) {
         { key: 'name', label: 'Award', sortable: false },
         { key: 'type', label: 'Type', sortable: false },
         { key: 'eventTitle', label: 'Earned On', sortable: false, hrefKey: 'eventHref' },
-        { key: 'awardedOn', label: 'Awarded On', sortable: false },
+        { key: 'eventDate', label: 'Earned Date', sortable: false },
+        { key: 'awardedOn', label: 'Awarded Date', sortable: false },
       ],
       width: 'medium',
       data: (child?.awards ?? []).map((a) => ({
@@ -68,6 +69,7 @@ export default function View({ child, clubYear }) {
         awardedOn: a.awardedOn ? fromDateToString(a.awardedOn) : '—',
         eventTitle: a.event ? a.event.title : '—',
         eventHref: a.event ? `/${clubYearLabel}/events/${a.event.id}` : null,
+        eventDate: a.event?.eventDate ? fromDateToString(a.event.eventDate) : '—',
       })),
       loading,
     },

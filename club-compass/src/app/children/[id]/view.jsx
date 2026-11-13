@@ -64,12 +64,14 @@ export default function View({ child }) {
       headers: [
         { key: 'name', label: 'Award', sortable: false },
         { key: 'type', label: 'Type', sortable: false },
+        { key: 'eventDate', label: 'Event Date', sortable: false },
         { key: 'awardedOn', label: 'Awarded On', sortable: false },
       ],
       data: (child?.awards ?? []).map((a) => ({
         id: a.id,
         name: a.name ?? '—',
         type: a.type ? fromSnakeCaseToTitleCase(a.type) : '—',
+        eventDate: a.event?.eventDate ? fromDateToString(a.event.eventDate) : '—',
         awardedOn: a.awardedOn ? fromDateToString(a.awardedOn) : '—',
       })),
       loading,
