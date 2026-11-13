@@ -8,7 +8,7 @@ import AppFooter from './AppFooter'
  * Root page layout — wraps every page with the header and content area.
  * @param {ReactNode} children
  * @param {Array} breadcrumbs - [{label, href}] for the header breadcrumbs
- * @param {Array} actions - [{label, href}] rendered as right-aligned buttons
+ * @param {Array} actions - [{label, href}] or [{label, onClick}] rendered as right-aligned buttons
  */
 export default function PageLayout({ children, breadcrumbs = [], actions = [] }) {
   return (
@@ -17,9 +17,9 @@ export default function PageLayout({ children, breadcrumbs = [], actions = [] })
       <Box className="page-content" flex="1">
         {actions.length > 0 && (
           <Flex justify="flex-end" gap={2} className="action-bar">
-            {actions.map(({ label, href }, index) => (
-              <Button key={index} asChild colorPalette="accent-2" size="xl">
-                <Link href={href}>{label}</Link>
+            {actions.map(({ label, href, onClick }, index) => (
+              <Button key={index} asChild={!onClick} onClick={onClick} colorPalette="accent-2" size="xl">
+                {onClick ? label : <Link href={href}>{label}</Link>}
               </Button>
             ))}
           </Flex>

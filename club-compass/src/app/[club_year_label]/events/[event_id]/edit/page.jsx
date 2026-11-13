@@ -8,7 +8,7 @@ const getEvent = cache(async (eventId) => eventsService.getById(eventId))
 export async function generateMetadata({ params }) {
   const { club_year_label: clubYearLabel, event_id: eventId } = await params
   const event = await getEvent(eventId)
-  const name = event?.title ?? 'Event'
+  const name = event?.title ?? 'Edit Event'
   return { title: generateTitle(`Edit ${name}`, clubYearLabel) }
 }
 

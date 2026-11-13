@@ -100,7 +100,7 @@ function TableCard({
                         ) : null}
                       </Button>
                     ) : (
-                      <Text>{header.label}</Text>
+                      <Text fontSize={header.labelFontSize}>{header.label}</Text>
                     )}
                   </Table.ColumnHeader>
                 ))}
@@ -153,7 +153,7 @@ function TableCard({
                             src={item[header.key]}
                             alt=""
                             style={{
-                              height: '2rem',
+                              height: header.imageHeight ?? '2rem',
                               width: 'auto',
                               objectFit: 'contain',
                               display: 'block',

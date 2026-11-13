@@ -1,10 +1,24 @@
 import sql from 'src/lib/postgres'
 import { resolveImageUrl } from '@/lib/storage/index.js'
 
-async function list(clubYearLabel = null, search = null) {
+async function list(clubYearLabel = null, search = null, toBeAwardedAt = null) {
   try {
     let result
-    if (clubYearLabel) {
+    if (clubYearLabel && toBeAwardedAt) {
+      // Pending awards (not yet awarded) earned at earlier events of the same club year
+      result = await sql`
+        SELECT DISTINCT a.id, a.name, a.level::text AS level, a.type::text AS type, a.link, a.patch_image_url
+        FROM adv_db.awards_children AS ac
+        JOIN adv_db.awards AS a ON ac.award_id = a.id
+        JOIN adv_db.events AS src ON ac.event_id = src.id
+        JOIN adv_db.events AS target ON target.id = ${toBeAwardedAt}
+        JOIN adv_db.club_years AS cy ON target.club_year_id = cy.id
+        WHERE cy.label = ${clubYearLabel}
+          AND src.club_year_id = target.club_year_id
+          AND src.event_date < target.event_date
+          AND ac.awarded_on IS NULL
+        ORDER BY level ASC, a.name ASC`
+    } else if (clubYearLabel) {
       result = search
         ? await sql`
             SELECT DISTINCT a.id, a.name, a.level::text AS level, a.type::text AS type, a.link, a.patch_image_url

@@ -69,6 +69,58 @@ async function getAttendeesByEventId(eventId) {
   return []
 }
 
+// Awards of an award ceremony grouped by class, with the children who are due to receive each award
+async function getAwardsReportByEventId(eventId) {
+  try {
+    const rows = await sql`
+      SELECT cl.id AS class_id, cl.class, a.id AS award_id, a.name AS award_name, a.patch_image_url,
+             ch.id AS child_id, ch.first_name, ch.last_name
+      FROM adv_db.events AS ev
+      JOIN adv_db.events_awards AS ea ON ea.event_id = ev.id
+      JOIN adv_db.awards AS a ON ea.award_id = a.id
+      JOIN adv_db.classes AS cl ON ea.class_id = cl.id
+      JOIN (
+        adv_db.awards_children AS ac
+        JOIN adv_db.children AS ch ON ac.child_id = ch.id
+        JOIN adv_db.classes_children AS cc ON cc.child_id = ch.id
+      ) ON ac.award_id = a.id
+        AND cc.class_id = ea.class_id
+        AND cc.club_year_id = ev.club_year_id
+        AND (ac.award_ceremony_id IS NULL OR ac.award_ceremony_id = ev.id)
+      WHERE ev.id = ${eventId} AND ev.award_ceremony = true
+      ORDER BY cl.class, a.name, ch.last_name, ch.first_name`
+
+    const classes = new Map()
+    for (const row of rows) {
+      if (!classes.has(row.classId)) {
+        classes.set(row.classId, { id: row.classId, class: row.class, awards: new Map(), children: new Map() })
+      }
+      const cls = classes.get(row.classId)
+      if (!cls.awards.has(row.awardId)) {
+        cls.awards.set(row.awardId, {
+          id: row.awardId,
+          name: row.awardName,
+          patchImageUrl: row.patchImageUrl,
+          childIds: [],
+        })
+      }
+      if (row.childId) {
+        cls.children.set(row.childId, { id: row.childId, firstName: row.firstName, lastName: row.lastName })
+        cls.awards.get(row.awardId).childIds.push(row.childId)
+      }
+    }
+
+    return [...classes.values()].map((cls) => ({
+      ...cls,
+      awards: [...cls.awards.values()],
+      children: [...cls.children.values()],
+    }))
+  } catch (err) {
+    console.error(err)
+  }
+  return []
+}
+
 async function create(event) {
   try {
     const [resultEvent] = await sql`
@@ -416,6 +468,7 @@ const eventsService = {
   getById,
   update,
   getAttendeesByEventId,
+  getAwardsReportByEventId,
 }
 
 export default eventsService

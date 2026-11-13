@@ -27,9 +27,16 @@ export default function View({ event }) {
       href: `/${clubYearLabel}/events/${eventId}/edit`,
     },
     {
+      label: 'Edit Awards',
+      href: `/${clubYearLabel}/events/${eventId}/edit-awards`,
+    },
+    {
       label: 'Roll Call',
       href: `/${clubYearLabel}/events/${eventId}/roll-call`,
     },
+    ...(event?.awardCeremony
+      ? [{ label: 'Awards Report', href: `/${clubYearLabel}/events/${eventId}/awards-report` }]
+      : []),
   ]
 
   const relatedCards = [
