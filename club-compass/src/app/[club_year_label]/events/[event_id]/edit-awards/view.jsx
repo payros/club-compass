@@ -55,11 +55,15 @@ export default function View({ event }) {
   // fetch classes on mount
   useMemo(() => fetchClasses(), [])
 
+  const isAwardCeremony = Boolean(event?.awardCeremony)
+
   const expandedAwards = useMemo(() => {
     const result = []
     for (const award of eventAwards) {
-      if (award.class_ids && award.class_ids.length > 0) {
-        for (const classId of award.class_ids) {
+      // Award ceremonies apply to every class
+      const classIds = isAwardCeremony ? classList.map((c) => String(c.id)) : award.class_ids
+      if (classIds && classIds.length > 0) {
+        for (const classId of classIds) {
           result.push({ award_id: award.award_id, class_id: classId })
         }
       } else {
@@ -67,7 +71,26 @@ export default function View({ event }) {
       }
     }
     return result
-  }, [eventAwards])
+  }, [eventAwards, isAwardCeremony, classList])
+
+  async function suggestEventAwards() {
+    setGlobalError(null)
+    try {
+      const response = await fetch(`/api/club-years/${clubYearLabel}/awards?toBeAwardedAt=${eventId}`)
+      if (!response.ok) throw new Error(`Request failed with status ${response.status}`)
+      const suggestedAwards = await response.json()
+      setEventAwards((current) => {
+        const existingIds = new Set(current.map((a) => a.award_id))
+        const additions = suggestedAwards
+          .filter((a) => !existingIds.has(a.id))
+          .map((a) => ({ award_id: a.id, name: a.name, class_ids: [] }))
+        return [...current, ...additions]
+      })
+    } catch (error) {
+      console.error('Error fetching suggested awards:', error)
+      setGlobalError('Suggested awards could not be loaded. Please try again.')
+    }
+  }
 
   async function handleSubmit(formEvent) {
     formEvent.preventDefault()
@@ -115,13 +138,17 @@ export default function View({ event }) {
   const breadcrumbs = [
     { label: 'Events', href: `/${clubYearLabel}/events` },
     { label: event?.title ?? 'Event', href: `/${clubYearLabel}/events/${eventId}` },
-    { label: 'Roll Call' },
+    { label: 'Edit Awards' },
   ]
 
   return (
     <FormPage
-      title={`Roll Call for ${event?.title ?? 'Event'}`}
-      description="Please review and update the event awards below prior to the roll call."
+      title={`Edit Awards for ${event?.title ?? 'Event'}`}
+      description={
+        event?.awardCeremony
+          ? `Please review and update awards given at this event below.`
+          : `Please review and update awards for this event below.`
+      }
       breadcrumbs={breadcrumbs}
       globalError={globalError}
       handleSubmit={handleSubmit}
@@ -131,6 +158,11 @@ export default function View({ event }) {
       current={current}
       total={total}
     >
+      {event?.awardCeremony && (
+        <Button type="button" size="sm" variant="outline" colorPalette="brand" onClick={suggestEventAwards}>
+          Suggest awards
+        </Button>
+      )}
       <input type="hidden" name="event_awards" value={JSON.stringify(expandedAwards)} readOnly />
       <Field.Root>
         <Field.Label>Awards</Field.Label>
@@ -148,47 +180,49 @@ export default function View({ event }) {
                 setEventAwards(newAwards)
               }}
             />
-            <Select.Root
-              multiple
-              collection={classCollection}
-              size="sm"
-              width="180px"
-              value={eventAward.class_ids || []}
-              onValueChange={({ value }) => {
-                const newAwards = [...eventAwards]
-                if (value.includes('all')) {
-                  const allIds = classList.map((c) => String(c.id))
-                  const currentIds = newAwards[index].class_ids || []
-                  const allSelected = allIds.every((id) => currentIds.includes(id))
-                  newAwards[index] = { ...newAwards[index], class_ids: allSelected ? [] : allIds }
-                } else {
-                  newAwards[index] = { ...newAwards[index], class_ids: value }
-                }
-                setEventAwards(newAwards)
-              }}
-            >
-              <Select.HiddenSelect />
-              <Select.Control>
-                <Select.Trigger>
-                  <Select.ValueText placeholder="Select Class" />
-                </Select.Trigger>
-                <Select.IndicatorGroup>
-                  <Select.Indicator />
-                </Select.IndicatorGroup>
-              </Select.Control>
-              <Portal>
-                <Select.Positioner>
-                  <Select.Content>
-                    {classCollection.items.map((item) => (
-                      <Select.Item item={item} key={item.value}>
-                        {item.label}
-                        <Select.ItemIndicator />
-                      </Select.Item>
-                    ))}
-                  </Select.Content>
-                </Select.Positioner>
-              </Portal>
-            </Select.Root>
+            {!isAwardCeremony && (
+              <Select.Root
+                multiple
+                collection={classCollection}
+                size="sm"
+                width="180px"
+                value={eventAward.class_ids || []}
+                onValueChange={({ value }) => {
+                  const newAwards = [...eventAwards]
+                  if (value.includes('all')) {
+                    const allIds = classList.map((c) => String(c.id))
+                    const currentIds = newAwards[index].class_ids || []
+                    const allSelected = allIds.every((id) => currentIds.includes(id))
+                    newAwards[index] = { ...newAwards[index], class_ids: allSelected ? [] : allIds }
+                  } else {
+                    newAwards[index] = { ...newAwards[index], class_ids: value }
+                  }
+                  setEventAwards(newAwards)
+                }}
+              >
+                <Select.HiddenSelect />
+                <Select.Control>
+                  <Select.Trigger>
+                    <Select.ValueText placeholder="Select Class" />
+                  </Select.Trigger>
+                  <Select.IndicatorGroup>
+                    <Select.Indicator />
+                  </Select.IndicatorGroup>
+                </Select.Control>
+                <Portal>
+                  <Select.Positioner>
+                    <Select.Content>
+                      {classCollection.items.map((item) => (
+                        <Select.Item item={item} key={item.value}>
+                          {item.label}
+                          <Select.ItemIndicator />
+                        </Select.Item>
+                      ))}
+                    </Select.Content>
+                  </Select.Positioner>
+                </Portal>
+              </Select.Root>
+            )}
             <IconButton
               variant="ghost"
               aria-label="Remove Award"
