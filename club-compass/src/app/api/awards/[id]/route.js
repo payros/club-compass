@@ -1,5 +1,4 @@
 import awardsService from '@/services/awardsService'
-import { resolveImageUrl } from '@/lib/storage/index.js'
 import { NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
@@ -10,10 +9,7 @@ export async function GET(request, { params }) {
   if (!award) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 })
   }
-  return NextResponse.json({
-    ...award,
-    patchImageUrl: await resolveImageUrl(award.patchImageUrl),
-  })
+  return NextResponse.json(award)
 }
 
 export async function PATCH(request, { params }) {
