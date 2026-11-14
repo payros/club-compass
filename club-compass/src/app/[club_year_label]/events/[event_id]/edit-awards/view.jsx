@@ -9,11 +9,14 @@ import SearchBox from '@/components/SearchBox'
 import { useState, useMemo } from 'react'
 import { Button, Field, IconButton, Portal, Select, createListCollection } from '@chakra-ui/react'
 
+let rowKeyCounter = 0
+const newRowKey = () => `award-row-${rowKeyCounter++}`
+
 function buildEventAwardsForForm(eventData) {
   const awardsMap = new Map()
   for (const award of eventData.awards ?? []) {
     if (!awardsMap.has(award.id)) {
-      awardsMap.set(award.id, { award_id: award.id, name: award.name, class_ids: [] })
+      awardsMap.set(award.id, { rowKey: newRowKey(), award_id: award.id, name: award.name, class_ids: [] })
     }
     if (award.classId !== null && award.classId !== undefined) {
       awardsMap.get(award.id).class_ids.push(String(award.classId))
@@ -83,7 +86,7 @@ export default function View({ event }) {
         const existingIds = new Set(current.map((a) => a.award_id))
         const additions = suggestedAwards
           .filter((a) => !existingIds.has(a.id))
-          .map((a) => ({ award_id: a.id, name: a.name, class_ids: [] }))
+          .map((a) => ({ rowKey: newRowKey(), award_id: a.id, name: a.name, class_ids: [] }))
         return [...current, ...additions]
       })
     } catch (error) {
@@ -167,7 +170,7 @@ export default function View({ event }) {
       <Field.Root>
         <Field.Label>Awards</Field.Label>
         {eventAwards.map((eventAward, index) => (
-          <div key={index} style={{ display: 'flex', gap: '8px', marginBottom: '8px', width: '100%' }}>
+          <div key={eventAward.rowKey ?? index} style={{ display: 'flex', gap: '8px', marginBottom: '8px', width: '100%' }}>
             <SearchBox
               type="award"
               name={`award-${index}`}
@@ -241,7 +244,7 @@ export default function View({ event }) {
           size="sm"
           variant="outline"
           colorPalette="brand"
-          onClick={() => setEventAwards([...eventAwards, { award_id: null, class_ids: [] }])}
+          onClick={() => setEventAwards([...eventAwards, { rowKey: newRowKey(), award_id: null, class_ids: [] }])}
         >
           Add Award
         </Button>
