@@ -87,7 +87,7 @@ async function getAwardsReportByEventId(eventId) {
       ) ON ac.award_id = a.id
         AND cc.class_id = ea.class_id
         AND cc.club_year_id = ev.club_year_id
-        AND (ac.award_ceremony_id IS NULL OR ac.award_ceremony_id = ev.id)
+        AND (ac.awarded_on IS NULL OR ac.award_ceremony_id = ev.id)
       WHERE ev.id = ${eventId} AND ev.award_ceremony = true
       ORDER BY cl.class, a.name, ch.last_name, ch.first_name`
 
