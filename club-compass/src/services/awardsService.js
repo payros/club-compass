@@ -104,7 +104,9 @@ async function getById(id, clubYearLabel = null) {
         WHERE a.id = ${id}
         GROUP BY a.id`
     }
-    return result[0]
+    const award = result[0]
+    if (!award) return award
+    return { ...award, patchImageUrl: await resolveImageUrl(award.patchImageUrl) }
   } catch (err) {
     console.error(err)
   }
