@@ -1,4 +1,5 @@
 import sql from 'src/lib/postgres'
+import { resolveImageUrl } from '@/lib/storage/index.js'
 
 async function list(search = null, isAwardCeremony = null) {
   try {
@@ -72,7 +73,7 @@ async function getAttendeesByEventId(eventId) {
 // Awards of an award ceremony grouped by class, with the children who are due to receive each award
 async function getAwardsReportByEventId(eventId) {
   try {
-    const rows = await sql`
+    const rawRows = await sql`
       SELECT cl.id AS class_id, cl.class, a.id AS award_id, a.name AS award_name, a.patch_image_url,
              ch.id AS child_id, ch.first_name, ch.last_name
       FROM adv_db.events AS ev
@@ -89,6 +90,10 @@ async function getAwardsReportByEventId(eventId) {
         AND (ac.award_ceremony_id IS NULL OR ac.award_ceremony_id = ev.id)
       WHERE ev.id = ${eventId} AND ev.award_ceremony = true
       ORDER BY cl.class, a.name, ch.last_name, ch.first_name`
+
+    const rows = await Promise.all(
+      rawRows.map(async (row) => ({ ...row, patchImageUrl: await resolveImageUrl(row.patchImageUrl) }))
+    )
 
     const classes = new Map()
     for (const row of rows) {
@@ -164,7 +169,15 @@ async function getById(eventId) {
                 WHERE ev.id = ${eventId}
                 GROUP BY ev.id`
     console.log('Event details:', result)
-    return result[0]
+    const event = result[0]
+    if (!event) return event
+    const awards = await Promise.all(
+      (event.awards ?? []).map(async (a) => ({
+        ...a,
+        patchImageUrl: await resolveImageUrl(a.patchImageUrl),
+      }))
+    )
+    return { ...event, awards }
   } catch (err) {
     console.error(err)
   }
