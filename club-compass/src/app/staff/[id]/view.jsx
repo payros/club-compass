@@ -2,8 +2,6 @@
 import { useParams } from 'next/navigation'
 import ResourcePage from '@/components/pages/ResourcePage'
 import { transformStaffMember } from '@/utils/transformUtils'
-import CertificateStatusIcon from '@/components/CertificateStatusIcon'
-import { isDateInPast } from '@/utils/dateUtils'
 
 export default function View({ staffMember: staffMemberData }) {
   const { id } = useParams()
@@ -24,9 +22,6 @@ export default function View({ staffMember: staffMemberData }) {
           label: 'Background Check Expiration',
           value: staffMember.backgroundCheckExpiration ?? '—',
           href: staffMember.certificateUrl ?? undefined,
-          icon: staffMemberData.backgroundCheckExpiration ? (
-            <CertificateStatusIcon status={isDateInPast(staffMemberData.backgroundCheckExpiration) ? 'expired' : 'current'} />
-          ) : undefined,
         },
       ]
     : []

@@ -4,7 +4,6 @@ import ResourcePage from '@/components/pages/ResourcePage'
 import { fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
 import { transformStaffMember } from '@/utils/transformUtils'
 import CertificateStatusIcon from '@/components/CertificateStatusIcon'
-import { isDateInPast } from '@/utils/dateUtils'
 
 export default function View({ staffMember: staffMemberData }) {
   const { club_year_label: clubYearLabel, id } = useParams()
@@ -29,9 +28,7 @@ export default function View({ staffMember: staffMemberData }) {
           label: 'Background Check Expiration',
           value: staffMember.backgroundCheckExpiration ?? '—',
           href: staffMember.certificateUrl ?? undefined,
-          icon: staffMemberData.backgroundCheckExpiration ? (
-            <CertificateStatusIcon status={isDateInPast(staffMemberData.backgroundCheckExpiration) ? 'expired' : 'current'} />
-          ) : undefined,
+          icon: <CertificateStatusIcon status={staffMember.certificateStatus} />,
         },
         { label: 'Role', value: staffMember.staffRole ? fromSnakeCaseToTitleCase(staffMember.staffRole) : '—' },
         ...(staffMember.instructorClass
