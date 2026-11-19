@@ -1,12 +1,14 @@
 'use client'
 import { useParams, useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import useChildren from '@/hooks/useChildren'
 import useEvents from '@/hooks/useEvents'
 import useStaff from '@/hooks/useStaff'
 import useClasses from '@/hooks/useClasses'
 import useAwards from '@/hooks/useAwards'
 import DashboardPage from '@/components/pages/DashboardPage'
+import CertificateStatusIcon from '@/components/CertificateStatusIcon'
+import { toaster } from '@/components/ui/toaster'
 
 const View = ({
   children: initialChildren = null,
@@ -29,6 +31,23 @@ const View = ({
   const { staff, loading: loadingStaff } = useStaff(clubYearLabel, initialStaff)
   const { classes, loading: loadingClasses } = useClasses(clubYearLabel, initialClasses)
   const { awards, loading: loadingAwards } = useAwards(clubYearLabel, initialAwards)
+
+  const expiringCertificates = staff.filter((s) => s.certificateStatus === 'expiring').length
+
+  useEffect(() => {
+    if (loadingStaff || expiringCertificates === 0) return
+    toaster.create({
+      id: `expiring-certificates-${clubYearLabel}`,
+      type: 'warning',
+      title:
+        expiringCertificates === 1
+          ? '1 staff member has an expiring certificate that needs your attention'
+          : `${expiringCertificates} staff have expiring certificates that need your attention`,
+      duration: 10000,
+      closable: true,
+      meta: { href: `/${clubYearLabel}/staff` },
+    })
+  }, [loadingStaff, expiringCertificates, clubYearLabel])
 
   function handleSorting(by, tableKey) {
     setSortBy((prev) => {
@@ -94,6 +113,13 @@ const View = ({
         href: `/${clubYearLabel}/staff/enroll`,
       },
       headers: [
+        {
+          key: 'certificateStatus',
+          label: '',
+          sortable: false,
+          type: 'icon',
+          render: (item) => <CertificateStatusIcon status={item.certificateStatus} />,
+        },
         { key: 'name', label: 'Name', sortable: false },
         { key: 'role', label: 'Role', sortable: false },
       ],

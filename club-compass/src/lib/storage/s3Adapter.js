@@ -43,16 +43,17 @@ const PRESIGNED_EXPIRY = 3600 // 1 hour
 /**
  * @param {string} key  e.g. "awards/42/patch.webp"
  * @param {Buffer} buffer
+ * @param {string} [contentType]
  * @returns {string} storage key
  */
-async function put(key, buffer) {
+async function put(key, buffer, contentType = 'image/webp') {
   const client = getClient()
   await client.send(
     new PutObjectCommand({
       Bucket: getBucket(),
       Key: key,
       Body: buffer,
-      ContentType: 'image/webp',
+      ContentType: contentType,
     })
   )
   return key

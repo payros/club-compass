@@ -9,8 +9,11 @@ async function ensureDir(dir) {
 }
 
 function keyToFilename(key) {
-  // "awards/42/patch.webp" → "42.webp"
-  return key.split('/').slice(-2, -1)[0] + '.webp'
+  // "awards/42/patch.webp" → "42.webp", "staff/staff-7/certificate.pdf" → "staff-7-certificate.pdf"
+  const segments = key.split('/')
+  const ext = path.extname(segments[segments.length - 1]) || '.webp'
+  if (ext === '.pdf') return `${segments[segments.length - 2]}-certificate${ext}`
+  return segments[segments.length - 2] + ext
 }
 
 /**

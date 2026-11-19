@@ -14,7 +14,7 @@ import PageTransition from '@/components/PageTransition'
  * @param {string} title
  * @param {string} subtitle
  * @param {boolean} loading
- * @param {Array} fields - [{label, value}] for the info grid
+ * @param {Array} fields - [{label, value, href?, icon?}] for the info grid (href renders value as an external link; icon is shown after the value)
  * @param {Array} relatedCards - TableCard props arrays
  */
 export default function ResourcePage({
@@ -84,7 +84,7 @@ export default function ResourcePage({
                       <div key={i} className="info-item">
                         <label>{field.label}</label>
                         {field.href ? (
-                          <p>
+                          <p style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                             <Link
                               href={field.href}
                               target="_blank"
@@ -100,9 +100,13 @@ export default function ResourcePage({
                               {field.value ?? '—'}
                               <FaExternalLinkAlt style={{ fontSize: '0.7em', opacity: 0.8 }} />
                             </Link>
+                            {field.icon}
                           </p>
                         ) : (
-                          <p>{field.value ?? '—'}</p>
+                          <p style={field.icon ? { display: 'flex', alignItems: 'center', gap: '0.5rem' } : undefined}>
+                            {field.value ?? '—'}
+                            {field.icon}
+                          </p>
                         )}
                       </div>
                     ))}

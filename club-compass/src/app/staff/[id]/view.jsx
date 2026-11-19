@@ -2,6 +2,8 @@
 import { useParams } from 'next/navigation'
 import ResourcePage from '@/components/pages/ResourcePage'
 import { transformStaffMember } from '@/utils/transformUtils'
+import CertificateStatusIcon from '@/components/CertificateStatusIcon'
+import { isDateInPast } from '@/utils/dateUtils'
 
 export default function View({ staffMember: staffMemberData }) {
   const { id } = useParams()
@@ -12,15 +14,31 @@ export default function View({ staffMember: staffMemberData }) {
 
   const breadcrumbs = [{ label: 'Staff Directory', href: '/staff' }, { label: name }]
 
+  const actions = [{ label: 'Upload Certificate', href: `/staff/${id}/certificate-upload` }]
+
   const fields = staffMember
     ? [
         { label: 'Email', value: staffMember.email ?? '—' },
         { label: 'Phone', value: staffMember.phone ?? '—' },
-        { label: 'Background Check Expiration', value: staffMember.backgroundCheckExpiration ?? '—' },
+        {
+          label: 'Background Check Expiration',
+          value: staffMember.backgroundCheckExpiration ?? '—',
+          href: staffMember.certificateUrl ?? undefined,
+          icon: staffMemberData.backgroundCheckExpiration ? (
+            <CertificateStatusIcon status={isDateInPast(staffMemberData.backgroundCheckExpiration) ? 'expired' : 'current'} />
+          ) : undefined,
+        },
       ]
     : []
 
   return (
-    <ResourcePage breadcrumbs={breadcrumbs} title={name} subtitle="Staff Member" loading={loading} fields={fields} />
+    <ResourcePage
+      breadcrumbs={breadcrumbs}
+      title={name}
+      subtitle="Staff Member"
+      loading={loading}
+      fields={fields}
+      actions={actions}
+    />
   )
 }

@@ -56,6 +56,7 @@ CREATE TABLE "staff" (
   "email" varchar,
   "phone" varchar,
   "background_check_expiration" timestamptz,
+  "certificate_url" varchar,
   "created_at" timestamptz DEFAULT (now())
 );
 
