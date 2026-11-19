@@ -96,6 +96,7 @@ const View = () => {
       }
 
       router.push(getNextPath ? getNextPath() : `/${clubYearLabel}/classes`)
+      router.refresh()
     } catch {
       setGlobalError('Could not add classes. Please try again.')
       setLoading(false)

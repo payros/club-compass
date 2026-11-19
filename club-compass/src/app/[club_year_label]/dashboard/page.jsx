@@ -7,6 +7,8 @@ import classesService from '@/services/classesService'
 import awardsService from '@/services/awardsService'
 import clubYearsService from '@/services/clubYearsService'
 
+export const dynamic = 'force-dynamic'
+
 export async function generateMetadata({ params }) {
   const { club_year_label } = await params
   return { title: generateTitle('Dashboard', club_year_label) }

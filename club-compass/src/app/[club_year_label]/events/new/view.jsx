@@ -40,6 +40,7 @@ const View = () => {
 
       const result = await response.json()
       router.push(`/${clubYearLabel}/events/${result.id}`)
+      router.refresh()
     } catch (error) {
       console.error('Create event submission error:', error)
       setGlobalError('The event could not be created. Please try again.')

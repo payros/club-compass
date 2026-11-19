@@ -2,6 +2,8 @@ import View from './view.jsx'
 import { generateTitle, fromSnakeCaseToTitleCase } from '@/utils/stringUtils'
 import classesService from '@/services/classesService'
 
+export const dynamic = 'force-dynamic'
+
 export async function generateMetadata({ params }) {
   const { club_year_label: clubYearLabel, class_name: className } = await params
   return { title: generateTitle(fromSnakeCaseToTitleCase(className), clubYearLabel) }

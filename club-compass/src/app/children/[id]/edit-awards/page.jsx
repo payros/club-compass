@@ -5,6 +5,8 @@ import childrenService from '@/services/childrenService'
 
 const getChild = cache(async (id) => childrenService.getById(id))
 
+export const dynamic = 'force-dynamic'
+
 export async function generateMetadata({ params }) {
   const { id } = await params
   const child = await getChild(id)

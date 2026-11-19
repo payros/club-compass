@@ -64,6 +64,7 @@ const View = ({ event: serverEvent, clubYear }) => {
 
       const nextPath = getNextPath?.({ club_year_label: clubYearLabel, event_id: eventId })
       router.push(nextPath ?? `/${clubYearLabel}/events/${eventId}`)
+      router.refresh()
     } catch (error) {
       console.error('Roll call submission error:', error)
       setGlobalError('Roll call could not be submitted. Please try again.')

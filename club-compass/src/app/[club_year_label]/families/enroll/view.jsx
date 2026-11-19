@@ -213,6 +213,7 @@ const View = () => {
 
       const parentIds = result.parents.map((p) => p.id).join(',')
       router.push(`/${clubYearLabel}/families/enroll/success?parentIds=${parentIds}`)
+      router.refresh()
     } catch (error) {
       console.error('Enroll family submission error:', error)
       setGlobalError('Family could not be enrolled. Please try again.')

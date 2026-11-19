@@ -87,6 +87,7 @@ export default function View({ award: serverAward }) {
           setGlobalError(uploadResult?.error ?? 'Award updated, but patch image upload failed.')
           setLoading(false)
           router.push(`/awards/${id}`)
+          router.refresh()
           return
         }
       } catch (err) {
@@ -96,6 +97,7 @@ export default function View({ award: serverAward }) {
     }
 
     router.push(`/awards/${id}`)
+    router.refresh()
   }
 
   const breadcrumbs = [

@@ -52,6 +52,7 @@ const View = () => {
         const label = result[0].label
         const nextPath = getNextPath?.({ club_year_label: label })
         router.push(nextPath ?? `/${label}/dashboard`)
+        router.refresh()
       }
     } catch (err) {
       console.error(err)

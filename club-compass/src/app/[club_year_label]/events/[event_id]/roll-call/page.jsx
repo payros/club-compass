@@ -7,6 +7,8 @@ import clubYearsService from '@/services/clubYearsService'
 const getEvent = cache(async (eventId) => eventsService.getById(eventId))
 const getClubYear = cache(async (label) => clubYearsService.getByLabel(label))
 
+export const dynamic = 'force-dynamic'
+
 export async function generateMetadata({ params }) {
   const { club_year_label: clubYearLabel, event_id: eventId } = await params
   const event = await getEvent(eventId)

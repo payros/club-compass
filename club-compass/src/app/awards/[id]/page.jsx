@@ -5,6 +5,8 @@ import awardsService from '@/services/awardsService'
 
 const getAward = cache(async (id) => awardsService.getById(id))
 
+export const dynamic = 'force-dynamic'
+
 export async function generateMetadata({ params }) {
   const { id } = await params
   const award = await getAward(id)

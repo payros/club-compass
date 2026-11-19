@@ -37,6 +37,7 @@ export default function View({ event }) {
       }
 
       router.push(`/${clubYearLabel}/events/${eventId}`)
+      router.refresh()
     } catch (error) {
       console.error('Edit event submission error:', error)
       setGlobalError('The event could not be updated. Please try again.')

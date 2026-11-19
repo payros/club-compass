@@ -5,6 +5,8 @@ import staffService from '@/services/staffService'
 
 const getStaffMember = cache(async (id) => staffService.getById(id))
 
+export const dynamic = 'force-dynamic'
+
 export async function generateMetadata({ params }) {
   const { id } = await params
   const staffMember = await getStaffMember(id)

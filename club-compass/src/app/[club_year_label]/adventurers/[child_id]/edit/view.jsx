@@ -103,6 +103,7 @@ export default function View({ child: serverChild }) {
     }
 
     router.push(`/${clubYearLabel}/adventurers/${childId}`)
+    router.refresh()
   }
 
   const name = child ? `${child.firstName} ${child.lastName}` : 'Adventurer'
