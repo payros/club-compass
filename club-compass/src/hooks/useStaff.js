@@ -9,6 +9,7 @@ function useStaff(clubYearLabel = null, initialData = null) {
   function transform(raw) {
     return raw.map((s) => ({
       id: s.id,
+      certificateStatus: s.certificateStatus ?? null,
       name: `${s.firstName} ${s.lastName}`,
       email: s.email ?? '—',
       phone: s.phone ?? '—',

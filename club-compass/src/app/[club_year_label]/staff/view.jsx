@@ -3,8 +3,16 @@ import { useParams, useRouter } from 'next/navigation'
 import { useState } from 'react'
 import useStaff from '@/hooks/useStaff'
 import CollectionPage from '@/components/pages/CollectionPage'
+import CertificateStatusIcon from '@/components/CertificateStatusIcon'
 
 const headers = [
+  {
+    key: 'certificateStatus',
+    label: '',
+    sortable: false,
+    type: 'icon',
+    render: (item) => <CertificateStatusIcon status={item.certificateStatus} />,
+  },
   { key: 'name', label: 'Name', sortable: true },
   { key: 'role', label: 'Role', sortable: true },
   { key: 'class', label: 'Class', sortable: true },

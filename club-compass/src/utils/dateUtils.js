@@ -24,4 +24,15 @@ function localDateToISO(dateStr) {
   return new Date(year, month - 1, day).toISOString()
 }
 
-export { fromDateOfBirthToAge, fromDateToString, localDateToISO }
+// Tomorrow as a local "YYYY-MM-DD" string, suitable for <input type="date" min>.
+function tomorrowAsInputDate() {
+  const d = new Date()
+  d.setDate(d.getDate() + 1)
+  return [d.getFullYear(), String(d.getMonth() + 1).padStart(2, '0'), String(d.getDate()).padStart(2, '0')].join('-')
+}
+
+function isDateInPast(date) {
+  return new Date(date) < new Date()
+}
+
+export { fromDateOfBirthToAge, fromDateToString, localDateToISO, tomorrowAsInputDate, isDateInPast }

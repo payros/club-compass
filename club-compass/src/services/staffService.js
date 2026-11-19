@@ -1,10 +1,23 @@
 import sql from 'src/lib/postgres'
+import { resolveImageUrl } from '@/lib/storage/index.js'
+
+// Compared against the club year's end date: 'missing' (no certificate), 'expiring' (expires before the club year ends), 'valid'.
+const certificateStatus = sql`
+  CASE
+    WHEN sf.certificate_url IS NULL THEN 'missing'
+    WHEN sf.background_check_expiration IS NULL OR sf.background_check_expiration < cy.end_date THEN 'expiring'
+    ELSE 'valid'
+  END AS certificate_status`
+
+async function withCertificateUrl(row) {
+  return row ? { ...row, certificateUrl: await resolveImageUrl(row.certificateUrl) } : row
+}
 
 async function list(search, clubYearLabel) {
   try {
     if (clubYearLabel) {
       const result = await sql`
-          SELECT sf.*, cys.staff_role, cl.class AS instructor_class
+          SELECT sf.*, cys.staff_role, cl.class AS instructor_class, ${certificateStatus}
           FROM adv_db.staff sf
           JOIN adv_db.club_years_staff cys ON cys.staff_id = sf.id
           JOIN adv_db.club_years cy ON cys.club_year_id = cy.id
@@ -13,7 +26,7 @@ async function list(search, clubYearLabel) {
           ${search ? sql`AND (sf.first_name ILIKE ${'%' + search + '%'} OR sf.last_name ILIKE ${'%' + search + '%'})` : sql``}
           ORDER BY sf.last_name ASC
           ${search ? sql`LIMIT 10` : sql``}`
-      return result
+      return await Promise.all(result.map(withCertificateUrl))
     }
     const result = await sql`
         SELECT sf.*,
@@ -25,7 +38,7 @@ async function list(search, clubYearLabel) {
         ${search ? sql`WHERE sf.first_name ILIKE ${'%' + search + '%'} OR sf.last_name ILIKE ${'%' + search + '%'}` : sql``}
         ORDER BY sf.last_name ASC
         ${search ? sql`LIMIT 10` : sql``}`
-    return result
+    return await Promise.all(result.map(withCertificateUrl))
   } catch (err) {
     console.error(err)
   }
@@ -35,13 +48,13 @@ async function list(search, clubYearLabel) {
 async function listByClubYear(clubYearLabel) {
   try {
     const result = await sql`
-      SELECT sf.*, cys.staff_role
+      SELECT sf.*, cys.staff_role, ${certificateStatus}
       FROM adv_db.club_years_staff AS cys
       JOIN adv_db.club_years AS cy ON cys.club_year_id = cy.id
       JOIN adv_db.staff AS sf ON cys.staff_id = sf.id
       WHERE cy.label = ${clubYearLabel}
       ORDER BY sf.last_name ASC`
-    return result
+    return await Promise.all(result.map(withCertificateUrl))
   } catch (err) {
     console.error(err)
   }
@@ -51,7 +64,7 @@ async function listByClubYear(clubYearLabel) {
 async function getById(id) {
   try {
     const result = await sql`SELECT * FROM adv_db.staff WHERE id = ${id}`
-    return result[0]
+    return await withCertificateUrl(result[0])
   } catch (err) {
     console.error(err)
   }
@@ -61,17 +74,25 @@ async function getById(id) {
 async function getByIdForClubYear(id, clubYearLabel) {
   try {
     const [result] = await sql`
-      SELECT sf.*, cys.staff_role, cl.class AS instructor_class
+      SELECT sf.*, cys.staff_role, cl.class AS instructor_class, ${certificateStatus}
       FROM adv_db.staff sf
       JOIN adv_db.club_years_staff cys ON cys.staff_id = sf.id
       JOIN adv_db.club_years cy ON cys.club_year_id = cy.id
       LEFT JOIN adv_db.classes cl ON cl.instructor_id = sf.id AND cl.club_year_id = cy.id
       WHERE cy.label = ${clubYearLabel} AND sf.id = ${id}`
-    return result ?? null
+    return (await withCertificateUrl(result)) ?? null
   } catch (err) {
     console.error(err)
   }
   return null
+}
+
+async function updateCertificate(id, key, expiration) {
+  await sql`
+    UPDATE adv_db.staff
+    SET certificate_url = ${key},
+        background_check_expiration = ${expiration}
+    WHERE id = ${id}`
 }
 
 async function enroll(clubYearLabel, staffMembers) {
@@ -137,5 +158,5 @@ async function getByRole(clubYearLabel, role) {
   return null
 }
 
-const staffService = { list, listByClubYear, getById, getByIdForClubYear, enroll, getByRole }
+const staffService = { list, listByClubYear, getById, getByIdForClubYear, updateCertificate, enroll, getByRole }
 export default staffService

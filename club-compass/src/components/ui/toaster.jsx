@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import {
   Toaster as ChakraToaster,
   Portal,
@@ -15,11 +16,25 @@ export const toaster = createToaster({
 })
 
 export const Toaster = () => {
+  const router = useRouter()
+
+  // Toasts with `meta.href` navigate there when clicked (except on the close button).
+  function handleToastClick(event, toast) {
+    const href = toast.meta?.href
+    if (!href || event.target.closest('[data-part="close-trigger"]')) return
+    toaster.dismiss(toast.id)
+    router.push(href)
+  }
+
   return (
     <Portal>
       <ChakraToaster toaster={toaster} insetInline={{ mdDown: '4' }}>
         {(toast) => (
-          <Toast.Root width={{ md: 'sm' }}>
+          <Toast.Root
+            width={{ md: 'sm' }}
+            cursor={toast.meta?.href ? 'pointer' : undefined}
+            onClick={(event) => handleToastClick(event, toast)}
+          >
             {toast.type === 'loading' ? (
               <Spinner size='sm' color='blue.solid' />
             ) : (

@@ -88,7 +88,7 @@ function TableCard({
                     onClick={() => (header.sortable && handleSort ? handleSort(header.key) : null)}
                     style={{
                       cursor: header.sortable ? 'pointer' : 'default',
-                      minWidth: header.type === 'image' || header.type === 'avatar' ? '3rem' : undefined,
+                      minWidth: header.type === 'image' || header.type === 'avatar' || header.type === 'icon' ? '3rem' : undefined,
                     }}
                   >
                     {header.sortable ? (
@@ -174,6 +174,9 @@ function TableCard({
                               margin: '0 auto',
                             }}
                           />
+                        )}
+                        {header.type === 'icon' && (
+                          <div style={{ display: 'flex', justifyContent: 'center' }}>{header.render?.(item)}</div>
                         )}
                         {header.type === 'link' && item[header.hrefKey] && (
                           <Link
