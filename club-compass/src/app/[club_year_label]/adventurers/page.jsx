@@ -5,6 +5,8 @@ import clubYearsService from '@/services/clubYearsService'
 
 const getClubYear = cache(async (label) => clubYearsService.getByLabel(label))
 
+export const dynamic = 'force-dynamic'
+
 export async function generateMetadata({ params }) {
   const { club_year_label } = await params
   return { title: generateTitle('Adventurers', club_year_label) }

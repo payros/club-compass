@@ -119,6 +119,7 @@ const View = () => {
       }
 
       router.push(getNextPath?.({ club_year_label: clubYearLabel }) ?? `/${clubYearLabel}/dashboard`)
+      router.refresh()
     } catch (error) {
       console.error('Enroll staff submission error:', error)
       setGlobalError('Staff could not be enrolled. Please try again.')

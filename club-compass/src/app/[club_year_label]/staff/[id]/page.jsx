@@ -5,6 +5,8 @@ import staffService from '@/services/staffService'
 
 const getStaffMember = cache(async (id, clubYearLabel) => staffService.getByIdForClubYear(id, clubYearLabel))
 
+export const dynamic = 'force-dynamic'
+
 export async function generateMetadata({ params }) {
   const { club_year_label: clubYearLabel, id } = await params
   const staffMember = await getStaffMember(id, clubYearLabel)

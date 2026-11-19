@@ -115,6 +115,7 @@ export default function View({ child: serverChild }) {
       }
 
       router.back()
+      router.refresh()
     } catch {
       setGlobalError('Could not save awards. Please try again.')
       setLoading(false)

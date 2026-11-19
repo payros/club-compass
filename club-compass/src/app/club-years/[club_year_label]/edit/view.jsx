@@ -61,6 +61,7 @@ data.endDate = localDateToISO(data.endDate)
       }
       const newLabel = result.label ?? currentLabel
       router.push(`/club-years/${newLabel}`)
+      router.refresh()
     } catch (err) {
       console.error(err)
       setGlobalError('The club year could not be updated. Please try again.')

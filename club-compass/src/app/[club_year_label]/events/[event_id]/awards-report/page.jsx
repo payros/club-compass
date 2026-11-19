@@ -6,6 +6,8 @@ import eventsService from '@/services/eventsService'
 
 const getEvent = cache(async (eventId) => eventsService.getById(eventId))
 
+export const dynamic = 'force-dynamic'
+
 export async function generateMetadata({ params }) {
   const { club_year_label: clubYearLabel, event_id: eventId } = await params
   const event = await getEvent(eventId)

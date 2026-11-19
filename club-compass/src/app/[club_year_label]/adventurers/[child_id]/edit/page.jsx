@@ -5,6 +5,8 @@ import childrenService from '@/services/childrenService'
 
 const getChild = cache(async (childId, clubYearLabel) => childrenService.getById(childId, clubYearLabel))
 
+export const dynamic = 'force-dynamic'
+
 export async function generateMetadata({ params }) {
   const { club_year_label: clubYearLabel, child_id: childId } = await params
   const child = await getChild(childId, clubYearLabel)

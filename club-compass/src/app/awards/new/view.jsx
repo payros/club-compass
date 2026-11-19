@@ -69,6 +69,7 @@ const View = () => {
           setGlobalError(uploadResult?.error ?? 'Award created, but patch image upload failed.')
           setLoading(false)
           router.push(`/awards/${newId}`)
+          router.refresh()
           return
         }
       } catch (err) {
@@ -78,6 +79,7 @@ const View = () => {
     }
 
     router.push(`/awards/${newId}`)
+    router.refresh()
   }
 
   const breadcrumbs = [{ label: 'Awards', href: '/awards' }, { label: 'New Award' }]

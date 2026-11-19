@@ -122,6 +122,7 @@ export default function View({ event }) {
       }
       const nextPath = getNextPath?.({ club_year_label: clubYearLabel, event_id: eventId })
       router.push(nextPath ?? `/${clubYearLabel}/events/${eventId}`)
+      router.refresh()
     } catch (error) {
       console.error('Edit event submission error:', error)
       setGlobalError('The event could not be updated. Please try again.')

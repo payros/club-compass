@@ -99,6 +99,7 @@ export default function View({ child: serverChild }) {
     }
 
     router.push(`/children/${id}`)
+    router.refresh()
   }
 
   const name = child ? `${child.firstName} ${child.lastName}` : 'Child'
