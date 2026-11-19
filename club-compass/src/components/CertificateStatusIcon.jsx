@@ -5,13 +5,11 @@ const STATUS_ICONS = {
   missing: { Component: FaExclamationTriangle, color: 'orange.400', label: 'No certificate uploaded' },
   expiring: { Component: FaTimesCircle, color: 'red.400', label: 'Certificate expires before the club year ends' },
   valid: { Component: FaCheckCircle, color: 'green.400', label: 'Certificate valid through the club year' },
-  expired: { Component: FaTimesCircle, color: 'red.400', label: 'Expired' },
-  current: { Component: FaCheckCircle, color: 'green.400', label: 'Not expired' },
 }
 
 /**
  * Status icon for background-check certificates.
- * @param {'missing'|'expiring'|'valid'|'expired'|'current'} status
+ * @param {'missing'|'expiring'|'valid'} status
  */
 export default function CertificateStatusIcon({ status }) {
   const config = STATUS_ICONS[status]

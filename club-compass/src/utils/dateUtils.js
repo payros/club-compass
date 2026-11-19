@@ -31,8 +31,4 @@ function tomorrowAsInputDate() {
   return [d.getFullYear(), String(d.getMonth() + 1).padStart(2, '0'), String(d.getDate()).padStart(2, '0')].join('-')
 }
 
-function isDateInPast(date) {
-  return new Date(date) < new Date()
-}
-
-export { fromDateOfBirthToAge, fromDateToString, localDateToISO, tomorrowAsInputDate, isDateInPast }
+export { fromDateOfBirthToAge, fromDateToString, localDateToISO, tomorrowAsInputDate }
